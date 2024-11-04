@@ -20,11 +20,12 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=django
-      - POSTGRES_PASSWORD=django_password
-      - POSTGRES_DB=django_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=topgeek
+      - POSTGRES_DB=crm_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
 
   redis:
     image: redis:latest
