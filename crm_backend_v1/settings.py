@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+
 import os
 from pathlib import Path
 from decouple import config
@@ -43,6 +44,8 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "djoser",
+    "rest_framework_simplejwt",
     "rest_framework.authtoken",
     "redis",
     "django_filters",
@@ -96,7 +99,7 @@ WSGI_APPLICATION = "crm_backend_v1.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-DJANGO_ENV = os.getenv('DJANGO_ENV', 'local')
+DJANGO_ENV = os.getenv("DJANGO_ENV", "local")
 
 DATABASES = {
     "default": {
@@ -104,7 +107,11 @@ DATABASES = {
         "NAME": config("POSTGRES_DB"),
         "USER": config("POSTGRES_USER"),
         "PASSWORD": config("POSTGRES_PASSWORD"),
-        'HOST': config("POSTGRES_DOCKER_HOST") if DJANGO_ENV == 'docker' else config("POSTGRES_LOCAL_HOST"),
+        "HOST": (
+            config("POSTGRES_DOCKER_HOST")
+            if DJANGO_ENV == "docker"
+            else config("POSTGRES_LOCAL_HOST")
+        ),
         "PORT": config("POSTGRES_PORT"),
     }
 }
@@ -134,7 +141,7 @@ INTERNAL_IPS = [
     # Add more IPs if necessary
 ]
 
-# AUTH_USER_MODEL = config("AUTH_USER_MODEL")
+AUTH_USER_MODEL = "authentication.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -202,3 +209,21 @@ if DEBUG:
         "debug_toolbar.middleware.DebugToolbarMiddleware",
         "silk.middleware.SilkyMiddleware",
     ] + MIDDLEWARE
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'authentication.serializers.CustomUserCreateSerializer',
+    },
+    'USERNAME_FIELD': 'email',
+}
+
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('JWT',),
+}

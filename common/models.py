@@ -25,16 +25,16 @@ class CreatedAtUpdatedAtBaseModel(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='created_%(class)s_set',
-        verbose_name='Created By'
+        related_name="created_%(class)s_set",
+        verbose_name="Created By",
     )
     updated_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='updated_%(class)s_set',
-        verbose_name='Updated By'
+        related_name="updated_%(class)s_set",
+        verbose_name="Updated By",
     )
 
     user_ip = models.GenericIPAddressField(

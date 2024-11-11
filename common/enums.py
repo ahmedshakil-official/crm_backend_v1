@@ -27,12 +27,12 @@ class UserTypeChoices(models.TextChoices):
 
 
 class GenderChoices(models.TextChoices):
-    MALE = "MALE", _('Male')
-    FEMALE = "FEMALE", _('Female')
-    OTHER = "OTHER", _('Other')
+    MALE = "MALE", _("Male")
+    FEMALE = "FEMALE", _("Female")
+    OTHER = "OTHER", _("Other")
 
 
 class RoleChoices(models.TextChoices):
-    INTRODUCER = "INTRODUCER", _('Introducer')
-    ADVISOR = "ADVISOR", _('Advisor')
-    ADMIN = "ADMIN", _('Admin')
+    INTRODUCER = "INTRODUCER", _("Introducer")
+    ADVISOR = "ADVISOR", _("Advisor")
+    ADMIN = "ADMIN", _("Admin")

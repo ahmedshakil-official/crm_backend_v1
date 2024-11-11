@@ -13,6 +13,8 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError("The Email field is required")
         email = self.normalize_email(email)
+        extra_fields.setdefault('first_name', '')
+        extra_fields.setdefault('last_name', '')
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -21,6 +23,9 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault('first_name', '')
+        extra_fields.setdefault('last_name', '')
+        extra_fields.setdefault('phone', '')
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
@@ -30,27 +35,26 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class User(
-    AbstractBaseUser, PermissionsMixin, CreatedAtUpdatedAtBaseModel
-):
+class User(AbstractBaseUser, PermissionsMixin, CreatedAtUpdatedAtBaseModel):
 
     email = models.EmailField(db_index=True, unique=True, null=False, default=None)
     phone = models.CharField(
-        db_index=True, max_length=24, unique=False, null=True, default=None
+        db_index=True, max_length=24, unique=False, null=True, blank=True, default=None
     )
     first_name = models.CharField(max_length=64, blank=True)
     last_name = models.CharField(max_length=64, blank=True)
     profile_image = TimestampThumbnailImageField(
         upload_to="user/profile", blank=True, null=True
     )
+    organization_name = models.CharField(max_length=64, blank=True, null=True)
     nid = models.CharField(
         max_length=64,
         unique=True,
         default=None,
         blank=True,
         null=True,
-        verbose_name=_('NID No.'),
-        help_text=_('National ID No. Example: YYYYXXXXXXXXXXXXX')
+        verbose_name=_("NID No."),
+        help_text=_("National ID No. Example: YYYYXXXXXXXXXXXXX"),
     )
     is_staff = models.BooleanField(
         _("staff status"),
