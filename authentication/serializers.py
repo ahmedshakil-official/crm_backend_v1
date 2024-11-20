@@ -11,7 +11,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
     # Fields for the required information during registration
     phone = serializers.CharField(max_length=24, required=False)
     profile_image = serializers.ImageField(required=False)
-    user_type = serializers.ChoiceField(choices=UserTypeChoices.choices, default=UserTypeChoices.SERVICE_HOLDER)
+    user_type = serializers.ChoiceField(choices=UserTypeChoices.choices, default=UserTypeChoices.SERVICE_HOLDER, required=False)
 
     # Additional fields for organization and role information
     organization_name = serializers.CharField(write_only=True)

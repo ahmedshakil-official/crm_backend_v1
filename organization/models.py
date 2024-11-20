@@ -26,13 +26,14 @@ class Organization(NameSlugDescriptionBaseModel):
     )
     primary_mobile = models.CharField(max_length=20)
     other_contact = models.CharField(max_length=64, blank=True, null=True)
-    contact_person = models.CharField(max_length=64)
+    contact_person = models.CharField(max_length=64, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     contact_person_designation = models.CharField(max_length=64, blank=True, null=True)
     license_no = models.CharField(max_length=128, blank=True, null=True)
     license_image = TimestampThumbnailImageField(
         upload_to="organization/license", blank=True, null=True
     )
+    is_removed = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

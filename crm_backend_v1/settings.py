@@ -27,7 +27,8 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", default="localhost").split(",")
+# ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", default="localhost").split(",")
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -44,6 +45,7 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "drf_spectacular",
     "djoser",
     "rest_framework_simplejwt",
     "rest_framework.authtoken",
@@ -66,6 +68,7 @@ PROJECT_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -95,7 +98,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "crm_backend_v1.wsgi.application"
-
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -215,15 +218,24 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 DJOSER = {
     'SERIALIZERS': {
-        'user_create': 'authentication.serializers.CustomUserCreateSerializer',
+        'user_create': 'authentication.serializers.py.CustomUserCreateSerializer',
     },
     'USERNAME_FIELD': 'email',
 }
 
 SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'QOP API',
+    'DESCRIPTION': 'It is a CRM based project.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
 }
