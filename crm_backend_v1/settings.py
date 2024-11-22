@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 from decouple import config
 
@@ -62,6 +63,7 @@ PROJECT_APPS = [
     "authentication.apps.AuthenticationConfig",
     "common.apps.CommonConfig",
     "organization.apps.OrganizationConfig",
+    "organizationuser.apps.OrganizationuserConfig",
 ]
 
 
@@ -215,27 +217,40 @@ if DEBUG:
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 DJOSER = {
-    'SERIALIZERS': {
-        'user_create': 'authentication.serializers.py.CustomUserCreateSerializer',
+    "SERIALIZERS": {
+        "user_create": "authentication.serializers.CustomUserCreateSerializer",
     },
-    'USERNAME_FIELD': 'email',
+    "USERNAME_FIELD": "email",
 }
 
 SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
+    "AUTH_HEADER_TYPES": ("JWT",),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'QOP API',
-    'DESCRIPTION': 'It is a CRM based project.',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    "TITLE": "QOP API",
+    "DESCRIPTION": "It is a CRM based project.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
     # OTHER SETTINGS
 }
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'description': 'JWT Authorization header using the Bearer scheme. Example: "Bearer {token}"',
+            'name': 'Authorization',
+            'in': 'header',
+        },
+    },
+}
+

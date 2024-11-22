@@ -13,8 +13,8 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError("The Email field is required")
         email = self.normalize_email(email)
-        extra_fields.setdefault('first_name', '')
-        extra_fields.setdefault('last_name', '')
+        extra_fields.setdefault("first_name", "")
+        extra_fields.setdefault("last_name", "")
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -23,9 +23,9 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault('first_name', '')
-        extra_fields.setdefault('last_name', '')
-        extra_fields.setdefault('phone', '')
+        extra_fields.setdefault("first_name", "")
+        extra_fields.setdefault("last_name", "")
+        extra_fields.setdefault("phone", "")
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
@@ -46,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin, CreatedAtUpdatedAtBaseModel):
     profile_image = TimestampThumbnailImageField(
         upload_to="user/profile", blank=True, null=True
     )
-    organization_name = models.CharField(max_length=64, blank=True, null=True)
+
     nid = models.CharField(
         max_length=64,
         unique=True,
@@ -97,4 +97,4 @@ class User(AbstractBaseUser, PermissionsMixin, CreatedAtUpdatedAtBaseModel):
     REQUIRED_FIELDS = ["first_name", "last_name"]
 
     def __str__(self):
-        return self.email
+        return f"{self.first_name} {self.last_name} - {self.email}"

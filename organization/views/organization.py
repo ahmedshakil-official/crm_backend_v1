@@ -1,9 +1,13 @@
+from django.db import models
+from rest_framework.exceptions import ValidationError
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status, viewsets
-from organization.models import Organization
-from organization.serializers import OrganizationSerializer
+from organization.models import Organization, OrganizationUser
+from organization.serializers import OrganizationSerializer, OrganizationUserSerializer
+
 
 class OrganizationViewSet(ModelViewSet):
     queryset = Organization.objects.filter()  # Only fetch non-removed records
@@ -18,8 +22,10 @@ class OrganizationViewSet(ModelViewSet):
         instance = self.get_object()
         instance.is_removed = True
         instance.save()
-        return Response({"detail": "Organization marked as removed."}, status=status.HTTP_204_NO_CONTENT)
-
+        return Response(
+            {"detail": "Organization marked as removed."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 class DirectorOrganizationViewSet(viewsets.ViewSet):
@@ -32,15 +38,11 @@ class DirectorOrganizationViewSet(viewsets.ViewSet):
         Assumes the user is associated with only one organization.
         """
         try:
-            print("="*20)
-            org = Organization.objects.get(
-                organization_users__user=self.request.user
-            )
+            print("=" * 20)
+            org = Organization.objects.get(organization_users__user=self.request.user)
             print(org)
-            print("="*20)
-            return Organization.objects.get(
-                organization_users__user=self.request.user
-            )
+            print("=" * 20)
+            return Organization.objects.get(organization_users__user=self.request.user)
         except Organization.DoesNotExist:
             return None
 
@@ -49,9 +51,7 @@ class DirectorOrganizationViewSet(viewsets.ViewSet):
         Retrieve the organization details.
         """
         print("=" * 20)
-        org = Organization.objects.get(
-            organization_users__user=self.request.user
-        )
+        org = Organization.objects.get(organization_users__user=self.request.user)
         print(org)
         organization = self.get_object()
         if not organization:
@@ -72,7 +72,9 @@ class DirectorOrganizationViewSet(viewsets.ViewSet):
                 {"detail": "Organization not found or removed."},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        serializer = OrganizationSerializer(organization, data=request.data, partial=True)
+        serializer = OrganizationSerializer(
+            organization, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -94,3 +96,5 @@ class DirectorOrganizationViewSet(viewsets.ViewSet):
             {"detail": "Organization soft deleted successfully."},
             status=status.HTTP_204_NO_CONTENT,
         )
+
+

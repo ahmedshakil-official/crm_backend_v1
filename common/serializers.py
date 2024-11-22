@@ -1,6 +1,12 @@
+from rest_framework import serializers
 from rest_framework.serializers import (
     ModelSerializer,
 )
+from djoser.serializers import UserCreateSerializer
+
+from common.enums import UserTypeChoices
+from organization.models import OrganizationUser
+
 
 class ListSerializer(ModelSerializer):
 
@@ -9,9 +15,39 @@ class ListSerializer(ModelSerializer):
         fields = (
             "id",
             "slug",
+        )
+        read_only_fields = ("id", "slug")
 
-        )
-        read_only_fields = (
+
+class OrganizationUserListSerializer(ModelSerializer):
+    class Meta:
+        model = OrganizationUser
+        ref_name = "OrganizationUserList"
+        fields = [
             "id",
-            "slug"
-        )
+            "alias",
+        ]
+        read_only_fields = [
+            "id",
+            "alias",
+        ]
+
+
+class CommonUserSerializer(UserCreateSerializer):
+    phone = serializers.CharField(max_length=24, required=False)
+    profile_image = serializers.ImageField(required=False)
+    user_type = serializers.ChoiceField(
+        choices=UserTypeChoices.choices,
+        default=UserTypeChoices.SERVICE_HOLDER,
+        required=False,
+    )
+
+    class Meta(UserCreateSerializer.Meta):
+        fields = [
+            "email",
+            "phone",
+            "first_name",
+            "last_name",
+            "profile_image",
+            "user_type",
+            ]
