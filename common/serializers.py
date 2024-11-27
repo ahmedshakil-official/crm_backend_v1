@@ -53,10 +53,3 @@ class CommonUserSerializer(UserCreateSerializer):
             "profile_image",
             "user_type",
         ]
-
-
-
-
-
-
-

@@ -6,10 +6,14 @@ from rest_framework.exceptions import PermissionDenied, NotFound
 
 from common.enums import RoleChoices, UserTypeChoices
 from common.models import User
-from common.views import BaseOrganizationUserListCreateView, BaseOrganizationUserRetrieveUpdateDeleteView
+from common.views import (
+    BaseOrganizationUserListCreateView,
+    BaseOrganizationUserRetrieveUpdateDeleteView,
+)
 from organization.models import Organization, OrganizationUser
 from organization.serializers import OrganizationSerializer, OrganizationUserSerializer
 from .serializers import OrganizationUserListCreateSerializer
+
 # from organizationuser.serializers import LeadSerializer, ClientSerializer, AdvisorSerializer, IntroducerSerializer
 
 
@@ -81,6 +85,7 @@ class LeadListCreateView(ListCreateAPIView):
     """
     View to list and create Leads for the authenticated user's organization.
     """
+
     serializer_class = OrganizationUserListCreateSerializer
     permission_classes = [IsAuthenticated]
 
@@ -107,7 +112,9 @@ class LeadListCreateView(ListCreateAPIView):
         ).first()
 
         if not user_organization:
-            raise PermissionDenied("You cannot create leads without being associated with an organization.")
+            raise PermissionDenied(
+                "You cannot create leads without being associated with an organization."
+            )
 
         # Save the Lead with the organization and role
         serializer.save(
@@ -121,6 +128,7 @@ class LeadRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     """
     View to retrieve, update, or delete a specific Lead.
     """
+
     serializer_class = OrganizationUserListCreateSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
@@ -146,11 +154,11 @@ class LeadRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
         serializer.save(updated_by=self.request.user)
 
 
-
 class ClientListCreateView(ListCreateAPIView):
     """
-        View to list and create Clients for the authenticated user's organization.
+    View to list and create Clients for the authenticated user's organization.
     """
+
     serializer_class = OrganizationUserListCreateSerializer
     permission_classes = [IsAuthenticated]
 
@@ -177,7 +185,9 @@ class ClientListCreateView(ListCreateAPIView):
         ).first()
 
         if not user_organization:
-            raise PermissionDenied("You cannot create clients without being associated with an organization.")
+            raise PermissionDenied(
+                "You cannot create clients without being associated with an organization."
+            )
 
         # Save the Client with the organization and role
         serializer.save(
@@ -189,8 +199,9 @@ class ClientListCreateView(ListCreateAPIView):
 
 class ClientRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     """
-        View to retrieve, update, or delete a specific Client.
+    View to retrieve, update, or delete a specific Client.
     """
+
     serializer_class = OrganizationUserListCreateSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
@@ -218,8 +229,9 @@ class ClientRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
 
 class IntroducerListCreateView(ListCreateAPIView):
     """
-        View to list and create Clients for the authenticated user's organization.
+    View to list and create Clients for the authenticated user's organization.
     """
+
     serializer_class = OrganizationUserListCreateSerializer
     permission_classes = [IsAuthenticated]
 
@@ -246,7 +258,9 @@ class IntroducerListCreateView(ListCreateAPIView):
         ).first()
 
         if not user_organization:
-            raise PermissionDenied("You cannot create clients without being associated with an organization.")
+            raise PermissionDenied(
+                "You cannot create clients without being associated with an organization."
+            )
 
         # Save the Client with the organization and role
         serializer.save(
@@ -258,8 +272,9 @@ class IntroducerListCreateView(ListCreateAPIView):
 
 class IntroducerRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     """
-        View to retrieve, update, or delete a specific Client.
+    View to retrieve, update, or delete a specific Client.
     """
+
     serializer_class = OrganizationUserListCreateSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
@@ -285,11 +300,11 @@ class IntroducerRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
         serializer.save(updated_by=self.request.user)
 
 
-
 class AdvisorListCreateView(ListCreateAPIView):
     """
-        View to list and create Clients for the authenticated user's organization.
+    View to list and create Clients for the authenticated user's organization.
     """
+
     serializer_class = OrganizationUserListCreateSerializer
     permission_classes = [IsAuthenticated]
 
@@ -316,7 +331,9 @@ class AdvisorListCreateView(ListCreateAPIView):
         ).first()
 
         if not user_organization:
-            raise PermissionDenied("You cannot create clients without being associated with an organization.")
+            raise PermissionDenied(
+                "You cannot create clients without being associated with an organization."
+            )
 
         # Save the Client with the organization and role
         serializer.save(
@@ -328,8 +345,9 @@ class AdvisorListCreateView(ListCreateAPIView):
 
 class AdvisorRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     """
-        View to retrieve, update, or delete a specific Client.
+    View to retrieve, update, or delete a specific Client.
     """
+
     serializer_class = OrganizationUserListCreateSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"

@@ -13,6 +13,7 @@ class BaseOrganizationUserListCreateView(ListCreateAPIView):
     Base view for handling OrganizationUser creation and listing for a specific role.
     Subclasses must define `user_type` and `role` attributes.
     """
+
     permission_classes = [IsAuthenticated]
 
     user_type = None  # Subclass must define this
@@ -63,6 +64,7 @@ class BaseOrganizationUserRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView)
     Base view for handling OrganizationUser retrieval, update, and deletion for a specific role.
     Subclasses must define the `role` attribute.
     """
+
     serializer_class = OrganizationUserSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
