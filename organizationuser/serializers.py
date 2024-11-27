@@ -28,6 +28,8 @@ class UserSerializer(serializers.ModelSerializer):
 class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     alias = serializers.UUIDField(read_only=True)
+    created_by = UserSerializer(read_only=True)
+
 
     class Meta:
         model = OrganizationUser
@@ -45,8 +47,10 @@ class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
             'joining_date',
             'registration_number',
             'degree',
+            "created_by",
+            "created_at",
         ]
-        read_only_fields = ['alias', 'official_email', 'official_phone', 'created_by', 'role']
+        read_only_fields = ['alias', 'official_email', 'official_phone', 'created_by', 'role', "created_at"]
 
     @transaction.atomic
     def create(self, validated_data):
