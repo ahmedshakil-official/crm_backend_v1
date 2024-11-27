@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from organization.views.organization import (
     OrganizationViewSet,
-    DirectorOrganizationViewSet
+    DirectorOrganizationViewSet,
 )
 
 router = DefaultRouter()

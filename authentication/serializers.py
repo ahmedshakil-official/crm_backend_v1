@@ -46,9 +46,9 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         request_user = (
             self.context["request"].user if "request" in self.context else None
         )
-        print("="*20)
+        print("=" * 20)
         print(request_user)
-        print("="*20)
+        print("=" * 20)
 
         # Extract user data
         password = validated_data.pop("password")

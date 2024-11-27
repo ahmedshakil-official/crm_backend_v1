@@ -22,6 +22,7 @@ class StatusChoices(models.TextChoices):
 class UserTypeChoices(models.TextChoices):
     LEAD = "LEAD", _("Lead")
     CLIENT = "CLIENT", _("Client")
+    ADVISOR = "ADVISOR", _("Advisor")
     INTRODUCER = "INTRODUCER", _("Introducer")
     SERVICE_HOLDER = "SERVICE_HOLDER", _("Service Holder")
 
@@ -36,3 +37,5 @@ class RoleChoices(models.TextChoices):
     INTRODUCER = "INTRODUCER", _("Introducer")
     ADVISOR = "ADVISOR", _("Advisor")
     ADMIN = "ADMIN", _("Admin")
+    LEAD = "LEAD", _("Lead")
+    CLIENT = "CLIENT", _("Client")

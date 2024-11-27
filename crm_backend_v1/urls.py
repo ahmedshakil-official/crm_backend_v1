@@ -41,7 +41,7 @@ urlpatterns = [
         name="redoc",
     ),
     path("organization/", include("organization.urls.organization")),
-    path("director/",include("organizationuser.urls") ),
+    path("director/", include("organizationuser.urls")),
 ]
 
 if settings.DEBUG:

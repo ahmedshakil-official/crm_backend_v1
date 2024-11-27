@@ -96,5 +96,3 @@ class DirectorOrganizationViewSet(viewsets.ViewSet):
             {"detail": "Organization soft deleted successfully."},
             status=status.HTTP_204_NO_CONTENT,
         )
-
-

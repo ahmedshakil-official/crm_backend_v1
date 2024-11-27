@@ -221,6 +221,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+
 }
 
 DJOSER = {
@@ -244,13 +245,12 @@ SPECTACULAR_SETTINGS = {
 }
 
 SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'description': 'JWT Authorization header using the Bearer scheme. Example: "Bearer {token}"',
-            'name': 'Authorization',
-            'in': 'header',
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "description": 'JWT Authorization header using the Bearer scheme. Example: "Bearer {token}"',
+            "name": "Authorization",
+            "in": "header",
         },
     },
 }
-

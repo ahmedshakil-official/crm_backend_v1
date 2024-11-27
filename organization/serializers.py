@@ -2,7 +2,11 @@ from django.db.models import Q
 from rest_framework import serializers
 
 from authentication.models import User
-from common.serializers import ListSerializer, OrganizationUserListSerializer, CommonUserSerializer
+from common.serializers import (
+    ListSerializer,
+    OrganizationUserListSerializer,
+    CommonUserSerializer,
+)
 from organization.models import Organization, OrganizationUser
 
 
@@ -53,16 +57,19 @@ class OrganizationSerializer(ListSerializer):
 
 
 class OrganizationUserSerializer(OrganizationUserListSerializer):
-    user_detail = CommonUserSerializer(read_only=True, source="user")  # Nested serializer for user details
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)  # Accepts user ID only during creation
+    user_detail = CommonUserSerializer(read_only=True, source="user")
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), write_only=True
+    )
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
+
     class Meta(OrganizationUserListSerializer.Meta):
         model = OrganizationUser
         fields = OrganizationUserListSerializer.Meta.fields + [
-            "user",  # This is the user ID field (write-only)
-            "user_detail",  # This will show the user details in the response
-            "organization",  # Automatically set, will be read-only
+            "user",
+            "user_detail",
+            "organization",
             "role",
             "designation",
             "official_email",
@@ -100,15 +107,13 @@ class OrganizationUserSerializer(OrganizationUserListSerializer):
 
     def get_fields(self):
         fields = super().get_fields()
-
-        # Limit user selection to request user's users or their organization's users
         request = self.context.get("request")
         if request and hasattr(request, "user"):
             user_organizations = Organization.objects.filter(
                 organization_users__user=request.user
             )
             fields["user"].queryset = User.objects.filter(
-                Q(organization_users__organization__in=user_organizations) |
-                Q(created_by=request.user)
+                Q(organization_users__organization__in=user_organizations)
+                | Q(created_by=request.user)
             ).distinct()
         return fields

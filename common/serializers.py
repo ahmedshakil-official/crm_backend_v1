@@ -1,11 +1,13 @@
+from django.db import transaction
 from rest_framework import serializers
 from rest_framework.serializers import (
     ModelSerializer,
 )
 from djoser.serializers import UserCreateSerializer
 
-from common.enums import UserTypeChoices
-from organization.models import OrganizationUser
+from common.enums import UserTypeChoices, RoleChoices
+from common.models import User
+from organization.models import OrganizationUser, Organization
 
 
 class ListSerializer(ModelSerializer):
@@ -50,4 +52,11 @@ class CommonUserSerializer(UserCreateSerializer):
             "last_name",
             "profile_image",
             "user_type",
-            ]
+        ]
+
+
+
+
+
+
+
