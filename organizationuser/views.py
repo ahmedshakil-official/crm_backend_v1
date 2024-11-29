@@ -12,7 +12,9 @@ from common.views import (
 )
 from organization.models import Organization, OrganizationUser
 from organization.serializers import OrganizationSerializer, OrganizationUserSerializer
-from .serializers import OrganizationUserListCreateSerializer
+from .serializers import OrganizationUserListCreateSerializer, UserRetrieveUpdateDeleteSerializer, \
+    OrganizationUserRetrieveUpdateDeleteSerializer
+
 
 # from organizationuser.serializers import LeadSerializer, ClientSerializer, AdvisorSerializer, IntroducerSerializer
 
@@ -129,7 +131,7 @@ class LeadRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     View to retrieve, update, or delete a specific Lead.
     """
 
-    serializer_class = OrganizationUserListCreateSerializer
+    serializer_class = OrganizationUserRetrieveUpdateDeleteSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
@@ -202,7 +204,7 @@ class ClientRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     View to retrieve, update, or delete a specific Client.
     """
 
-    serializer_class = OrganizationUserListCreateSerializer
+    serializer_class = OrganizationUserRetrieveUpdateDeleteSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
@@ -275,7 +277,7 @@ class IntroducerRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     View to retrieve, update, or delete a specific Client.
     """
 
-    serializer_class = OrganizationUserListCreateSerializer
+    serializer_class = OrganizationUserRetrieveUpdateDeleteSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
@@ -348,7 +350,7 @@ class AdvisorRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     View to retrieve, update, or delete a specific Client.
     """
 
-    serializer_class = OrganizationUserListCreateSerializer
+    serializer_class = OrganizationUserRetrieveUpdateDeleteSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 

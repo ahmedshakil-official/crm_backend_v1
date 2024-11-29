@@ -122,3 +122,88 @@ class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
             registration_number=validated_data.get("registration_number", ""),
             degree=validated_data.get("degree", ""),
         )
+
+
+class UserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "first_name",
+            "last_name",
+            "profile_image",
+            "nid",
+            "user_type",
+            "city",
+            "state",
+            "country",
+            "zip_code",
+            "address",
+        ]
+
+    def update(self, instance, validated_data):
+        # Handle updating the user fields, including special logic for `address`
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class OrganizationUserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
+    user = UserRetrieveUpdateDeleteSerializer(write_only=True)
+    user_details = UserSerializer(read_only=True, source="user")
+    created_by = UserSerializer(read_only=True)
+    updated_by = UserSerializer(read_only=True)
+
+    class Meta:
+        model = OrganizationUser
+        fields = [
+            "alias",
+            "user",
+            "user_details",
+            "role",
+            "designation",
+            "official_email",
+            "official_phone",
+            "permanent_address",
+            "present_address",
+            "dob",
+            "joining_date",
+            "registration_number",
+            "degree",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "alias",
+            "user_details",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+    def update(self, instance, validated_data):
+        # Extract user data and update using UserRetrieveUpdateDeleteSerializer
+        user_data = validated_data.pop("user", {})
+        if user_data:
+            user_serializer = UserRetrieveUpdateDeleteSerializer(instance.user, data=user_data, partial=True)
+            user_serializer.is_valid(raise_exception=True)
+            user_serializer.save()
+
+        # Update the OrganizationUser fields
+        if "permanent_address" in validated_data:
+            instance.user.address = validated_data["permanent_address"]  # Update `address` in User
+            instance.user.save()
+
+        # Set the `updated_by` field to the current authenticated user (request.user)
+        instance.updated_by = self.context["request"].user
+
+        # Update OrganizationUser fields and save
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        return instance
+
