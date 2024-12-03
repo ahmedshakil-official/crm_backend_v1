@@ -38,8 +38,7 @@ class Organization(NameSlugDescriptionBaseModel):
     is_staff = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ("-created_at",)
-
+        ordering = ["-created_at", "-updated_at"]
     def __str__(self):
         return self.email
 
@@ -99,7 +98,7 @@ class OrganizationUser(CreatedAtUpdatedAtBaseModel):
         unique_together = ("user", "organization")
         verbose_name = _("Organization User")
         verbose_name_plural = _("Organization Users")
-        ordering = ("-created_at",)
+        ordering = ["-created_at", "-updated_at"]
 
     def __str__(self):
         return f"{self.user.email} - {self.organization.name} ({self.role})"

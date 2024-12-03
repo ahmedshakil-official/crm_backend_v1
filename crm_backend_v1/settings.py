@@ -64,6 +64,7 @@ PROJECT_APPS = [
     "common.apps.CommonConfig",
     "organization.apps.OrganizationConfig",
     "organizationuser.apps.OrganizationuserConfig",
+    "case.apps.CaseConfig",
 ]
 
 

@@ -97,7 +97,7 @@ class User(AbstractBaseUser, PermissionsMixin, CreatedAtUpdatedAtBaseModel):
     REQUIRED_FIELDS = ["first_name", "last_name"]
 
     class Meta:
-        ordering = ("-created_at",)
+        ordering = ["-created_at", "-updated_at"]
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.email}"
