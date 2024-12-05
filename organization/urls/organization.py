@@ -1,14 +1,8 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from organization.views.organization import (
-    OrganizationViewSet,
-    DirectorOrganizationViewSet,
-)
+from django.urls import path
 
-router = DefaultRouter()
-router.register("", OrganizationViewSet, basename="organization")
-router.register("admin", DirectorOrganizationViewSet, basename="director-organization")
+from organization.views.organization import UserOrganizationListAPIView, UserOrganizationRetrieveAPIView
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("", UserOrganizationListAPIView.as_view(), name="organization-list"),
+    path("details/", UserOrganizationRetrieveAPIView.as_view(), name="organization-details"),
 ]
