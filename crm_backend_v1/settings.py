@@ -164,10 +164,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-STATIC_URL = "static/"
-MEDIA_URL = "media/"
+# Media files (Uploaded files)
+MEDIA_URL = "http://162.0.230.24/media/"  # Use the server's address or domain name
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
