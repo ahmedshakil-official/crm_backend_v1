@@ -253,9 +253,9 @@ SPECTACULAR_SETTINGS = {
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
-        "Bearer": {
+        "JWT": {
             "type": "apiKey",
-            "description": 'JWT Authorization header using the Bearer scheme. Example: "Bearer {token}"',
+            "description": 'JWT Authorization header using the Bearer scheme. Example: "JWT {token}"',
             "name": "Authorization",
             "in": "header",
         },
