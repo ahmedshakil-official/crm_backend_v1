@@ -53,3 +53,17 @@ class CommonUserSerializer(UserCreateSerializer):
             "profile_image",
             "user_type",
         ]
+
+
+class CommonOrganizationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Organization
+        fields = [
+            "alias",
+            "email",
+            "name",
+            "logo",
+            "profile_image",
+            "hero_image",
+        ]

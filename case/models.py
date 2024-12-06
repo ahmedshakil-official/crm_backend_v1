@@ -11,7 +11,7 @@ class Case(CreatedAtUpdatedAtBaseModel):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     lead = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=True)
-    product_category = models.CharField(
+    case_category = models.CharField(
         max_length=50,
         choices=ProductCategoryChoices.choices,
         default=ProductCategoryChoices.MORTGAGES,
@@ -63,7 +63,16 @@ class Case(CreatedAtUpdatedAtBaseModel):
         return f"{stage_abbreviation}-{alias_suffix}"
 
     def save(self, *args, **kwargs):
-        # Generate name if not set
-        if not self.name:
-            self.name = self.generate_case_name()
+        # Check if the case_stage has changed
+        if self.pk:  # Check if the instance already exists (for updates)
+            original = Case.objects.get(pk=self.pk)
+            if original.case_stage != self.case_stage:
+                # If the case_stage is different, regenerate the name
+                self.name = self.generate_case_name()
+        else:
+            # For new cases, generate the name if not set
+            if not self.name:
+                self.name = self.generate_case_name()
+
+        # Call the parent save method
         super().save(*args, **kwargs)

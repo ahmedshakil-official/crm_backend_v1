@@ -40,7 +40,7 @@ class Organization(NameSlugDescriptionBaseModel):
     class Meta:
         ordering = ["-created_at", "-updated_at"]
     def __str__(self):
-        return self.email
+        return f"{self.email} - {self.name}"
 
 
 class OrganizationUser(CreatedAtUpdatedAtBaseModel):
