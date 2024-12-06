@@ -170,7 +170,7 @@ STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Media files (Uploaded files)
-MEDIA_URL = "http://162.0.230.24/media/"  # Use the server's address or domain name
+MEDIA_URL = "/media/"  # Use the server's address or domain name
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
