@@ -188,13 +188,17 @@ class OrganizationUserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer
         # Extract user data and update using UserRetrieveUpdateDeleteSerializer
         user_data = validated_data.pop("user", {})
         if user_data:
-            user_serializer = UserRetrieveUpdateDeleteSerializer(instance.user, data=user_data, partial=True)
+            user_serializer = UserRetrieveUpdateDeleteSerializer(
+                instance.user, data=user_data, partial=True
+            )
             user_serializer.is_valid(raise_exception=True)
             user_serializer.save()
 
         # Update the OrganizationUser fields
         if "permanent_address" in validated_data:
-            instance.user.address = validated_data["permanent_address"]  # Update `address` in User
+            instance.user.address = validated_data[
+                "permanent_address"
+            ]  # Update `address` in User
             instance.user.save()
 
         # Set the `updated_by` field to the current authenticated user (request.user)
@@ -206,4 +210,3 @@ class OrganizationUserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer
         instance.save()
 
         return instance
-

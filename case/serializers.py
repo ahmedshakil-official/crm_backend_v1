@@ -5,6 +5,7 @@ from .models import Case
 from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonOrganizationSerializer
 
+
 class CaseListCreateSerializer(serializers.ModelSerializer):
     organization = CommonOrganizationSerializer(read_only=True)
     lead_user = CommonUserSerializer(read_only=True, source="lead")
@@ -35,20 +36,30 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["alias", "name", "lead_user", "created_by", "is_removed", "updated_by", "created_at", "updated_at"]
+        read_only_fields = [
+            "alias",
+            "name",
+            "lead_user",
+            "created_by",
+            "is_removed",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
         write_only_fields = ["lead"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Dynamically adjust the queryset for the 'lead' field based on the organization of the current user
-        organization = Organization.objects.filter(organization_users__user=self.context['request'].user).first()
+        organization = Organization.objects.filter(
+            organization_users__user=self.context["request"].user
+        ).first()
         if organization:
             # Only allow users who are Leads and belong to the same organization as the current user
 
-            self.fields['lead'].queryset = User.objects.filter(user_type="LEAD",
-                                                                   organization_users__organization=organization)
-
-
+            self.fields["lead"].queryset = User.objects.filter(
+                user_type="LEAD", organization_users__organization=organization
+            )
 
 
 class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
@@ -56,6 +67,7 @@ class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
     lead_user = CommonUserSerializer(read_only=True, source="lead")
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
+
     class Meta:
         model = Case
         fields = [
@@ -74,6 +86,13 @@ class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["alias", "name", "lead_user", "created_by", "is_removed", "updated_by", "created_at",
-                            "updated_at"]
-
+        read_only_fields = [
+            "alias",
+            "name",
+            "lead_user",
+            "created_by",
+            "is_removed",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]

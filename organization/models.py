@@ -39,6 +39,7 @@ class Organization(NameSlugDescriptionBaseModel):
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
+
     def __str__(self):
         return f"{self.email} - {self.name}"
 

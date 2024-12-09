@@ -13,12 +13,16 @@ class CaseListCreateApiView(ListCreateAPIView):
 
     def get_queryset(self):
         # Get the organization associated with the user
-        organization = get_object_or_404(Organization, organization_users__user=self.request.user)
+        organization = get_object_or_404(
+            Organization, organization_users__user=self.request.user
+        )
         return Case.objects.filter(organization=organization, is_removed=False)
 
     def perform_create(self, serializer):
         # Get the organization associated with the user
-        organization = get_object_or_404(Organization, organization_users__user=self.request.user)
+        organization = get_object_or_404(
+            Organization, organization_users__user=self.request.user
+        )
         serializer.save(
             organization=organization,
             created_by=self.request.user,
@@ -27,8 +31,9 @@ class CaseListCreateApiView(ListCreateAPIView):
     def get_serializer_context(self):
         # Add the request to the serializer context to allow dynamic queryset for 'lead' field
         context = super().get_serializer_context()
-        context['request'] = self.request
+        context["request"] = self.request
         return context
+
 
 class CaseRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
     serializer_class = CaseRetrieveUpdateDeleteSerializer
@@ -37,7 +42,9 @@ class CaseRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         # Retrieve the organization for the logged-in user
-        organization = get_object_or_404(Organization, organization_users__user=self.request.user)
+        organization = get_object_or_404(
+            Organization, organization_users__user=self.request.user
+        )
         return Case.objects.filter(organization=organization)
 
     def perform_update(self, serializer):

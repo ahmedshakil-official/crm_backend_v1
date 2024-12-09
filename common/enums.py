@@ -46,6 +46,7 @@ class ProductCategoryChoices(models.TextChoices):
     PROTECTION = "PROTECTION", _("Protection")
     GENERAL_INSURANCE = "GENERAL_INSURANCE", _("General Insurance")
 
+
 class CaseStatusChoices(models.TextChoices):
     NEW_LEAD = "NEW_LEAD", _("New Lead")
     CALL_BACK = "CALL_BACK", _("Call Back")
@@ -55,9 +56,13 @@ class CaseStatusChoices(models.TextChoices):
 class CaseStageChoices(models.TextChoices):
     INQUIRY = "INQUIRY", _("Inquiry")
     FACT_FIND = "FACT_FIND", _("Fact Find")
-    RESEARCH_COMPLIANCE_CHECK = "RESEARCH_COMPLIANCE_CHECK", _("Research and Compliance Check")
+    RESEARCH_COMPLIANCE_CHECK = "RESEARCH_COMPLIANCE_CHECK", _(
+        "Research and Compliance Check"
+    )
     DECISION_IN_PRINCIPLE = "DECISION_IN_PRINCIPLE", _("Decision in Principle")
-    FULL_MORTGAGE_APPLICATION = "FULL_MORTGAGE_APPLICATION", _("Full Mortgage Application")
+    FULL_MORTGAGE_APPLICATION = "FULL_MORTGAGE_APPLICATION", _(
+        "Full Mortgage Application"
+    )
     OFFER_FROM_BANK = "OFFER_FROM_BANK", _("Offer From Bank")
     LEGAL = "LEGAL", _("Legal")
     COMPLETION = "COMPLETION", _("Completion")

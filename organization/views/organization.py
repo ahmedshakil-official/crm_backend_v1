@@ -11,6 +11,7 @@ class UserOrganizationListAPIView(ListAPIView):
     """
     ListAPIView to retrieve the logged-in user's organization.
     """
+
     permission_classes = [IsAuthenticated]
     serializer_class = OrganizationSerializer
 
@@ -25,6 +26,7 @@ class UserOrganizationRetrieveAPIView(RetrieveAPIView):
     """
     RetrieveAPIView to get the organization details for the logged-in user.
     """
+
     permission_classes = [IsAuthenticated]
     serializer_class = OrganizationSerializer
 
@@ -32,4 +34,6 @@ class UserOrganizationRetrieveAPIView(RetrieveAPIView):
         """
         Return the organization associated with the logged-in user or raise 404.
         """
-        return get_object_or_404(Organization, organization_users__user=self.request.user)
+        return get_object_or_404(
+            Organization, organization_users__user=self.request.user
+        )

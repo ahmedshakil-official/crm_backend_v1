@@ -2,9 +2,13 @@ from django.db import models
 
 from authentication.models import User
 from common.models import CreatedAtUpdatedAtBaseModel
-from common.enums import ProductCategoryChoices, ApplicantTypeChoices, CaseStageChoices, CaseStatusChoices
+from common.enums import (
+    ProductCategoryChoices,
+    ApplicantTypeChoices,
+    CaseStageChoices,
+    CaseStatusChoices,
+)
 from organization.models import Organization
-
 
 
 class Case(CreatedAtUpdatedAtBaseModel):
@@ -15,32 +19,31 @@ class Case(CreatedAtUpdatedAtBaseModel):
         max_length=50,
         choices=ProductCategoryChoices.choices,
         default=ProductCategoryChoices.MORTGAGES,
-        db_index=True
+        db_index=True,
     )
     applicant_type = models.CharField(
         max_length=50,
         choices=ApplicantTypeChoices.choices,
         default=ApplicantTypeChoices.SINGLE,
-        db_index=True
+        db_index=True,
     )
     case_status = models.CharField(
         max_length=50,
         choices=CaseStatusChoices.choices,
         default=CaseStatusChoices.NEW_LEAD,
-        db_index=True
+        db_index=True,
     )
     case_stage = models.CharField(
         max_length=50,
         choices=CaseStageChoices.choices,
         default=CaseStageChoices.INQUIRY,
-        db_index=True
+        db_index=True,
     )
     notes = models.TextField(blank=True, null=True)
     is_removed = models.BooleanField(default=False, blank=True, db_index=True)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
-
 
     def generate_case_name(self):
         # Mapping case stage choices to abbreviations

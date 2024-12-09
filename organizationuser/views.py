@@ -12,8 +12,11 @@ from common.views import (
 )
 from organization.models import Organization, OrganizationUser
 from organization.serializers import OrganizationSerializer, OrganizationUserSerializer
-from .serializers import OrganizationUserListCreateSerializer, UserRetrieveUpdateDeleteSerializer, \
-    OrganizationUserRetrieveUpdateDeleteSerializer
+from .serializers import (
+    OrganizationUserListCreateSerializer,
+    UserRetrieveUpdateDeleteSerializer,
+    OrganizationUserRetrieveUpdateDeleteSerializer,
+)
 
 
 # from organizationuser.serializers import LeadSerializer, ClientSerializer, AdvisorSerializer, IntroducerSerializer
@@ -33,10 +36,7 @@ class OrganizationUserListCreateView(ListCreateAPIView):
         )
 
         # Return users created by the user or associated with their organization(s)
-        return OrganizationUser.objects.filter(
-            models.Q(created_by=self.request.user)
-            | models.Q(organization__in=user_organizations)
-        )
+        return OrganizationUser.objects.filter(organization__in=user_organizations)
 
     def perform_create(self, serializer):
 
@@ -72,10 +72,7 @@ class OrganizationUserRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
             organization_users__user=self.request.user
         )
 
-        return OrganizationUser.objects.filter(
-            models.Q(created_by=self.request.user)
-            | models.Q(organization__in=user_organizations)
-        )
+        return OrganizationUser.objects.filter(organization__in=user_organizations)
 
     def perform_update(self, serializer):
         if not self.request.user.is_authenticated:
@@ -101,8 +98,7 @@ class LeadListCreateView(ListCreateAPIView):
 
         # Get Leads either created by the user or belonging to their organizations
         return OrganizationUser.objects.filter(
-            models.Q(created_by=self.request.user)
-            & models.Q(organization__in=user_organizations, role=RoleChoices.LEAD)
+            organization__in=user_organizations, role=RoleChoices.LEAD
         )
 
     def perform_create(self, serializer):
@@ -145,8 +141,7 @@ class LeadRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
 
         # Restrict access to Leads created by the user or within their organizations
         return OrganizationUser.objects.filter(
-            models.Q(created_by=self.request.user)
-            & models.Q(organization__in=user_organizations, role=RoleChoices.LEAD)
+            organization__in=user_organizations, role=RoleChoices.LEAD
         )
 
     def perform_update(self, serializer):
@@ -174,8 +169,7 @@ class ClientListCreateView(ListCreateAPIView):
 
         # Get Clients either created by the user or belonging to their organizations
         return OrganizationUser.objects.filter(
-            models.Q(created_by=self.request.user)
-            & models.Q(organization__in=user_organizations, role=RoleChoices.CLIENT)
+            organization__in=user_organizations, role=RoleChoices.CLIENT
         )
 
     def perform_create(self, serializer):
@@ -218,8 +212,7 @@ class ClientRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
 
         # Restrict access to Clients created by the user or within their organizations
         return OrganizationUser.objects.filter(
-            models.Q(created_by=self.request.user)
-            & models.Q(organization__in=user_organizations, role=RoleChoices.CLIENT)
+            organization__in=user_organizations, role=RoleChoices.CLIENT
         )
 
     def perform_update(self, serializer):
@@ -247,8 +240,7 @@ class IntroducerListCreateView(ListCreateAPIView):
 
         # Get Clients either created by the user or belonging to their organizations
         return OrganizationUser.objects.filter(
-            models.Q(created_by=self.request.user)
-            & models.Q(organization__in=user_organizations, role=RoleChoices.INTRODUCER)
+            organization__in=user_organizations, role=RoleChoices.INTRODUCER
         )
 
     def perform_create(self, serializer):
@@ -291,8 +283,7 @@ class IntroducerRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
 
         # Restrict access to Clients created by the user or within their organizations
         return OrganizationUser.objects.filter(
-            models.Q(created_by=self.request.user)
-            & models.Q(organization__in=user_organizations, role=RoleChoices.INTRODUCER)
+            organization__in=user_organizations, role=RoleChoices.INTRODUCER
         )
 
     def perform_update(self, serializer):
@@ -320,8 +311,7 @@ class AdvisorListCreateView(ListCreateAPIView):
 
         # Get Clients either created by the user or belonging to their organizations
         return OrganizationUser.objects.filter(
-            models.Q(created_by=self.request.user)
-            & models.Q(organization__in=user_organizations, role=RoleChoices.ADVISOR)
+            organization__in=user_organizations, role=RoleChoices.ADVISOR
         )
 
     def perform_create(self, serializer):
@@ -364,8 +354,7 @@ class AdvisorRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
 
         # Restrict access to Clients created by the user or within their organizations
         return OrganizationUser.objects.filter(
-            models.Q(created_by=self.request.user)
-            & models.Q(organization__in=user_organizations, role=RoleChoices.ADVISOR)
+            organization__in=user_organizations, role=RoleChoices.ADVISOR
         )
 
     def perform_update(self, serializer):
