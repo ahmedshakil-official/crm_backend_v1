@@ -42,6 +42,7 @@ class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrganizationUser
         fields = [
+            "id",
             "alias",
             "user",
             "role",
@@ -59,6 +60,7 @@ class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields = [
+            "id",
             "alias",
             "official_email",
             "official_phone",
