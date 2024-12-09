@@ -1,8 +1,10 @@
+from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
 from organization.models import Organization
+from .filter import CaseFilter
 from .models import Case
 from .serializers import CaseListCreateSerializer, CaseRetrieveUpdateDeleteSerializer
 
@@ -10,6 +12,8 @@ from .serializers import CaseListCreateSerializer, CaseRetrieveUpdateDeleteSeria
 class CaseListCreateApiView(ListCreateAPIView):
     serializer_class = CaseListCreateSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CaseFilter
 
     def get_queryset(self):
         # Get the organization associated with the user
@@ -33,6 +37,12 @@ class CaseListCreateApiView(ListCreateAPIView):
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
+
+    # def get_filterset_kwargs(self):
+    #     # Pass the request to the filterset for dynamic filtering
+    #     kwargs = super().get_filterset_kwargs()
+    #     kwargs["request"] = self.request
+    #     return kwargs
 
 
 class CaseRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
