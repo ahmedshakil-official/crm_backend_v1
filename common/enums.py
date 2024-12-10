@@ -42,7 +42,7 @@ class RoleChoices(models.TextChoices):
 
 
 class ProductCategoryChoices(models.TextChoices):
-    MORTGAGES = "MORTGAGES", _("Mortgages")
+    MORTGAGE = "MORTGAGE", _("Mortgage")
     PROTECTION = "PROTECTION", _("Protection")
     GENERAL_INSURANCE = "GENERAL_INSURANCE", _("General Insurance")
 

@@ -20,7 +20,7 @@ class CaseListCreateApiView(ListCreateAPIView):
         organization = get_object_or_404(
             Organization, organization_users__user=self.request.user
         )
-        return Case.objects.filter(organization=organization, is_removed=False)
+        return Case.objects.filter(organization=organization)
 
     def perform_create(self, serializer):
         # Get the organization associated with the user

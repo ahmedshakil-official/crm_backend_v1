@@ -18,7 +18,7 @@ class Case(CreatedAtUpdatedAtBaseModel):
     case_category = models.CharField(
         max_length=50,
         choices=ProductCategoryChoices.choices,
-        default=ProductCategoryChoices.MORTGAGES,
+        default=ProductCategoryChoices.MORTGAGE,
         db_index=True,
     )
     applicant_type = models.CharField(

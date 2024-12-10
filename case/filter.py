@@ -1,11 +1,15 @@
 from django_filters import rest_framework as filters
 
-from common.enums import ProductCategoryChoices, ApplicantTypeChoices, CaseStatusChoices, CaseStageChoices
+from authentication.models import User
+from common.enums import ProductCategoryChoices, ApplicantTypeChoices, CaseStatusChoices, CaseStageChoices, RoleChoices
 from .models import Case
 
 
 class CaseFilter(filters.FilterSet):
-    employee = filters.CharFilter(method="filter_by_employee", label="Employee")
+    created_by = filters.ModelChoiceFilter(
+        queryset=User.objects.none(),
+        label="Employee",
+    )
     case_category = filters.ChoiceFilter(
         choices=ProductCategoryChoices.choices, field_name="case_category"
     )
@@ -23,7 +27,7 @@ class CaseFilter(filters.FilterSet):
     class Meta:
         model = Case
         fields = [
-            "employee",
+            "created_by",
             "case_category",
             "applicant_type",
             "case_status",
@@ -31,9 +35,17 @@ class CaseFilter(filters.FilterSet):
             "is_removed",
         ]
 
-    def filter_by_employee(self, queryset, name, value):
-        # Only filter by employees within the user's organization
-        if self.request:
-            organization = self.request.user.organization_users.first().organization
-            return queryset.filter(created_by__email=value, organization=organization)
-        return queryset.none()
+    def __init__(self, *args, **kwargs):
+        # Call the superclass initializer
+        super().__init__(*args, **kwargs)
+        # Dynamically set the queryset for the created_by field
+        if hasattr(self, 'request') and self.request is not None:
+            organization = (
+                self.request.user.organization_users.first().organization
+            )
+            # Filter Users based on the Organization and Role
+            self.filters['created_by'].queryset = User.objects.filter(
+                organization_users__organization=organization,
+                organization_users__role=RoleChoices.ADVISOR,
+            )
+
