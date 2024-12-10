@@ -25,6 +25,7 @@ class UserTypeChoices(models.TextChoices):
     ADVISOR = "ADVISOR", _("Advisor")
     INTRODUCER = "INTRODUCER", _("Introducer")
     SERVICE_HOLDER = "SERVICE_HOLDER", _("Service Holder")
+    JOINT_USER = "JOINT_USER", _("Joint User")
 
 
 class GenderChoices(models.TextChoices):

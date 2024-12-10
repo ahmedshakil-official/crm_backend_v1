@@ -9,6 +9,7 @@ from common.enums import (
     CaseStatusChoices,
 )
 from organization.models import Organization
+from .utils import upload_to_case_files
 
 
 class Case(CreatedAtUpdatedAtBaseModel):
@@ -79,3 +80,77 @@ class Case(CreatedAtUpdatedAtBaseModel):
 
         # Call the parent save method
         super().save(*args, **kwargs)
+
+
+
+class Files(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="files",
+        verbose_name="Related Case"
+    )
+    file = models.FileField(
+        upload_to=upload_to_case_files,
+        verbose_name="File",
+        help_text="Upload the file"
+    )
+    name = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name="File Name",
+        help_text="Optional name of the file"
+    )
+    description = models.CharField(
+        max_length=1000,
+        blank=True,
+        null=True,
+        verbose_name="Description",
+        help_text="Optional description of the file"
+    )
+    special_notes = models.CharField(
+        max_length=1000,
+        blank=True,
+        null=True,
+        verbose_name="Special Notes",
+        help_text="Optional special notes related to the file"
+    )
+
+    class Meta:
+        ordering = ["-created_at", "-updated_at"]
+        verbose_name = "Case File"
+        verbose_name_plural = "Case Files"
+
+    def __str__(self):
+        return f"{self.case.name} - {self.name or self.file.name}"
+
+
+
+class JointUser(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="joint_users",
+        verbose_name="Related Case"
+    )
+    joint_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="joint_user_cases",
+        verbose_name="Joint User"
+    )
+    notes = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Notes",
+        help_text="Additional notes about the joint user"
+    )
+
+    class Meta:
+        ordering = ["-created_at", "-updated_at"]
+        verbose_name = "Joint User"
+        verbose_name_plural = "Joint Users"
+
+    def __str__(self):
+        return f"(Case: {self.case.name}) Joint User: {self.joint_user}"
