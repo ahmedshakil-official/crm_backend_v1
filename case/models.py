@@ -6,7 +6,7 @@ from common.enums import (
     ProductCategoryChoices,
     ApplicantTypeChoices,
     CaseStageChoices,
-    CaseStatusChoices,
+    CaseStatusChoices, FileTypeChoices,
 )
 from organization.models import Organization
 from .utils import upload_to_case_files
@@ -95,6 +95,11 @@ class Files(CreatedAtUpdatedAtBaseModel):
         verbose_name="File",
         help_text="Upload the file"
     )
+    file_type = models.CharField(
+        max_length=50, choices=FileTypeChoices.choices, default=FileTypeChoices.IDS
+    )
+    file_owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    is_deleted = models.BooleanField(default=False, db_index=True)
     name = models.CharField(
         max_length=500,
         blank=True,
