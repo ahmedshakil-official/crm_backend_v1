@@ -109,3 +109,16 @@ class FileTypeChoices(models.TextChoices):
         _("AML and Sanctions Search"),
     )
     OTHERS = "OTHERS", _("Others")
+
+
+class MeetingTypeChoices(models.TextChoices):
+    UPCOMING = "UPCOMING", _("Upcoming Meeting")
+    PREVIOUS = "PREVIOUS", _("Previous Meeting")
+
+
+class MeetingStatusChoices(models.TextChoices):
+    CONFIRMED = "CONFIRMED", _("Confirmed")
+    CANCELLED = "CANCELLED", _("Canceled")
+    ON_HOLD = "ON_HOLD", _("On Hold")
+    SUCCESS = "SUCCESS", _("Success")
+
