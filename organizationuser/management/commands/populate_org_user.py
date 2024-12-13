@@ -1,79 +1,57 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
-from organization.models import Organization, OrganizationUser
-from common.enums import RoleChoices, UserTypeChoices
-import random
+from authentication.models import User  # Import your custom User model
+from common.enums import RoleChoices
+from organization.models import Organization  # Replace with your app name
 
-User = get_user_model()
 
 class Command(BaseCommand):
-    help = "Create 20 Advisors, 20 Leads, 20 Introducers, and 20 Clients for each organization."
+    help = "Populate organization with advisor users"
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--org',
+            type=str,
+            help="Name of the organization to populate users for"
+        )
+        parser.add_argument(
+            '--count',
+            type=int,
+            default=10,
+            help="Number of advisor users to create"
+        )
 
     def handle(self, *args, **kwargs):
-        # Fetch all organizations
-        organizations = Organization.objects.all()
+        org_name = kwargs['org']
+        user_count = kwargs['count']
 
-        if not organizations.exists():
-            self.stdout.write(self.style.ERROR("No organizations found. Please create organizations first."))
+        if not org_name:
+            self.stderr.write(self.style.ERROR("Organization name is required. Use --org."))
             return
 
-        # Function to generate random phone numbers
-        def random_phone():
-            return f"+1{random.randint(1000000000, 9999999999)}"
+        try:
+            organization = Organization.objects.get(name=org_name)
+        except Organization.DoesNotExist:
+            self.stderr.write(self.style.ERROR(f"Organization '{org_name}' does not exist."))
+            return
 
-        # Function to generate random email
-        def random_email(role, org_name, index):
-            return f"{role.lower()}_{org_name.lower()}_{index}@example.com"
+        for i in range(1, user_count + 1):
+            email = f'advisor_{org_name.lower()}_{i}@example.com'
 
-        for org in organizations:
-            self.stdout.write(self.style.SUCCESS(f"Processing organization: {org.name}"))
+            # Check if user already exists
+            if User.objects.filter(email=email).exists():
+                self.stdout.write(self.style.WARNING(f"User {email} already exists. Skipping."))
+                continue
 
-            for role, user_type in [
-                (RoleChoices.ADVISOR, UserTypeChoices.ADVISOR),
-                (RoleChoices.LEAD, UserTypeChoices.LEAD),
-                (RoleChoices.INTRODUCER, UserTypeChoices.INTRODUCER),
-                (RoleChoices.CLIENT, UserTypeChoices.CLIENT),
-            ]:
-                for i in range(1, 21):
-                    # Create user
-                    first_name = f"{role.capitalize()}_{i}"
-                    last_name = f"User_{i}"
-                    email = random_email(role, org.name, i)
-                    phone = random_phone()
+            # Create the user
+            user = User.objects.create_user(
+                email=email,
+                username=email.split('@')[0],
+                password="defaultpassword123",  # Replace with a secure mechanism
+                role=RoleChoices.ADVISOR,  # Assuming your RoleChoices contains ADVISOR
+            )
+            user.save()
 
-                    user, created = User.objects.get_or_create(
-                        email=email,
-                        defaults={
-                            "first_name": first_name,
-                            "last_name": last_name,
-                            "password": "Admin.1234",
-                            "phone": phone,
-                            "user_type": user_type,
-                            "is_active": True,
-                        },
-                    )
-
-                    if created:
-                        self.stdout.write(self.style.SUCCESS(f"Created user: {email}"))
-                    else:
-                        self.stdout.write(self.style.WARNING(f"User already exists: {email}"))
-
-                    # Create organization user
-                    org_user, org_user_created = OrganizationUser.objects.get_or_create(
-                        user=user,
-                        organization=org,
-                        defaults={"role": role},
-                    )
-
-                    if org_user_created:
-                        self.stdout.write(
-                            self.style.SUCCESS(f"Assigned {role} role to {email} in {org.name}")
-                        )
-                    else:
-                        self.stdout.write(
-                            self.style.WARNING(
-                                f"User {email} is already assigned as {role} in {org.name}"
-                            )
-                        )
-
-        self.stdout.write(self.style.SUCCESS("Completed creating users for all organizations."))
+            # Output success message
+            self.stdout.write(self.style.SUCCESS(
+                f"Created user: {email} and assigned ADVISOR role in {org_name}."
+            ))
