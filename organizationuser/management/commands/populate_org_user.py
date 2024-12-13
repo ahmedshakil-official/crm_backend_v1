@@ -17,28 +17,29 @@ class Command(BaseCommand):
             return
 
         # Iterate through each organization
-        for org in organizations:
-            self.stdout.write(f"Processing organization: {org.name}")
+        for _ in range(200):
+            for org in organizations:
+                self.stdout.write(f"Processing organization: {org.name}")
 
-            # Create a LEAD user
-            self.create_user_for_organization(
-                org, UserTypeChoices.LEAD, RoleChoices.LEAD
-            )
+                # Create a LEAD user
+                self.create_user_for_organization(
+                    org, UserTypeChoices.LEAD, RoleChoices.LEAD
+                )
 
-            # Create a CLIENT user
-            self.create_user_for_organization(
-                org, UserTypeChoices.CLIENT, RoleChoices.CLIENT
-            )
+                # Create a CLIENT user
+                self.create_user_for_organization(
+                    org, UserTypeChoices.CLIENT, RoleChoices.CLIENT
+                )
 
-            # Create an ADVISOR user
-            self.create_user_for_organization(
-                org, UserTypeChoices.ADVISOR, RoleChoices.ADVISOR
-            )
+                # Create an ADVISOR user
+                self.create_user_for_organization(
+                    org, UserTypeChoices.ADVISOR, RoleChoices.ADVISOR
+                )
 
-            # Create an INTRODUCER user
-            self.create_user_for_organization(
-                org, UserTypeChoices.INTRODUCER, RoleChoices.INTRODUCER
-            )
+                # Create an INTRODUCER user
+                self.create_user_for_organization(
+                    org, UserTypeChoices.INTRODUCER, RoleChoices.INTRODUCER
+                )
 
     def create_user_for_organization(self, org, user_type, role):
         # Generate unique user details
