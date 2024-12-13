@@ -46,6 +46,7 @@ class Command(BaseCommand):
                         defaults={
                             "first_name": first_name,
                             "last_name": last_name,
+                            "password": "Admin.1234",
                             "phone": phone,
                             "user_type": user_type,
                             "is_active": True,
