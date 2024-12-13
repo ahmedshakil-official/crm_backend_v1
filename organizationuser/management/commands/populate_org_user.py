@@ -1,57 +1,71 @@
 from django.core.management.base import BaseCommand
-from authentication.models import User  # Import your custom User model
-from common.enums import RoleChoices
-from organization.models import Organization  # Replace with your app name
+from django.utils.crypto import get_random_string
+from authentication.models import User
+from organization.models import Organization, OrganizationUser  # Adjust app names accordingly
+from common.enums import RoleChoices, GenderChoices, UserTypeChoices
 
 
 class Command(BaseCommand):
-    help = "Populate organization with advisor users"
-
-    def add_arguments(self, parser):
-        parser.add_argument(
-            '--org',
-            type=str,
-            help="Name of the organization to populate users for"
-        )
-        parser.add_argument(
-            '--count',
-            type=int,
-            default=10,
-            help="Number of advisor users to create"
-        )
+    help = "Populate organizations with users of different roles"
 
     def handle(self, *args, **kwargs):
-        org_name = kwargs['org']
-        user_count = kwargs['count']
+        # Fetch all organizations
+        organizations = Organization.objects.all()
 
-        if not org_name:
-            self.stderr.write(self.style.ERROR("Organization name is required. Use --org."))
+        if not organizations.exists():
+            self.stderr.write("No organizations found.")
             return
 
-        try:
-            organization = Organization.objects.get(name=org_name)
-        except Organization.DoesNotExist:
-            self.stderr.write(self.style.ERROR(f"Organization '{org_name}' does not exist."))
-            return
+        # Iterate through each organization
+        for org in organizations:
+            self.stdout.write(f"Processing organization: {org.name}")
 
-        for i in range(1, user_count + 1):
-            email = f'advisor_{org_name.lower()}_{i}@example.com'
-
-            # Check if user already exists
-            if User.objects.filter(email=email).exists():
-                self.stdout.write(self.style.WARNING(f"User {email} already exists. Skipping."))
-                continue
-
-            # Create the user
-            user = User.objects.create_user(
-                email=email,
-                username=email.split('@')[0],
-                password="defaultpassword123",  # Replace with a secure mechanism
-                role=RoleChoices.ADVISOR,  # Assuming your RoleChoices contains ADVISOR
+            # Create a LEAD user
+            self.create_user_for_organization(
+                org, UserTypeChoices.LEAD, RoleChoices.LEAD
             )
-            user.save()
 
-            # Output success message
-            self.stdout.write(self.style.SUCCESS(
-                f"Created user: {email} and assigned ADVISOR role in {org_name}."
-            ))
+            # Create a CLIENT user
+            self.create_user_for_organization(
+                org, UserTypeChoices.CLIENT, RoleChoices.CLIENT
+            )
+
+            # Create an ADVISOR user
+            self.create_user_for_organization(
+                org, UserTypeChoices.ADVISOR, RoleChoices.ADVISOR
+            )
+
+            # Create an INTRODUCER user
+            self.create_user_for_organization(
+                org, UserTypeChoices.INTRODUCER, RoleChoices.INTRODUCER
+            )
+
+    def create_user_for_organization(self, org, user_type, role):
+        # Generate unique user details
+        email = f"{user_type.lower()}_{org.slug}_{get_random_string(5)}@example.com"
+        phone = f"+1234567{get_random_string(4, '0123456789')}"
+        first_name = f"{user_type.title()}"
+        last_name = "User"
+        password = "securepassword"
+
+        # Create the user
+        user = User.objects.create_user(
+            email=email,
+            phone=phone,
+            first_name=first_name,
+            last_name=last_name,
+            user_type=user_type,
+            password=password,
+        )
+
+        # Assign to OrganizationUser
+        OrganizationUser.objects.create(
+            user=user,
+            organization=org,
+            role=role,
+            gender=GenderChoices.MALE  # Replace with logic if dynamic gender is needed
+        )
+
+        self.stdout.write(
+            f"Created {user_type} user: {email} and assigned {role} role in {org.name}"
+        )
