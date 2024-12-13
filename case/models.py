@@ -6,7 +6,10 @@ from common.enums import (
     ProductCategoryChoices,
     ApplicantTypeChoices,
     CaseStageChoices,
-    CaseStatusChoices, FileTypeChoices, MeetingTypeChoices, MeetingStatusChoices,
+    CaseStatusChoices,
+    FileTypeChoices,
+    MeetingTypeChoices,
+    MeetingStatusChoices,
 )
 from organization.models import Organization
 from .utils import upload_to_case_files
@@ -46,6 +49,9 @@ class Case(CreatedAtUpdatedAtBaseModel):
     class Meta:
         ordering = ["-created_at", "-updated_at"]
 
+    def __str__(self):
+        return self.name
+
     def generate_case_name(self):
         # Mapping case stage choices to abbreviations
         stage_mapping = {
@@ -82,44 +88,48 @@ class Case(CreatedAtUpdatedAtBaseModel):
         super().save(*args, **kwargs)
 
 
-
 class Files(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
         Case,
         on_delete=models.CASCADE,
         related_name="files",
-        verbose_name="Related Case"
+        verbose_name="Related Case",
     )
     file = models.FileField(
         upload_to=upload_to_case_files,
         verbose_name="File",
-        help_text="Upload the file"
+        help_text="Upload the file",
     )
     file_type = models.CharField(
-        max_length=50, choices=FileTypeChoices.choices, default=FileTypeChoices.IDS, db_index=True
+        max_length=50,
+        choices=FileTypeChoices.choices,
+        default=FileTypeChoices.IDS,
+        db_index=True,
     )
-    file_owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, db_index=True)
+    file_owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True, db_index=True
+    )
     is_removed = models.BooleanField(default=False, db_index=True)
     name = models.CharField(
         max_length=500,
         blank=True,
         null=True,
         verbose_name="File Name",
-        help_text="Optional name of the file"
+        help_text="Optional name of the file",
     )
     description = models.CharField(
         max_length=1000,
         blank=True,
         null=True,
         verbose_name="Description",
-        help_text="Optional description of the file"
+        help_text="Optional description of the file",
     )
     special_notes = models.CharField(
         max_length=1000,
         blank=True,
         null=True,
         verbose_name="Special Notes",
-        help_text="Optional special notes related to the file"
+        help_text="Optional special notes related to the file",
     )
 
     class Meta:
@@ -128,8 +138,7 @@ class Files(CreatedAtUpdatedAtBaseModel):
         verbose_name_plural = "Case Files"
 
     def __str__(self):
-        return f"{self.case.name} - {self.name or self.file.name}"
-
+        return f"{self.case.name} - {self.file.name}"
 
 
 class JointUser(CreatedAtUpdatedAtBaseModel):
@@ -137,13 +146,13 @@ class JointUser(CreatedAtUpdatedAtBaseModel):
         Case,
         on_delete=models.CASCADE,
         related_name="joint_users",
-        verbose_name="Related Case"
+        verbose_name="Related Case",
     )
     joint_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="joint_user_cases",
-        verbose_name="Joint User"
+        verbose_name="Joint User",
     )
     relationship = models.CharField(
         max_length=100,
@@ -154,7 +163,7 @@ class JointUser(CreatedAtUpdatedAtBaseModel):
         blank=True,
         null=True,
         verbose_name="Notes",
-        help_text="Additional notes about the joint user"
+        help_text="Additional notes about the joint user",
     )
 
     class Meta:
@@ -171,7 +180,7 @@ class Meeting(CreatedAtUpdatedAtBaseModel):
         Case,
         on_delete=models.CASCADE,
         related_name="meetings",
-        verbose_name="Related Case"
+        verbose_name="Related Case",
     )
     meeting_type = models.CharField(
         max_length=50,

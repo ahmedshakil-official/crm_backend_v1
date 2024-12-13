@@ -76,7 +76,6 @@ class ApplicantTypeChoices(models.TextChoices):
     JOINT = "JOINT", _("Joint")
 
 
-
 class FileTypeChoices(models.TextChoices):
     COMPLIANCE_DOCUMENTS = "COMPLIANCE_DOCUMENTS", _("Compliance Documents")
     FACT_FINDS = "FACT_FINDS", _("Fact Finds")
@@ -121,4 +120,3 @@ class MeetingStatusChoices(models.TextChoices):
     CANCELLED = "CANCELLED", _("Canceled")
     ON_HOLD = "ON_HOLD", _("On Hold")
     SUCCESS = "SUCCESS", _("Success")
-
