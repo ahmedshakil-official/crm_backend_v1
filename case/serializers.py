@@ -102,7 +102,9 @@ class FileSerializer(serializers.ModelSerializer):
     file_owner_info = CommonUserSerializer(read_only=True, source="file_owner")
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
-    file_owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.none(), write_only=True)
+    file_owner = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.none(), write_only=True
+    )
 
     class Meta:
         model = Files
@@ -148,7 +150,10 @@ class FileSerializer(serializers.ModelSerializer):
 
         # Fetch the lead and joint users as user objects
         valid_owners = [case.lead] + list(
-            User.objects.filter(pk__in=case.joint_users.values_list("joint_user", flat=True)))
+            User.objects.filter(
+                pk__in=case.joint_users.values_list("joint_user", flat=True)
+            )
+        )
 
         if value not in valid_owners:
             raise serializers.ValidationError(

@@ -10,7 +10,8 @@ from common.enums import (
     ApplicantTypeChoices,
     CaseStatusChoices,
     CaseStageChoices,
-    RoleChoices, FileTypeChoices,
+    RoleChoices,
+    FileTypeChoices,
 )
 from .models import Case, Files
 
@@ -49,12 +50,10 @@ class CaseFilter(filters.FilterSet):
         # Call the superclass initializer
         super().__init__(*args, **kwargs)
         # Dynamically set the queryset for the created_by field
-        if hasattr(self, 'request') and self.request is not None:
-            organization = (
-                self.request.user.organization_users.first().organization
-            )
+        if hasattr(self, "request") and self.request is not None:
+            organization = self.request.user.organization_users.first().organization
             # Filter Users based on the Organization and Role
-            self.filters['created_by'].queryset = User.objects.filter(
+            self.filters["created_by"].queryset = User.objects.filter(
                 organization_users__organization=organization,
                 organization_users__role=RoleChoices.ADVISOR,
             )
@@ -85,16 +84,16 @@ class FileFilter(filters.FilterSet):
 
         if self.request:
             # Limit `created_by` to advisors in the user's organization
-            user_organization =self. request.user.organization
+            user_organization = self.request.user.organization
             self.filters["created_by"].queryset = User.objects.filter(
                 organization=user_organization, role="advisor"
             )
 
             # Limit `file_owner` to valid owners based on the provided case
             case = kwargs.get("alias", None)
-            print("="*20)
+            print("=" * 20)
             print(case)
-            print("="*20)
+            print("=" * 20)
             if case:
                 lead = case.lead
                 joint_users = case.joint_users.values_list("joint_user", flat=True)

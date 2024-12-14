@@ -2,7 +2,12 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from case.models import Case
 from organization.models import Organization, OrganizationUser
-from common.enums import ProductCategoryChoices, ApplicantTypeChoices, CaseStatusChoices, CaseStageChoices
+from common.enums import (
+    ProductCategoryChoices,
+    ApplicantTypeChoices,
+    CaseStatusChoices,
+    CaseStageChoices,
+)
 import random
 from django.utils.timezone import now
 
@@ -19,26 +24,38 @@ class Command(BaseCommand):
 
         for organization in organizations:
             # Fetch the LEAD user for the organization (role="LEAD")
-            lead_user = OrganizationUser.objects.filter(
-                organization=organization, role="LEAD"
-            ).select_related('user').first()
+            lead_user = (
+                OrganizationUser.objects.filter(organization=organization, role="LEAD")
+                .select_related("user")
+                .first()
+            )
 
             # Fetch the ADVISOR users for the organization (role="ADVISOR")
             advisors = OrganizationUser.objects.filter(
                 organization=organization, role="ADVISOR"
-            ).select_related('user')
+            ).select_related("user")
 
             if not lead_user:
-                self.stdout.write(self.style.ERROR(f"No lead found for organization {organization.name}"))
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"No lead found for organization {organization.name}"
+                    )
+                )
                 continue
 
             if not advisors:
-                self.stdout.write(self.style.ERROR(f"No advisors found for organization {organization.name}"))
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"No advisors found for organization {organization.name}"
+                    )
+                )
                 continue
 
             # Create 40 cases for each organization (to make a total of 200)
             for _ in range(40):
-                advisor = random.choice(advisors).user  # Randomly select an advisor for this case
+                advisor = random.choice(
+                    advisors
+                ).user  # Randomly select an advisor for this case
                 lead = lead_user.user  # The lead user for this case
 
                 # Randomly choose values for the case fields
@@ -57,7 +74,7 @@ class Command(BaseCommand):
                     case_status=case_status,
                     case_stage=case_stage,
                     created_at=now(),
-                    updated_at=now()
+                    updated_at=now(),
                 )
 
                 cases_to_create.append(case)
@@ -65,4 +82,6 @@ class Command(BaseCommand):
         # Bulk create all the cases at once
         Case.objects.bulk_create(cases_to_create)
 
-        self.stdout.write(self.style.SUCCESS(f"Successfully created {len(cases_to_create)} cases"))
+        self.stdout.write(
+            self.style.SUCCESS(f"Successfully created {len(cases_to_create)} cases")
+        )

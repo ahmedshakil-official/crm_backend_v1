@@ -36,7 +36,9 @@ class OrganizationUserListCreateView(ListCreateAPIView):
         )
 
         # Return users created by the user or associated with their organization(s)
-        return OrganizationUser.objects.filter(organization__in=user_organizations)
+        return OrganizationUser.objects.filter(
+            organization__in=user_organizations
+        ).select_related("organization", "user", "created_by", "updated_by")
 
     def perform_create(self, serializer):
 
@@ -72,7 +74,9 @@ class OrganizationUserRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
             organization_users__user=self.request.user
         )
 
-        return OrganizationUser.objects.filter(organization__in=user_organizations)
+        return OrganizationUser.objects.filter(
+            organization__in=user_organizations
+        ).select_related("organization", "user", "created_by", "updated_by")
 
     def perform_update(self, serializer):
         if not self.request.user.is_authenticated:
@@ -99,7 +103,7 @@ class LeadListCreateView(ListCreateAPIView):
         # Get Leads either created by the user or belonging to their organizations
         return OrganizationUser.objects.filter(
             organization__in=user_organizations, role=RoleChoices.LEAD
-        )
+        ).select_related("organization", "user", "created_by", "updated_by")
 
     def perform_create(self, serializer):
         if not self.request.user.is_authenticated:
@@ -142,7 +146,7 @@ class LeadRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
         # Restrict access to Leads created by the user or within their organizations
         return OrganizationUser.objects.filter(
             organization__in=user_organizations, role=RoleChoices.LEAD
-        )
+        ).select_related("organization", "user", "created_by", "updated_by")
 
     def perform_update(self, serializer):
         if not self.request.user.is_authenticated:
@@ -170,7 +174,7 @@ class ClientListCreateView(ListCreateAPIView):
         # Get Clients either created by the user or belonging to their organizations
         return OrganizationUser.objects.filter(
             organization__in=user_organizations, role=RoleChoices.CLIENT
-        )
+        ).select_related("organization", "user", "created_by", "updated_by")
 
     def perform_create(self, serializer):
         if not self.request.user.is_authenticated:
@@ -213,7 +217,7 @@ class ClientRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
         # Restrict access to Clients created by the user or within their organizations
         return OrganizationUser.objects.filter(
             organization__in=user_organizations, role=RoleChoices.CLIENT
-        )
+        ).select_related("organization", "user", "created_by", "updated_by")
 
     def perform_update(self, serializer):
         if not self.request.user.is_authenticated:
@@ -241,7 +245,7 @@ class IntroducerListCreateView(ListCreateAPIView):
         # Get Clients either created by the user or belonging to their organizations
         return OrganizationUser.objects.filter(
             organization__in=user_organizations, role=RoleChoices.INTRODUCER
-        )
+        ).select_related("organization", "user", "created_by", "updated_by")
 
     def perform_create(self, serializer):
         if not self.request.user.is_authenticated:
@@ -284,7 +288,7 @@ class IntroducerRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
         # Restrict access to Clients created by the user or within their organizations
         return OrganizationUser.objects.filter(
             organization__in=user_organizations, role=RoleChoices.INTRODUCER
-        )
+        ).select_related("organization", "user", "created_by", "updated_by")
 
     def perform_update(self, serializer):
         if not self.request.user.is_authenticated:
@@ -307,20 +311,22 @@ class AdvisorListCreateView(ListCreateAPIView):
         # Get all organizations the user is associated with
         user_organizations = Organization.objects.filter(
             organization_users__user=self.request.user
-        )
+        ).prefetch_related("organizationuser_set")
 
         # Get Clients either created by the user or belonging to their organizations
         return OrganizationUser.objects.filter(
             organization__in=user_organizations, role=RoleChoices.ADVISOR
-        )
+        ).select_related("organization", "user", "created_by", "updated_by")
 
     def perform_create(self, serializer):
         if not self.request.user.is_authenticated:
             raise ValidationError("User must be authenticated.")
         # Ensure the user is part of at least one organization
-        user_organization = Organization.objects.filter(
-            organization_users__user=self.request.user
-        ).first()
+        user_organization = (
+            Organization.objects.filter(organization_users__user=self.request.user)
+            .prefetch_related("organizationuser_set")
+            .first()
+        )
 
         if not user_organization:
             raise PermissionDenied(
@@ -350,12 +356,12 @@ class AdvisorRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
         # Get all organizations the user is associated with
         user_organizations = Organization.objects.filter(
             organization_users__user=self.request.user
-        )
+        ).prefetch_related("organizationuser_set")
 
         # Restrict access to Clients created by the user or within their organizations
         return OrganizationUser.objects.filter(
             organization__in=user_organizations, role=RoleChoices.ADVISOR
-        )
+        ).select_related("organization", "user", "created_by", "updated_by")
 
     def perform_update(self, serializer):
         if not self.request.user.is_authenticated:

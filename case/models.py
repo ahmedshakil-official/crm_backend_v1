@@ -198,7 +198,7 @@ class Meeting(CreatedAtUpdatedAtBaseModel):
     meeting_link = models.URLField(null=True, blank=True)
     meeting_date = models.DateField(null=True, blank=True)
     meeting_time = models.TimeField(null=True, blank=True)
+
     class Meta:
         ordering = ["-created_at", "-updated_at"]
         verbose_name = "Meeting"
-

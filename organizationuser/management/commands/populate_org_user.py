@@ -1,7 +1,10 @@
 from django.core.management.base import BaseCommand
 from django.utils.crypto import get_random_string
 from authentication.models import User
-from organization.models import Organization, OrganizationUser  # Adjust app names accordingly
+from organization.models import (
+    Organization,
+    OrganizationUser,
+)  # Adjust app names accordingly
 from common.enums import RoleChoices, GenderChoices, UserTypeChoices
 
 
@@ -64,7 +67,7 @@ class Command(BaseCommand):
             user=user,
             organization=org,
             role=role,
-            gender=GenderChoices.MALE  # Replace with logic if dynamic gender is needed
+            gender=GenderChoices.MALE,  # Replace with logic if dynamic gender is needed
         )
 
         self.stdout.write(

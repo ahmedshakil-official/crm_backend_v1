@@ -24,23 +24,12 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from rest_framework import permissions
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.jwt")),
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    # Optional UI:
-    path(
-        "api/schema/swagger-ui/",
-        SpectacularSwaggerView.as_view(url_name="schema"),
-        name="swagger-ui",
-    ),
-    path(
-        "api/schema/redoc/",
-        SpectacularRedocView.as_view(url_name="schema"),
-        name="redoc",
-    ),
     path("organization/", include("organization.urls.organization")),
     path("director/", include("organizationuser.urls")),
     path("cases/", include("case.urls")),
@@ -55,3 +44,40 @@ if settings.DEBUG:
         path("__debug__/", include(debug_toolbar.urls)),
         path("silk/", include("silk.urls", namespace="silk")),
     ] + urlpatterns
+
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    # drf yasg api documentation
+    from drf_yasg.views import get_schema_view
+    from drf_yasg import openapi
+
+    schema_view = get_schema_view(
+        openapi.Info(
+            title="CRM API",  # Replace with your API title
+            default_version="v1",  # Replace with your API version
+            description="API documentation for the CRM Backend",  # Optional description
+            terms_of_service="https://www.example.com/terms/",  # Optional terms URL
+            contact=openapi.Contact(
+                email="support@example.com"
+            ),  # Optional contact email
+            license=openapi.License(name="MIT License"),  # Optional license info
+        ),
+        public=True,
+        permission_classes=[
+            permissions.AllowAny,
+        ],
+    )
+    urlpatterns += [
+        path(
+            "swagger<format>/",
+            schema_view.without_ui(cache_timeout=0),
+            name="schema-json",
+        ),
+        path(
+            "api/docs",
+            schema_view.with_ui("swagger", cache_timeout=0),
+            name="schema-swagger-ui",
+        ),
+        path(
+            "redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+        ),
+    ]

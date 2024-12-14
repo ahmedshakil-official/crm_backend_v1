@@ -27,7 +27,9 @@ class CaseListCreateApiView(ListCreateAPIView):
         organization = get_object_or_404(
             Organization, organization_users__user=self.request.user
         )
-        return Case.objects.filter(organization=organization)
+        return Case.objects.select_related("organization", "lead", "created_by").filter(
+            organization=organization
+        )
 
     def perform_create(self, serializer):
         # Get the organization associated with the user
@@ -144,4 +146,3 @@ class FileRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
 
         # Return a 204 No Content response after deleting the file
         return Response(status=status.HTTP_204_NO_CONTENT)
-

@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from organization.models import Organization
 
+
 class Command(BaseCommand):
     help = "Create 5 organizations."
 
@@ -9,27 +10,27 @@ class Command(BaseCommand):
             {
                 "name": "QOP",
                 "email": "qop@example.com",
-                "primary_mobile": "+1234567890"
+                "primary_mobile": "+1234567890",
             },
             {
                 "name": "Health OS",
                 "email": "healthos@example.com",
-                "primary_mobile": "+1234567891"
+                "primary_mobile": "+1234567891",
             },
             {
                 "name": "Repliq LTD",
                 "email": "repliqltd@example.com",
-                "primary_mobile": "+1234567892"
+                "primary_mobile": "+1234567892",
             },
             {
                 "name": "Therap BD",
                 "email": "therapbd@example.com",
-                "primary_mobile": "+1234567893"
+                "primary_mobile": "+1234567893",
             },
             {
                 "name": "Optimizly",
                 "email": "optimizly@example.com",
-                "primary_mobile": "+1234567894"
+                "primary_mobile": "+1234567894",
             },
         ]
 
@@ -38,10 +39,16 @@ class Command(BaseCommand):
                 name=org_data["name"],
                 defaults={
                     "email": org_data["email"],
-                    "primary_mobile": org_data["primary_mobile"]
-                }
+                    "primary_mobile": org_data["primary_mobile"],
+                },
             )
             if created:
-                self.stdout.write(self.style.SUCCESS(f"Organization created: {org_data['name']}"))
+                self.stdout.write(
+                    self.style.SUCCESS(f"Organization created: {org_data['name']}")
+                )
             else:
-                self.stdout.write(self.style.WARNING(f"Organization already exists: {org_data['name']}"))
+                self.stdout.write(
+                    self.style.WARNING(
+                        f"Organization already exists: {org_data['name']}"
+                    )
+                )
