@@ -4,6 +4,9 @@ from .views import (
     CaseRetrieveUpdateDeleteApiView,
     FileListCreateApiView,
     FileRetrieveUpdateDeleteApiView,
+    JointUserListCreateApiView,
+    JointUserRetrieveUpdateDeleteApiView,
+    CaseUserListApiView,
 )
 
 urlpatterns = [
@@ -23,4 +26,19 @@ urlpatterns = [
         FileRetrieveUpdateDeleteApiView.as_view(),
         name="file-detail",
     ),
+    path(
+        "<uuid:case_alias>/joint/users/",
+        JointUserListCreateApiView.as_view(),
+        name="joint-user-list-create",
+    ),
+    path(
+        "<uuid:case_alias>/joint/users/<uuid:alias>/",
+        JointUserRetrieveUpdateDeleteApiView.as_view(),
+        name="joint-user-detail",
+    ),
+    path(
+        "<uuid:case_alias>/users/",
+        CaseUserListApiView.as_view(),
+        name="case-user-list",
+    )
 ]

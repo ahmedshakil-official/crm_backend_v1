@@ -40,6 +40,7 @@ class RoleChoices(models.TextChoices):
     ADMIN = "ADMIN", _("Admin")
     LEAD = "LEAD", _("Lead")
     CLIENT = "CLIENT", _("Client")
+    JOINT_USER = "JOINT_USER", _("Joint User")
 
 
 class ProductCategoryChoices(models.TextChoices):

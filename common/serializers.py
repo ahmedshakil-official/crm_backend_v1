@@ -5,6 +5,7 @@ from rest_framework.serializers import (
 )
 from djoser.serializers import UserCreateSerializer
 
+from case.models import Case
 from common.enums import UserTypeChoices, RoleChoices
 from common.models import User
 from organization.models import OrganizationUser, Organization
@@ -55,6 +56,27 @@ class CommonUserSerializer(UserCreateSerializer):
         ]
 
 
+class CommonUserWithPasswordSerializer(UserCreateSerializer):
+    phone = serializers.CharField(max_length=24, required=False)
+    profile_image = serializers.ImageField(required=False)
+    user_type = serializers.ChoiceField(
+        choices=UserTypeChoices.choices,
+        default=UserTypeChoices.SERVICE_HOLDER,
+        required=False,
+    )
+
+    class Meta(UserCreateSerializer.Meta):
+        fields = [
+            "email",
+            "phone",
+            "password",
+            "first_name",
+            "last_name",
+            "profile_image",
+            "user_type",
+        ]
+
+
 class CommonOrganizationSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -66,4 +88,18 @@ class CommonOrganizationSerializer(serializers.ModelSerializer):
             "logo",
             "profile_image",
             "hero_image",
+        ]
+
+
+class CommonCaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Case
+        fields = [
+            "alias",
+            "name",
+            "case_category",
+            "applicant_type",
+            "case_status",
+            "case_stage",
+            "created_at"
         ]

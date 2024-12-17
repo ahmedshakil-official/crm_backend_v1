@@ -1,9 +1,11 @@
 from rest_framework import serializers
 
+from common.enums import UserTypeChoices, RoleChoices
 from organization.models import Organization, OrganizationUser
-from .models import Case, Files
+from .models import Case, Files, JointUser
 from authentication.models import User
-from common.serializers import CommonUserSerializer, CommonOrganizationSerializer
+from common.serializers import CommonUserSerializer, CommonOrganizationSerializer, CommonUserWithPasswordSerializer, \
+    CommonCaseSerializer
 
 
 class CaseListCreateSerializer(serializers.ModelSerializer):
@@ -181,3 +183,75 @@ class FileSerializer(serializers.ModelSerializer):
             "REMOTE_ADDR", None
         )
         return super().update(instance, validated_data)
+
+
+class JointUserSerializer(serializers.ModelSerializer):
+    joint_user = CommonUserWithPasswordSerializer(write_only=True)
+    joint_user_details = CommonUserSerializer(read_only=True, source="joint_user")
+    created_by = CommonUserSerializer(read_only=True)
+    updated_by = CommonUserSerializer(read_only=True)
+    case = CommonCaseSerializer(read_only=True)
+
+    class Meta:
+        model = JointUser
+        fields = [
+            "alias",
+            "case",
+            "joint_user",
+            "joint_user_details",
+            "relationship",
+            "notes",
+            "is_removed",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = ["alias", "case", "is_removed", "created_at", "updated_at", "created_by", "updated_by"]
+
+    def create(self, validated_data):
+        joint_user_data = validated_data.pop("joint_user")
+        joint_user_data["user_type"] = UserTypeChoices.JOINT_USER
+        joint_user = CommonUserWithPasswordSerializer().create(joint_user_data)
+
+        case = validated_data["case"]
+        organization = case.organization
+
+        OrganizationUser.objects.create(
+            user=joint_user,
+            organization=organization,
+            role=RoleChoices.JOINT_USER,
+            official_email=joint_user_data.get("email"),
+            official_phone=joint_user_data.get("phone"),
+        )
+
+        validated_data["joint_user"] = joint_user
+        validated_data["created_by"] = self.context["request"].user
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        joint_user_data = validated_data.pop("joint_user", None)
+        if joint_user_data:
+            joint_user_data["user_type"] = UserTypeChoices.JOINT_USER
+            joint_user_serializer = CommonUserWithPasswordSerializer(instance.joint_user, data=joint_user_data, partial=True)
+            joint_user_serializer.is_valid(raise_exception=True)
+            joint_user_serializer.save()
+
+            # Update OrganizationUser information
+            organization_user = OrganizationUser.objects.filter(user=instance.joint_user, organization=instance.case.organization).first()
+            if organization_user:
+                organization_user.official_email = instance.joint_user.email
+                organization_user.official_phone = joint_user_data.get("phone", organization_user.official_phone)
+                organization_user.save()
+
+        validated_data["updated_by"] = self.context["request"].user
+        return super().update(instance, validated_data)
+
+
+
+class CaseUserListSerializer(serializers.ModelSerializer):
+    joint_user = CommonUserSerializer(read_only=True)
+
+    class Meta:
+        model = JointUser
+        fields = ['joint_user', 'relationship', 'notes', 'is_removed']

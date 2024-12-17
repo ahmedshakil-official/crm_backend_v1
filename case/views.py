@@ -1,18 +1,19 @@
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.exceptions import NotFound
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from common.serializers import CommonUserSerializer
 from organization.models import Organization
 from .filter import CaseFilter, FileFilter
-from .models import Case, Files
+from .models import Case, Files, JointUser
 from .serializers import (
     CaseListCreateSerializer,
     CaseRetrieveUpdateDeleteSerializer,
-    FileSerializer,
+    FileSerializer, JointUserSerializer, CaseUserListSerializer,
 )
 
 
@@ -146,3 +147,64 @@ class FileRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
 
         # Return a 204 No Content response after deleting the file
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class JointUserListCreateApiView(ListCreateAPIView):
+    serializer_class = JointUserSerializer
+
+    def get_queryset(self):
+        case_alias = self.kwargs.get("case_alias")
+        case = get_object_or_404(Case, alias=case_alias)
+        return JointUser.objects.filter(case=case, is_removed=False)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs.get("case_alias")
+        case = get_object_or_404(Case, alias=case_alias)
+        serializer.save(case=case)
+
+
+
+class JointUserRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
+    serializer_class = JointUserSerializer
+    lookup_field = "alias"
+
+    def get_queryset(self):
+        case_alias = self.kwargs.get("case_alias")
+        case = get_object_or_404(Case, alias=case_alias)
+        return JointUser.objects.filter(case=case)
+
+    def perform_destroy(self, instance):
+        instance.is_removed = True
+        instance.updated_by = self.request.user
+        instance.save()
+
+
+class CaseUserListApiView(ListAPIView):
+    serializer_class = CaseUserListSerializer
+
+    def get_queryset(self):
+        case_alias = self.kwargs['case_alias']
+
+        try:
+            case = Case.objects.get(alias=case_alias)
+        except Case.DoesNotExist:
+            raise NotFound("Case not found.")
+
+        return JointUser.objects.filter(case=case, is_removed=False)
+
+    def list(self, request, *args, **kwargs):
+        joint_users = self.get_queryset()
+
+        case_alias = self.kwargs['case_alias']
+        try:
+            case = Case.objects.get(alias=case_alias)
+        except Case.DoesNotExist:
+            raise NotFound("Case not found.")
+
+        lead_user = CommonUserSerializer(case.lead).data
+        joint_users_data = CaseUserListSerializer(joint_users, many=True).data
+
+        return Response({
+            'lead_user': lead_user,
+            'joint_users': joint_users_data
+        })
