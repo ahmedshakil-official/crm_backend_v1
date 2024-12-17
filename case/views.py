@@ -1,4 +1,5 @@
 from django_filters.rest_framework.backends import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
@@ -20,8 +21,19 @@ from .serializers import (
 class CaseListCreateApiView(ListCreateAPIView):
     serializer_class = CaseListCreateSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = CaseFilter
+    search_fields = [
+        "name",
+        "case_category",
+        "applicant_type",
+        "case_status",
+        "case_stage",
+        "lead_user.first_name",
+        "lead_user.last_name",
+        "lead_user.phone",
+        "lead_user.email",
+    ]
 
     def get_queryset(self):
         # Get the organization associated with the user
