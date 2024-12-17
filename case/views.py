@@ -29,10 +29,10 @@ class CaseListCreateApiView(ListCreateAPIView):
         "applicant_type",
         "case_status",
         "case_stage",
-        "lead_user__first_name",
-        "lead_user__last_name",
-        "lead_user__phone",
-        "lead_user__email",
+        "lead__first_name",
+        "lead__last_name",
+        "lead__phone",
+        "lead__email",
     ]
 
     def get_queryset(self):
