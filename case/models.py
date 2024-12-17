@@ -165,6 +165,7 @@ class JointUser(CreatedAtUpdatedAtBaseModel):
         verbose_name="Notes",
         help_text="Additional notes about the joint user",
     )
+    is_removed = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
@@ -198,6 +199,7 @@ class Meeting(CreatedAtUpdatedAtBaseModel):
     meeting_link = models.URLField(null=True, blank=True)
     meeting_date = models.DateField(null=True, blank=True)
     meeting_time = models.TimeField(null=True, blank=True)
+    is_removed = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
