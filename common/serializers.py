@@ -56,6 +56,28 @@ class CommonUserSerializer(UserCreateSerializer):
         ]
 
 
+class CommonUserWithIdSerializer(UserCreateSerializer):
+    phone = serializers.CharField(max_length=24, required=False)
+    profile_image = serializers.ImageField(required=False)
+    user_type = serializers.ChoiceField(
+        choices=UserTypeChoices.choices,
+        default=UserTypeChoices.SERVICE_HOLDER,
+        required=False,
+    )
+
+    class Meta(UserCreateSerializer.Meta):
+        fields = [
+            "id",
+            "alias",
+            "email",
+            "phone",
+            "first_name",
+            "last_name",
+            "profile_image",
+            "user_type",
+        ]
+
+
 class CommonUserWithPasswordSerializer(UserCreateSerializer):
     phone = serializers.CharField(max_length=24, required=False)
     profile_image = serializers.ImageField(required=False)

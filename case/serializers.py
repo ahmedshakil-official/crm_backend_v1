@@ -5,7 +5,7 @@ from organization.models import Organization, OrganizationUser
 from .models import Case, Files, JointUser
 from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonOrganizationSerializer, CommonUserWithPasswordSerializer, \
-    CommonCaseSerializer
+    CommonCaseSerializer, CommonUserWithIdSerializer
 
 
 class CaseListCreateSerializer(serializers.ModelSerializer):
@@ -250,7 +250,7 @@ class JointUserSerializer(serializers.ModelSerializer):
 
 
 class CaseUserListSerializer(serializers.ModelSerializer):
-    joint_user = CommonUserSerializer(read_only=True)
+    joint_user = CommonUserWithIdSerializer(read_only=True)
 
     class Meta:
         model = JointUser

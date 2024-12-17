@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from common.serializers import CommonUserSerializer
+from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
 from .filter import CaseFilter, FileFilter
 from .models import Case, Files, JointUser
@@ -201,7 +201,7 @@ class CaseUserListApiView(ListAPIView):
         except Case.DoesNotExist:
             raise NotFound("Case not found.")
 
-        lead_user = CommonUserSerializer(case.lead).data
+        lead_user = CommonUserWithIdSerializer(case.lead).data
         joint_users_data = CaseUserListSerializer(joint_users, many=True).data
 
         return Response({
