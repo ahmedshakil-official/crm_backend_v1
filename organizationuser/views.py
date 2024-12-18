@@ -311,7 +311,7 @@ class AdvisorListCreateView(ListCreateAPIView):
         # Get all organizations the user is associated with
         user_organizations = Organization.objects.filter(
             organization_users__user=self.request.user
-        ).prefetch_related("organizationuser_set")
+        )
 
         # Get Clients either created by the user or belonging to their organizations
         return OrganizationUser.objects.filter(
@@ -324,8 +324,6 @@ class AdvisorListCreateView(ListCreateAPIView):
         # Ensure the user is part of at least one organization
         user_organization = (
             Organization.objects.filter(organization_users__user=self.request.user)
-            .prefetch_related("organizationuser_set")
-            .first()
         )
 
         if not user_organization:
