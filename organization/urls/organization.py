@@ -3,6 +3,8 @@ from django.urls import path
 from organization.views.organization import (
     UserOrganizationListAPIView,
     UserOrganizationRetrieveAPIView,
+    OrganizationListCreateApiView,
+    OrganizationRetrieveUpdateDestroyApiView,
 )
 
 urlpatterns = [
@@ -10,6 +12,8 @@ urlpatterns = [
     path(
         "details/",
         UserOrganizationRetrieveAPIView.as_view(),
-        name="organization-details",
+        name="organization",
     ),
+    path("list/", OrganizationListCreateApiView.as_view(), name="organization-list-create"),
+    path("list/<slug:slug>/", OrganizationRetrieveUpdateDestroyApiView.as_view(), name="organization-details"),
 ]

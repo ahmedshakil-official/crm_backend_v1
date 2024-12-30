@@ -7,15 +7,30 @@ from common.serializers import (
     OrganizationUserListSerializer,
     CommonUserSerializer,
 )
-from organization.models import Organization, OrganizationUser
+from organization.models import Organization, OrganizationUser, Network, NetworkUser
 
-
-class OrganizationSerializer(ListSerializer):
+class NetworkSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Organization
-
+        model = Network
         fields = [
             "slug",
+            "name",
+            "email",
+            "logo",
+            "profile_image",
+            "hero_image",
+            "primary_mobile",
+        ]
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    network = NetworkSerializer(read_only=True)
+
+    class Meta:
+        model = Organization
+        fields = [
+            "slug",
+            "network",
             "name",
             "email",
             "logo",
@@ -33,16 +48,13 @@ class OrganizationSerializer(ListSerializer):
             "is_active",
             "is_staff",
         ]
-
         read_only_fields = [
             "id",
             "slug",
-            "is_removed",
             "is_approved",
             "is_active",
             "is_staff",
         ]
-
         extra_kwargs = {
             "logo": {"required": False, "allow_null": True},
             "profile_image": {"required": False, "allow_null": True},

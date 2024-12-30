@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Organization, OrganizationUser
+from .models import Organization, OrganizationUser, Network, NetworkUser
 
 
 @admin.register(Organization)
@@ -47,3 +47,21 @@ class OrganizationUserAdmin(admin.ModelAdmin):
         return obj.organization.name
 
     get_organization_name.short_description = "Organization"
+
+
+@admin.register(Network)
+class NetworkAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "email",
+        "primary_mobile",
+    )
+
+
+@admin.register(NetworkUser)
+class NetworkUserAdmin(admin.ModelAdmin):
+    list_display = (
+        "network",
+        "user",
+        "role",
+    )
