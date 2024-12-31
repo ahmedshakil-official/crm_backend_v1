@@ -1,4 +1,6 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import ValidationError
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView, RetrieveAPIView, get_object_or_404, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -42,6 +44,12 @@ class UserOrganizationRetrieveAPIView(RetrieveAPIView):
 class OrganizationListCreateApiView(ListCreateAPIView):
     serializer_class = OrganizationSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = [
+        "name",
+        "email",
+        "primary_mobile"
+    ]
 
     def get_queryset(self):
         """
