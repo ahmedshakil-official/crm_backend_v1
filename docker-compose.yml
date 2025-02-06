@@ -3,7 +3,7 @@ services:
   postgres:
     image: postgres:latest
     ports:
-      - "5433:5432"
+      - "5435:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=johnwick
@@ -14,7 +14,7 @@ services:
   redis:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "6377:6379"
     volumes:
       - redis_data:/data
 
@@ -32,7 +32,7 @@ services:
       - DJANGO_ENV=docker
       - DEBUG=1
       - DJANGO_ALLOWED_HOSTS=localhost
-      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6377/0
 
   celery:
     build: .
@@ -40,8 +40,8 @@ services:
     depends_on:
       - redis
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6377/0
+      - CELERY_RESULT_BACKEND=redis://redis:6377/0
     volumes:
       - .:/app
 
@@ -51,8 +51,8 @@ services:
     depends_on:
       - redis
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6377/0
+      - CELERY_RESULT_BACKEND=redis://redis:6377/0
     volumes:
       - .:/app
 
@@ -65,8 +65,8 @@ services:
       - redis
       - celery
     environment:
-      - CELERY_BROKER=redis://redis:6379/0
-      - CELERY_BACKEND=redis://redis:6379/0
+      - CELERY_BROKER=redis://redis:6377/0
+      - CELERY_BACKEND=redis://redis:6377/0
 
 volumes:
   postgres_data:
