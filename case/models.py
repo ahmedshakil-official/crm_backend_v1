@@ -12,6 +12,22 @@ from common.enums import (
     MeetingStatusChoices,
 )
 from organization.models import Organization
+from .enums import (
+    ApplicationTypeChoices,
+    MortgageTypeChoices,
+    LoanPurposeChoices,
+    LenderChoices,
+    BorrowerTypeChoices,
+    RepaymentMethodChoices,
+    RepaymentVehicleChoices,
+    InterestRateTypeChoices,
+    ProductTermChoices,
+    AdviceLevelChoices,
+    IntroductionTypeChoices,
+    IntroducerPaymentTermsChoices,
+    LeadSourceChoices,
+    SaleTypeChoices,
+)
 from .utils import upload_to_case_files
 
 
@@ -204,3 +220,88 @@ class Meeting(CreatedAtUpdatedAtBaseModel):
     class Meta:
         ordering = ["-created_at", "-updated_at"]
         verbose_name = "Meeting"
+
+
+class LoanDetails(CreatedAtUpdatedAtBaseModel):
+    case = models.OneToOneField(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="loan_details",
+        verbose_name="Related Case",
+    )
+    application_type = models.CharField(
+        max_length=50, choices=ApplicationTypeChoices.choices
+    )
+
+    mortgage_type = models.CharField(
+        max_length=50, choices=MortgageTypeChoices.choices, blank=True, null=True
+    )
+    loan_purpose = models.CharField(
+        max_length=50, choices=LoanPurposeChoices.choices, blank=True, null=True
+    )
+    lender = models.CharField(
+        max_length=50, choices=LenderChoices.choices, blank=True, null=True
+    )
+    lenders_reference = models.CharField(max_length=100, blank=True, null=True)
+    borrower_type = models.CharField(
+        max_length=50, choices=BorrowerTypeChoices.choices, blank=True, null=True
+    )
+    repayment_method = models.CharField(
+        max_length=50, choices=RepaymentMethodChoices.choices, blank=True, null=True
+    )
+    repayment_vehicle = models.CharField(
+        max_length=50, choices=RepaymentVehicleChoices.choices, blank=True, null=True
+    )
+    interest_rate_type = models.CharField(
+        max_length=50, choices=InterestRateTypeChoices.choices, blank=True, null=True
+    )
+    product_term = models.CharField(
+        max_length=50, choices=ProductTermChoices.choices, blank=True, null=True
+    )
+    purchase_price = models.DecimalField(max_digits=15, decimal_places=2)
+    loan_amount = models.DecimalField(max_digits=15, decimal_places=2)
+    estimated_value = models.DecimalField(max_digits=15, decimal_places=2)
+    ltv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    term_years = models.PositiveIntegerField(default=0)
+    term_months = models.PositiveIntegerField(default=0)
+    deposit_amount = models.DecimalField(
+        max_digits=15, decimal_places=2, blank=True, null=True
+    )
+    deposit_source = models.CharField(max_length=255, blank=True, null=True)
+    interest_only_amount = models.DecimalField(
+        max_digits=15, decimal_places=2, blank=True, null=True, default=0.00
+    )
+    advice_level = models.CharField(
+        max_length=50, choices=AdviceLevelChoices.choices, blank=True, null=True
+    )
+
+    dip_accept_date = models.DateField(blank=True, null=True)
+    dip_expiry_date = models.DateField(blank=True, null=True)
+    expected_completion_date = models.DateField(blank=True, null=True)
+    product_expiry_date = models.DateField(blank=True, null=True)
+
+    introduction_type = models.CharField(
+        max_length=50, choices=IntroductionTypeChoices.choices, blank=True, null=True
+    )
+    introducer = models.CharField(max_length=255, blank=True, null=True)
+    introducer_payment_terms = models.CharField(
+        max_length=50,
+        choices=IntroducerPaymentTermsChoices.choices,
+        blank=True,
+        null=True,
+    )
+    introducer_fee = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True
+    )
+    lead_source = models.CharField(
+        max_length=50, choices=LeadSourceChoices.choices, blank=True, null=True
+    )
+    sale_type = models.CharField(
+        max_length=50, choices=SaleTypeChoices.choices, blank=True, null=True
+    )
+    reasons_for_capital_raising = models.TextField(blank=True, null=True)
+    case_summary = models.TextField(blank=True, null=True)
+    accepted_or_declined_by_lender = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.application_type} - {self.mortgage_type if self.mortgage_type else 'No Mortgage Type'}"

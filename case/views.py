@@ -2,7 +2,11 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework import status
 from rest_framework.exceptions import NotFound
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+    ListAPIView, CreateAPIView, RetrieveUpdateAPIView,
+)
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,11 +14,13 @@ from rest_framework.response import Response
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
 from .filter import CaseFilter, FileFilter
-from .models import Case, Files, JointUser
+from .models import Case, Files, JointUser, LoanDetails
 from .serializers import (
     CaseListCreateSerializer,
     CaseRetrieveUpdateDeleteSerializer,
-    FileSerializer, JointUserSerializer, CaseUserListSerializer,
+    FileSerializer,
+    JointUserSerializer,
+    CaseUserListSerializer, LoanDetailsSerializer,
 )
 
 
@@ -175,7 +181,6 @@ class JointUserListCreateApiView(ListCreateAPIView):
         serializer.save(case=case)
 
 
-
 class JointUserRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
     serializer_class = JointUserSerializer
     lookup_field = "alias"
@@ -195,7 +200,7 @@ class CaseUserListApiView(ListAPIView):
     serializer_class = CaseUserListSerializer
 
     def get_queryset(self):
-        case_alias = self.kwargs['case_alias']
+        case_alias = self.kwargs["case_alias"]
 
         try:
             case = Case.objects.get(alias=case_alias)
@@ -207,7 +212,7 @@ class CaseUserListApiView(ListAPIView):
     def list(self, request, *args, **kwargs):
         joint_users = self.get_queryset()
 
-        case_alias = self.kwargs['case_alias']
+        case_alias = self.kwargs["case_alias"]
         try:
             case = Case.objects.get(alias=case_alias)
         except Case.DoesNotExist:
@@ -216,7 +221,42 @@ class CaseUserListApiView(ListAPIView):
         lead_user = CommonUserWithIdSerializer(case.lead).data
         joint_users_data = CaseUserListSerializer(joint_users, many=True).data
 
-        return Response({
-            'lead_user': lead_user,
-            'joint_users': joint_users_data
-        })
+        return Response({"lead_user": lead_user, "joint_users": joint_users_data})
+
+
+class LoanDetailsCreateApiView(CreateAPIView):
+    serializer_class = LoanDetailsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        case_alias = self.kwargs.get("case_alias")
+        case = get_object_or_404(Case, alias=case_alias)
+        context.update({"case": case})
+        return context
+
+    def perform_create(self, serializer):
+        case = self.get_serializer_context().get("case")
+        serializer.save(created_by=self.request.user, case=case)
+
+
+
+class LoanDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    serializer_class = LoanDetailsSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "alias"
+
+    def get_object(self):
+        case_alias = self.kwargs.get("case_alias")
+        loan_alias = self.kwargs.get("alias")
+        case = get_object_or_404(Case, alias=case_alias)
+        loan_details = get_object_or_404(LoanDetails, case=case, alias=loan_alias)
+        return loan_details
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"case": self.get_object().case})
+        return context
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)

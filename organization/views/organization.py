@@ -1,7 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter
-from rest_framework.generics import ListAPIView, RetrieveAPIView, get_object_or_404, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (
+    ListAPIView,
+    RetrieveAPIView,
+    get_object_or_404,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
@@ -45,18 +51,16 @@ class OrganizationListCreateApiView(ListCreateAPIView):
     serializer_class = OrganizationSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields = [
-        "name",
-        "email",
-        "primary_mobile"
-    ]
+    search_fields = ["name", "email", "primary_mobile"]
 
     def get_queryset(self):
         """
         Filter organizations based on the network of the logged-in user.
         If the user has no network, return an empty queryset.
         """
-        user_network = Network.objects.filter(network_users__user=self.request.user).first()
+        user_network = Network.objects.filter(
+            network_users__user=self.request.user
+        ).first()
         if user_network:
             return Organization.objects.filter(network=user_network, is_removed=False)
         return Organization.objects.none()
@@ -66,7 +70,9 @@ class OrganizationListCreateApiView(ListCreateAPIView):
         Automatically set the network field from the request.user's network.
         If the user has no network, do not assign any network.
         """
-        user_network = Network.objects.filter(network_users__user=self.request.user).first()
+        user_network = Network.objects.filter(
+            network_users__user=self.request.user
+        ).first()
         serializer.save(network=user_network if user_network else None)
 
 
@@ -80,7 +86,9 @@ class OrganizationRetrieveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
         Filter organizations based on the network of the logged-in user.
         If the user has no network, return an empty queryset.
         """
-        user_network = Network.objects.filter(network_users__user=self.request.user).first()
+        user_network = Network.objects.filter(
+            network_users__user=self.request.user
+        ).first()
         if user_network:
             return Organization.objects.filter(network=user_network)
         return Organization.objects.none()
@@ -96,7 +104,7 @@ class OrganizationRetrieveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
         """
         Ensure the `network` field remains consistent with the user's network on update.
         """
-        user_network = Network.objects.filter(network_users__user=self.request.user).first()
+        user_network = Network.objects.filter(
+            network_users__user=self.request.user
+        ).first()
         serializer.save(network=user_network if user_network else None)
-
-

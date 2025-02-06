@@ -123,5 +123,5 @@ class CommonCaseSerializer(serializers.ModelSerializer):
             "applicant_type",
             "case_status",
             "case_stage",
-            "created_at"
+            "created_at",
         ]

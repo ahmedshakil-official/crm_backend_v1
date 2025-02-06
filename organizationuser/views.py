@@ -322,8 +322,8 @@ class AdvisorListCreateView(ListCreateAPIView):
         if not self.request.user.is_authenticated:
             raise ValidationError("User must be authenticated.")
         # Ensure the user is part of at least one organization
-        user_organization = (
-            Organization.objects.filter(organization_users__user=self.request.user)
+        user_organization = Organization.objects.filter(
+            organization_users__user=self.request.user
         )
 
         if not user_organization:

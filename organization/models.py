@@ -11,11 +11,10 @@ from authentication.models import User
 
 # User = get_user_model()
 
+
 class Network(NameSlugDescriptionBaseModel):
     email = models.EmailField(unique=True)
-    logo = TimestampThumbnailImageField(
-        upload_to="network/logo", blank=True, null=True
-    )
+    logo = TimestampThumbnailImageField(upload_to="network/logo", blank=True, null=True)
     profile_image = TimestampThumbnailImageField(
         upload_to="network/profile", blank=True, null=True
     )
@@ -142,7 +141,6 @@ class OrganizationUser(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.user.email} - {self.organization.name} ({self.role})"
-
 
 
 class NetworkUser(CreatedAtUpdatedAtBaseModel):

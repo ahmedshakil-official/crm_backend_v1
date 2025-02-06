@@ -2,10 +2,15 @@ from rest_framework import serializers
 
 from common.enums import UserTypeChoices, RoleChoices
 from organization.models import Organization, OrganizationUser
-from .models import Case, Files, JointUser
+from .models import Case, Files, JointUser, LoanDetails
 from authentication.models import User
-from common.serializers import CommonUserSerializer, CommonOrganizationSerializer, CommonUserWithPasswordSerializer, \
-    CommonCaseSerializer, CommonUserWithIdSerializer
+from common.serializers import (
+    CommonUserSerializer,
+    CommonOrganizationSerializer,
+    CommonUserWithPasswordSerializer,
+    CommonCaseSerializer,
+    CommonUserWithIdSerializer,
+)
 
 
 class CaseListCreateSerializer(serializers.ModelSerializer):
@@ -207,7 +212,15 @@ class JointUserSerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
         ]
-        read_only_fields = ["alias", "case", "is_removed", "created_at", "updated_at", "created_by", "updated_by"]
+        read_only_fields = [
+            "alias",
+            "case",
+            "is_removed",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
 
     def create(self, validated_data):
         joint_user_data = validated_data.pop("joint_user")
@@ -233,20 +246,25 @@ class JointUserSerializer(serializers.ModelSerializer):
         joint_user_data = validated_data.pop("joint_user", None)
         if joint_user_data:
             joint_user_data["user_type"] = UserTypeChoices.JOINT_USER
-            joint_user_serializer = CommonUserWithPasswordSerializer(instance.joint_user, data=joint_user_data, partial=True)
+            joint_user_serializer = CommonUserWithPasswordSerializer(
+                instance.joint_user, data=joint_user_data, partial=True
+            )
             joint_user_serializer.is_valid(raise_exception=True)
             joint_user_serializer.save()
 
             # Update OrganizationUser information
-            organization_user = OrganizationUser.objects.filter(user=instance.joint_user, organization=instance.case.organization).first()
+            organization_user = OrganizationUser.objects.filter(
+                user=instance.joint_user, organization=instance.case.organization
+            ).first()
             if organization_user:
                 organization_user.official_email = instance.joint_user.email
-                organization_user.official_phone = joint_user_data.get("phone", organization_user.official_phone)
+                organization_user.official_phone = joint_user_data.get(
+                    "phone", organization_user.official_phone
+                )
                 organization_user.save()
 
         validated_data["updated_by"] = self.context["request"].user
         return super().update(instance, validated_data)
-
 
 
 class CaseUserListSerializer(serializers.ModelSerializer):
@@ -254,4 +272,58 @@ class CaseUserListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JointUser
-        fields = ['joint_user', 'relationship', 'notes', 'is_removed']
+        fields = ["joint_user", "relationship", "notes", "is_removed"]
+
+
+class LoanDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LoanDetails
+        fields = [
+            "alias",
+            "case",
+            "application_type",
+            "mortgage_type",
+            "loan_purpose",
+            "lender",
+            "lenders_reference",
+            "borrower_type",
+            "repayment_method",
+            "repayment_vehicle",
+            "interest_rate_type",
+            "product_term",
+            "purchase_price",
+            "loan_amount",
+            "estimated_value",
+            "ltv",
+            "term_years",
+            "term_months",
+            "deposit_amount",
+            "deposit_source",
+            "interest_only_amount",
+            "advice_level",
+            "dip_accept_date",
+            "dip_expiry_date",
+            "expected_completion_date",
+            "product_expiry_date",
+            "introduction_type",
+            "introducer",
+            "introducer_payment_terms",
+            "introducer_fee",
+            "lead_source",
+            "sale_type",
+            "reasons_for_capital_raising",
+            "case_summary",
+            "accepted_or_declined_by_lender",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "case",
+        ]

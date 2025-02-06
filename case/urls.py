@@ -1,4 +1,6 @@
 from django.urls import path
+
+from .models import LoanDetails
 from .views import (
     CaseListCreateApiView,
     CaseRetrieveUpdateDeleteApiView,
@@ -6,7 +8,7 @@ from .views import (
     FileRetrieveUpdateDeleteApiView,
     JointUserListCreateApiView,
     JointUserRetrieveUpdateDeleteApiView,
-    CaseUserListApiView,
+    CaseUserListApiView, LoanDetailsCreateApiView, LoanDetailsRetrieveUpdateApiView,
 )
 
 urlpatterns = [
@@ -40,5 +42,15 @@ urlpatterns = [
         "<uuid:case_alias>/users/",
         CaseUserListApiView.as_view(),
         name="case-user-list",
-    )
+    ),
+    path(
+        "<uuid:case_alias>/loan/details/",
+        LoanDetailsCreateApiView.as_view(),
+        name="loan-details-create",
+    ),
+    path(
+        "<uuid:case_alias>/loan/details//<uuid:alias>/",
+        LoanDetailsRetrieveUpdateApiView.as_view(),
+        name="loan-details-detail",
+    ),
 ]

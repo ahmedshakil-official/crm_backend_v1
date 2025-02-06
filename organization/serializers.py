@@ -9,6 +9,7 @@ from common.serializers import (
 )
 from organization.models import Organization, OrganizationUser, Network, NetworkUser
 
+
 class NetworkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Network
