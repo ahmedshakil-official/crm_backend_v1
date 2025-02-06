@@ -49,7 +49,7 @@ urlpatterns = [
         name="loan-details-list-create",
     ),
     path(
-        "<uuid:case_alias>/loan/details//<uuid:alias>/",
+        "<uuid:case_alias>/loan/details/<uuid:alias>/",
         LoanDetailsRetrieveUpdateApiView.as_view(),
         name="loan-details-detail",
     ),
