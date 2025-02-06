@@ -8,7 +8,7 @@ from .views import (
     FileRetrieveUpdateDeleteApiView,
     JointUserListCreateApiView,
     JointUserRetrieveUpdateDeleteApiView,
-    CaseUserListApiView, LoanDetailsCreateApiView, LoanDetailsRetrieveUpdateApiView,
+    CaseUserListApiView, LoanDetailsListCreateApiView, LoanDetailsRetrieveUpdateApiView,
 )
 
 urlpatterns = [
@@ -45,8 +45,8 @@ urlpatterns = [
     ),
     path(
         "<uuid:case_alias>/loan/details/",
-        LoanDetailsCreateApiView.as_view(),
-        name="loan-details-create",
+        LoanDetailsListCreateApiView.as_view(),
+        name="loan-details-list-create",
     ),
     path(
         "<uuid:case_alias>/loan/details//<uuid:alias>/",

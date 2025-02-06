@@ -224,9 +224,14 @@ class CaseUserListApiView(ListAPIView):
         return Response({"lead_user": lead_user, "joint_users": joint_users_data})
 
 
-class LoanDetailsCreateApiView(CreateAPIView):
+class LoanDetailsListCreateApiView(ListCreateAPIView):
     serializer_class = LoanDetailsSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs.get("case_alias")
+        case = get_object_or_404(Case, alias=case_alias)
+        return LoanDetails.objects.filter(case=case)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
