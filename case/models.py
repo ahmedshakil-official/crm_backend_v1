@@ -26,7 +26,7 @@ from .enums import (
     IntroductionTypeChoices,
     IntroducerPaymentTermsChoices,
     LeadSourceChoices,
-    SaleTypeChoices,
+    SaleTypeChoices, CurrentLenderChoices,
 )
 from .utils import upload_to_case_files
 
@@ -258,19 +258,29 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
     product_term = models.CharField(
         max_length=50, choices=ProductTermChoices.choices, blank=True, null=True
     )
-    purchase_price = models.DecimalField(max_digits=15, decimal_places=2)
+    property_valuation = models.DecimalField(max_digits=15, decimal_places=2)
     loan_amount = models.DecimalField(max_digits=15, decimal_places=2)
     estimated_value = models.DecimalField(max_digits=15, decimal_places=2)
     ltv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     term_years = models.PositiveIntegerField(default=0)
     term_months = models.PositiveIntegerField(default=0)
-    deposit_amount = models.DecimalField(
+    outstanding_balance = models.DecimalField(
         max_digits=15, decimal_places=2, blank=True, null=True
     )
-    deposit_source = models.CharField(max_length=255, blank=True, null=True)
+    current_monthly_payment = models.DecimalField(
+        max_digits=15, decimal_places=2, blank=True, null=True
+    )
+    current_lender = models.CharField(
+        max_length=50, choices=CurrentLenderChoices.choices, blank=True, null=True
+    )
+
     interest_only_amount = models.DecimalField(
         max_digits=15, decimal_places=2, blank=True, null=True, default=0.00
     )
+    original_purchase_price = models.DecimalField(
+        max_digits=15, decimal_places=2, blank=True, null=True, default=0.00
+    )
+    date_of_purchase = models.DateField(null=True, blank=True)
     advice_level = models.CharField(
         max_length=50, choices=AdviceLevelChoices.choices, blank=True, null=True
     )
@@ -283,7 +293,6 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
     introduction_type = models.CharField(
         max_length=50, choices=IntroductionTypeChoices.choices, blank=True, null=True
     )
-    introducer = models.CharField(max_length=255, blank=True, null=True)
     introducer_payment_terms = models.CharField(
         max_length=50,
         choices=IntroducerPaymentTermsChoices.choices,
