@@ -29,7 +29,7 @@ from .enums import (
     LeadSourceChoices,
     SaleTypeChoices, CurrentLenderChoices,
 )
-from .siignals import create_loan_details
+from .signals import create_loan_details
 from .utils import upload_to_case_files
 
 
