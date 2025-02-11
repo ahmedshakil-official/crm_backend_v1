@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.signals import post_save
 
 from authentication.models import User
 from common.models import CreatedAtUpdatedAtBaseModel
@@ -28,6 +29,7 @@ from .enums import (
     LeadSourceChoices,
     SaleTypeChoices, CurrentLenderChoices,
 )
+from .siignals import create_loan_details
 from .utils import upload_to_case_files
 
 
@@ -318,3 +320,9 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.application_type} - {self.mortgage_type if self.mortgage_type else 'No Mortgage Type'}"
+
+
+
+
+# Call all signals here.
+post_save.connect(create_loan_details, sender=Case)
