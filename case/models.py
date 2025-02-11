@@ -230,7 +230,7 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
         verbose_name="Related Case",
     )
     application_type = models.CharField(
-        max_length=50, choices=ApplicationTypeChoices.choices
+        max_length=50, choices=ApplicationTypeChoices.choices, default= ApplicationTypeChoices.SELECT_APPLICATION_TYPE
     )
 
     mortgage_type = models.CharField(
@@ -258,9 +258,11 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
     product_term = models.CharField(
         max_length=50, choices=ProductTermChoices.choices, blank=True, null=True
     )
-    property_valuation = models.DecimalField(max_digits=15, decimal_places=2)
-    loan_amount = models.DecimalField(max_digits=15, decimal_places=2)
-    estimated_value = models.DecimalField(max_digits=15, decimal_places=2)
+    property_valuation = models.PositiveIntegerField(default=0)
+    purchase_price = models.PositiveIntegerField(default=0)
+    loan_amount = models.PositiveIntegerField(default=0)
+    estimated_value = models.PositiveIntegerField(default=0)
+
     ltv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     term_years = models.PositiveIntegerField(default=0)
     term_months = models.PositiveIntegerField(default=0)
@@ -281,6 +283,8 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
         max_digits=15, decimal_places=2, blank=True, null=True, default=0.00
     )
     date_of_purchase = models.DateField(null=True, blank=True)
+    deposit_amount = models.PositiveIntegerField(default=0)
+    deposit_source = models.CharField(max_length=255, null=True, blank=True)
     advice_level = models.CharField(
         max_length=50, choices=AdviceLevelChoices.choices, blank=True, null=True
     )

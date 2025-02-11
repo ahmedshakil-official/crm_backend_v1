@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class ApplicationTypeChoices(models.TextChoices):
+    SELECT_APPLICATION_TYPE = "SELECT_APPLICATION_TYPE", _("Select Application Type")
     BUSINESS_LOAN = "BUSINESS_LOAN", _("Business Loan")
     BUY_TO_LET = "BUY_TO_LET", _("Buy to Let Mortgage")
     COMMERCIAL_MORTGAGE = "COMMERCIAL_MORTGAGE", _("Commercial Mortgage")
