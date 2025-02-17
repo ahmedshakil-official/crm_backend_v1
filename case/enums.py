@@ -282,30 +282,50 @@ class CurrentLenderChoices(models.TextChoices):
     BARCLAYS = "BARCLAYS", _("Barclays")
     BARCLAYS_COMMERCIAL = "BARCLAYS_COMMERCIAL", _("Barclays Commercial")
     BATH_BUILDING_SOCIETY = "BATH_BUILDING_SOCIETY", _("Bath Building Society")
-    BEVERLEY_BUILDING_SOCIETY = "BEVERLEY_BUILDING_SOCIETY", _("Beverley Building Society")
+    BEVERLEY_BUILDING_SOCIETY = "BEVERLEY_BUILDING_SOCIETY", _(
+        "Beverley Building Society"
+    )
     BLUESTONE_MORTGAGES = "BLUESTONE_MORTGAGES", _("Bluestone Mortgages")
     BLUEZEST = "BLUEZEST", _("BlueZest")
     BM_SOLUTIONS = "BM_SOLUTIONS", _("BM Solutions")
     BOOST_CAPITAL = "BOOST_CAPITAL", _("Boost Capital")
-    BRIDGEWATER_EQUITY_RELEASE = "BRIDGEWATER_EQUITY_RELEASE", _("Bridgewater Equity Release")
-    BUCKINGHAMSHIRE_BUILDING_SOCIETY = "BUCKINGHAMSHIRE_BUILDING_SOCIETY", _("Buckinghamshire Building Society")
-    CAMBRIDGE_AND_COUNTIES_BANK = "CAMBRIDGE_AND_COUNTIES_BANK", _("Cambridge and Counties Bank")
-    CAMBRIDGE_BUILDING_SOCIETY = "CAMBRIDGE_BUILDING_SOCIETY", _("Cambridge Building Society")
+    BRIDGEWATER_EQUITY_RELEASE = "BRIDGEWATER_EQUITY_RELEASE", _(
+        "Bridgewater Equity Release"
+    )
+    BUCKINGHAMSHIRE_BUILDING_SOCIETY = "BUCKINGHAMSHIRE_BUILDING_SOCIETY", _(
+        "Buckinghamshire Building Society"
+    )
+    CAMBRIDGE_AND_COUNTIES_BANK = "CAMBRIDGE_AND_COUNTIES_BANK", _(
+        "Cambridge and Counties Bank"
+    )
+    CAMBRIDGE_BUILDING_SOCIETY = "CAMBRIDGE_BUILDING_SOCIETY", _(
+        "Cambridge Building Society"
+    )
     CENTRAL_TRUST = "CENTRAL_TRUST", _("Central Trust")
     CHARTERBANK = "CHARTERBANK", _("Charterbank")
     CHL_MORTGAGES = "CHL_MORTGAGES", _("CHL Mortgages")
-    CHORLEY_AND_DISTRICT_BUILDING_SOCIETY = "CHORLEY_AND_DISTRICT_BUILDING_SOCIETY", _("Chorley & District Building Society")
+    CHORLEY_AND_DISTRICT_BUILDING_SOCIETY = "CHORLEY_AND_DISTRICT_BUILDING_SOCIETY", _(
+        "Chorley & District Building Society"
+    )
     CLEARLY_LOANS = "CLEARLY_LOANS", _("Clearly Loans")
     CLYDESDALE_BANK = "CLYDESDALE_BANK", _("Clydesdale Bank")
     COUTTS = "COUTTS", _("Coutts")
-    COVENTRY_BUILDING_SOCIETY = "COVENTRY_BUILDING_SOCIETY", _("Coventry Building Society")
+    COVENTRY_BUILDING_SOCIETY = "COVENTRY_BUILDING_SOCIETY", _(
+        "Coventry Building Society"
+    )
     CROWN_EQUITY_RELEASE = "CROWN_EQUITY_RELEASE", _("Crown Equity Release")
-    CUMBERLAND_BUILDING_SOCIETY = "CUMBERLAND_BUILDING_SOCIETY", _("Cumberland Building Society")
+    CUMBERLAND_BUILDING_SOCIETY = "CUMBERLAND_BUILDING_SOCIETY", _(
+        "Cumberland Building Society"
+    )
     DANSKE_BANK = "DANSKE_BANK", _("Danske Bank")
-    DARLINGTON_BUILDING_SOCIETY = "DARLINGTON_BUILDING_SOCIETY", _("Darlington Building Society")
+    DARLINGTON_BUILDING_SOCIETY = "DARLINGTON_BUILDING_SOCIETY", _(
+        "Darlington Building Society"
+    )
     DIGITAL_MORTGAGES = "DIGITAL_MORTGAGES", _("Digital Mortgages")
     DUDLEY_BUILDING_SOCIETY = "DUDLEY_BUILDING_SOCIETY", _("Dudley Building Society")
-    EARL_SHILTON_BUILDING_SOCIETY = "EARL_SHILTON_BUILDING_SOCIETY", _("Earl Shilton Building Society")
+    EARL_SHILTON_BUILDING_SOCIETY = "EARL_SHILTON_BUILDING_SOCIETY", _(
+        "Earl Shilton Building Society"
+    )
     ECOLOGY_BUILDING_SOCIETY = "ECOLOGY_BUILDING_SOCIETY", _("Ecology Building Society")
     EQUIFINANCE = "EQUIFINANCE", _("Equifinance")
     FAMILY_BUILDING_SOCIETY = "FAMILY_BUILDING_SOCIETY", _("Family Building Society")

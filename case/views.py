@@ -5,12 +5,15 @@ from rest_framework.exceptions import NotFound
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
-    ListAPIView, CreateAPIView, RetrieveUpdateAPIView,
+    ListAPIView,
+    CreateAPIView,
+    RetrieveUpdateAPIView,
 )
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
 from .filter import CaseFilter, FileFilter
@@ -20,7 +23,8 @@ from .serializers import (
     CaseRetrieveUpdateDeleteSerializer,
     FileSerializer,
     JointUserSerializer,
-    CaseUserListSerializer, LoanDetailsSerializer,
+    CaseUserListSerializer,
+    LoanDetailsSerializer,
 )
 
 
@@ -245,7 +249,6 @@ class LoanDetailsListCreateApiView(ListCreateAPIView):
         serializer.save(created_by=self.request.user, case=case)
 
 
-
 class LoanDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
     serializer_class = LoanDetailsSerializer
     permission_classes = [IsAuthenticated]
@@ -265,3 +268,26 @@ class LoanDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
+
+class CaseUserListViewOnlyApiView(ListAPIView):
+    serializer_class = CommonUserSerializer
+
+    def get_queryset(self):
+        # Retrieve the Case by alias from the URL
+        case_alias = self.kwargs.get("case_alias")
+        case = get_object_or_404(Case, alias=case_alias)
+
+        # Collect user IDs from the lead and joint users
+        user_ids = set()
+        if case.lead:
+            user_ids.add(case.lead.id)
+
+        # Add joint_user IDs (excluding removed ones)
+        joint_user_ids = case.joint_users.filter(is_removed=False).values_list(
+            "joint_user_id", flat=True
+        )
+        user_ids.update(joint_user_ids)
+
+        # Return a QuerySet of User objects matching the collected IDs
+        return User.objects.filter(id__in=user_ids)

@@ -27,7 +27,8 @@ from .enums import (
     IntroductionTypeChoices,
     IntroducerPaymentTermsChoices,
     LeadSourceChoices,
-    SaleTypeChoices, CurrentLenderChoices,
+    SaleTypeChoices,
+    CurrentLenderChoices,
 )
 from .signals import create_loan_details
 from .utils import upload_to_case_files
@@ -232,7 +233,9 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
         verbose_name="Related Case",
     )
     application_type = models.CharField(
-        max_length=50, choices=ApplicationTypeChoices.choices, default= ApplicationTypeChoices.SELECT_APPLICATION_TYPE
+        max_length=50,
+        choices=ApplicationTypeChoices.choices,
+        default=ApplicationTypeChoices.SELECT_APPLICATION_TYPE,
     )
 
     mortgage_type = models.CharField(
@@ -320,8 +323,6 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.application_type} - {self.mortgage_type if self.mortgage_type else 'No Mortgage Type'}"
-
-
 
 
 # Call all signals here.

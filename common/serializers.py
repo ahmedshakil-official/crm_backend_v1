@@ -47,6 +47,7 @@ class CommonUserSerializer(UserCreateSerializer):
 
     class Meta(UserCreateSerializer.Meta):
         fields = [
+            "alias",
             "email",
             "phone",
             "first_name",
