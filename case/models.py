@@ -327,3 +327,5 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
+
+

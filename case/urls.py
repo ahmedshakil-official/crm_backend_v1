@@ -57,7 +57,7 @@ urlpatterns = [
         name="loan-details-detail",
     ),
     path(
-        "<uuid:case_alias>/user/list",
+        "<uuid:case_alias>/user/list/",
         CaseUserListViewOnlyApiView.as_view(),
         name="case-users",
     ),
