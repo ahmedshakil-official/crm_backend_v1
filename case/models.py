@@ -383,7 +383,7 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     gender = models.CharField(
         max_length=6, choices=GenderChoices.choices, default=GenderChoices.MALE
     )
-    nationality = CountryField(blank_label="Select Country")
+    nationality = CountryField(blank_label="Select Country", blank=True, null=True)
     dual_nationality = models.BooleanField(default=False)
     marital_status = models.CharField(
         max_length=30, choices=MaritalStatusChoices.choices, default=MaritalStatusChoices.SINGLE
@@ -440,7 +440,7 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     erc_expiry_date = models.DateField(null=True, blank=True)
     erc_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     erc_being_paid = models.BooleanField(default=False)
-    mortgage_account_number = models.CharField(max_length=50, unique=True)
+    mortgage_account_number = models.CharField(max_length=50, unique=True, blank=True, null=True)
     being_redeemed = models.BooleanField(default=False)
     is_mortgage_portable = models.BooleanField(default=False)
     is_mortgage_being_ported = models.BooleanField(default=False)
