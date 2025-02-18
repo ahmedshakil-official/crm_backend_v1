@@ -353,7 +353,7 @@ class CompanyInfo(models.Model):
 
 
 class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
-    case = models.OneToOneField(
+    case = models.ForeignKey(
         Case,
         on_delete=models.CASCADE,
         related_name="applicant_details",
