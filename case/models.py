@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models.signals import post_save
+from django_countries.fields import CountryField
+from multiselectfield import MultiSelectField
 
 from authentication.models import User
 from common.models import CreatedAtUpdatedAtBaseModel
@@ -28,9 +30,11 @@ from .enums import (
     IntroducerPaymentTermsChoices,
     LeadSourceChoices,
     SaleTypeChoices,
-    CurrentLenderChoices,
+    CurrentLenderChoices, TitleChoices, GenderChoices, MaritalStatusChoices, MarketingPreferencesChoices,
+    ResidentialStatus, MortgageType, RepaymentType, InterestType, ERCCompletionStatus, PropertyType, TenureType,
+    RoleType, CompanyType,
 )
-from .signals import create_loan_details
+from .signals import create_loan_details, create_applicant_details, create_applicant_details_for_joint_user
 from .utils import upload_to_case_files
 
 
@@ -325,7 +329,162 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
         return f"{self.application_type} - {self.mortgage_type if self.mortgage_type else 'No Mortgage Type'}"
 
 
+class CompanyInfo(models.Model):
+    company_name = models.CharField(max_length=255)
+    company_registration_number = models.CharField(max_length=50, unique=True)
+    date_of_incorporation = models.DateField(blank=True, null=True)
+    company_type = models.CharField(
+        max_length=50, choices=CompanyType.choices, default=CompanyType.PRIVATE_LIMITED
+    )
+    trade_business_type = models.CharField(max_length=255, blank=True, null=True)
+    sic_code = models.CharField(max_length=255, blank=True, null=True)
+    is_spv = models.BooleanField(default=False)
+
+    # Address fields
+    postcode = models.CharField(max_length=20, blank=True, null=True)
+    house_number_or_name = models.CharField(max_length=255, blank=True, null=True)
+    address_line1 = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    county = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.company_name} ({self.company_registration_number})"
+
+
+class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
+    case = models.OneToOneField(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="applicant_details",
+    )
+    is_company_application = models.BooleanField(default=False)
+    company = models.OneToOneField(
+        CompanyInfo,
+        on_delete=models.CASCADE,
+        related_name="applicant_company",
+        null=True,
+        blank=True,
+    )
+    applicant = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="applicant",
+    )
+    title = models.CharField(
+        max_length=10, choices=TitleChoices.choices, default=TitleChoices.MR
+    )
+
+    maiden_name = models.CharField(max_length=100, blank=True, null=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    anticipated_retirement_age = models.PositiveIntegerField(default=0)
+    state_retirement_age = models.PositiveIntegerField(default=0)
+    is_smoker = models.BooleanField(default=False)
+    gender = models.CharField(
+        max_length=6, choices=GenderChoices.choices, default=GenderChoices.MALE
+    )
+    nationality = CountryField(blank_label="Select Country")
+    dual_nationality = models.BooleanField(default=False)
+    marital_status = models.CharField(
+        max_length=30, choices=MaritalStatusChoices.choices, default=MaritalStatusChoices.SINGLE
+    )
+    ni_number = models.CharField(max_length=20, blank=True, null=True)
+    country_of_birth = models.CharField(max_length=100, blank=True, null=True)
+    bank_name = models.CharField(max_length=100, blank=True, null=True)
+    home_phone = models.CharField(max_length=20, blank=True, null=True)
+    mobile_phone = models.CharField(max_length=20, blank=True, null=True)
+    work_phone = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+
+    marketing_preferences = MultiSelectField(
+        choices=MarketingPreferencesChoices.choices,
+        max_length=100,
+        blank=True
+    )
+    has_dependants = models.BooleanField(default=False)
+    number_of_dependants = models.PositiveIntegerField(default=0)
+    date_of_arrival_uk = models.DateField(blank=True, null=True)
+    indefinite_right_to_reside = models.BooleanField(default=False)
+    visa_details = models.CharField(max_length=255, blank=True, null=True)
+    visa_expiry_date = models.DateField(blank=True, null=True)
+    postcode = models.CharField(max_length=10, null=True, blank=True)
+    house_number_or_name = models.CharField(max_length=255, blank=True, null=True)
+    address_line1 = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    county = models.CharField(max_length=100, blank=True, null=True)
+    county = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+    effective_from = models.DateField(blank=True, null=True)
+    time_at_address_years = models.PositiveIntegerField(default=0)
+    time_at_address_months = models.PositiveIntegerField(default=0)
+    residential_status = models.CharField(
+        max_length=50, choices=ResidentialStatus.choices, default=ResidentialStatus.OWNER
+    )
+    current_mortgage_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    property_value = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    owner_monthly_payment = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    lender = models.CharField(max_length=100, blank=True, null=True)
+    mortgage_start_date = models.DateField(blank=True, null=True)
+    mortgage_type = models.CharField(
+        max_length=100, choices=MortgageType.choices, default=MortgageType.SECURED_LOAN
+    )
+    current_interest_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    remaining_term = models.PositiveIntegerField(default=0)
+    repayment_type = models.CharField(
+        max_length=50, choices=RepaymentType.choices, default=RepaymentType.CAPITAL_INTEREST
+    )
+    current_interest_type = models.CharField(
+        max_length=50, choices=InterestType.choices, default=InterestType.FIXED
+    )
+    early_repayment_charge_applies = models.BooleanField(default=False)
+    erc_expiry_date = models.DateField(null=True, blank=True)
+    erc_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    erc_being_paid = models.BooleanField(default=False)
+    mortgage_account_number = models.CharField(max_length=50, unique=True)
+    being_redeemed = models.BooleanField(default=False)
+    is_mortgage_portable = models.BooleanField(default=False)
+    is_mortgage_being_ported = models.BooleanField(default=False)
+    mortgage_not_to_complete_until_erc_ended = models.CharField(
+        max_length=10, choices=ERCCompletionStatus.choices, null=True, blank=True
+    )
+    mortgage_charter_scheme = models.BooleanField(default=False)
+    property_type = models.CharField(
+        max_length=50, choices=PropertyType.choices, default=PropertyType.HOUSE
+    )
+    bedrooms = models.PositiveIntegerField(default=0)
+    tenure = models.CharField(
+        max_length=50, choices=TenureType.choices, default=TenureType.FREEHOLD
+    )
+    year_built = models.PositiveIntegerField(default=0)
+    notes = models.TextField(blank=True, null=True)
+
+#
+
+
+
+class Dependant(models.Model):
+    applicant_details = models.ForeignKey(ApplicantDetails, on_delete=models.CASCADE, related_name='dependants')
+    name = models.CharField(max_length=255)
+    date_of_birth = models.DateField(blank=True, null=True)
+
+
+
+
+
+class DirectorShareholder(models.Model):
+    company = models.ForeignKey(CompanyInfo, on_delete=models.CASCADE, related_name="directors_shareholders")
+    full_name = models.CharField(max_length=255, blank=True, null=True)
+    percentage_share = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    role = models.CharField(max_length=50, choices=RoleType.choices, default=RoleType.DIRECTOR)
+
+    def __str__(self):
+        return f"{self.full_name} - {self.role} ({self.percentage_share}%)"
+
+
+
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
+post_save.connect(create_applicant_details, sender=Case)
+post_save.connect(create_applicant_details_for_joint_user, sender=JointUser)
 
 
