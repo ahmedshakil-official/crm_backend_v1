@@ -458,7 +458,8 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     year_built = models.PositiveIntegerField(default=0)
     notes = models.TextField(blank=True, null=True)
 
-#
+    def __str__(self):
+        return f"{self.company} ({self.applicant})"
 
 
 
@@ -466,7 +467,8 @@ class Dependant(models.Model):
     applicant_details = models.ForeignKey(ApplicantDetails, on_delete=models.CASCADE, related_name='dependants')
     name = models.CharField(max_length=255)
     date_of_birth = models.DateField(blank=True, null=True)
-
+    def __str__(self):
+        return f"{self.name} ({self.date_of_birth})"
 
 
 
