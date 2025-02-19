@@ -358,6 +358,7 @@ class CompanyInfoSerializer(serializers.ModelSerializer):
 class ApplicantDetailsSerializer(serializers.ModelSerializer):
     company = CompanyInfoSerializer(read_only=True)
     nationality = CountryField(required=False, allow_blank=True, allow_null=True)
+    applicant = CommonUserWithIdSerializer(read_only=True)
 
     class Meta:
         model = ApplicantDetails
