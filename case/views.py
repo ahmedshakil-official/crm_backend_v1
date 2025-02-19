@@ -320,9 +320,9 @@ class ApplicantDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
         serializer.save(updated_by=self.request.user)
 
 
-class DependantListCreateApiView(generics.ListCreateAPIView):
+class DependantListCreateApiView(ListCreateAPIView):
     serializer_class = DependantSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """Return dependants belonging to the ApplicantDetails object."""
