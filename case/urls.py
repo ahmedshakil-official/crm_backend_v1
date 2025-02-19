@@ -15,7 +15,7 @@ from .views import (
     ApplicantDetailsListApiView,
     ApplicantDetailsRetrieveUpdateApiView,
     DependantListCreateApiView,
-    CompanyInfoListCreateApiView,
+    CompanyInfoListCreateApiView, DirectorShareholderListCreateApiView,
 )
 
 urlpatterns = [
@@ -84,5 +84,10 @@ urlpatterns = [
         "<uuid:case_alias>/applicant/details/<uuid:alias>/company/",
         CompanyInfoListCreateApiView.as_view(),
         name="companyinfo-list-create",
+    ),
+    path(
+        "<uuid:case_alias>/applicant/details/<uuid:alias>/company/<str:company_name>/shareholders/",
+        DirectorShareholderListCreateApiView.as_view(),
+        name="director-shareholder-list-create",
     ),
 ]

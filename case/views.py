@@ -17,7 +17,16 @@ from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
 from .filter import CaseFilter, FileFilter
-from .models import Case, Files, JointUser, LoanDetails, ApplicantDetails, Dependant, CompanyInfo
+from .models import (
+    Case,
+    Files,
+    JointUser,
+    LoanDetails,
+    ApplicantDetails,
+    Dependant,
+    CompanyInfo,
+    DirectorShareholder,
+)
 from .serializers import (
     CaseListCreateSerializer,
     CaseRetrieveUpdateDeleteSerializer,
@@ -26,7 +35,9 @@ from .serializers import (
     CaseUserListSerializer,
     LoanDetailsSerializer,
     ApplicantDetailsSerializer,
-    DependantSerializer, CompanyInfoSerializer,
+    DependantSerializer,
+    CompanyInfoSerializer,
+    DirectorShareholderSerializer,
 )
 
 
@@ -355,8 +366,7 @@ class CompanyInfoListCreateApiView(ListCreateAPIView):
         case_alias = self.kwargs["case_alias"]
         alias = self.kwargs["alias"]
         return CompanyInfo.objects.filter(
-            applicant_details__case__alias=case_alias,
-            applicant_details__alias=alias
+            applicant_details__case__alias=case_alias, applicant_details__alias=alias
         )
 
     def perform_create(self, serializer):
@@ -364,8 +374,47 @@ class CompanyInfoListCreateApiView(ListCreateAPIView):
         case_alias = self.kwargs["case_alias"]
         alias = self.kwargs["alias"]
         applicant_details = get_object_or_404(
-            ApplicantDetails,
-            case__alias=case_alias,
-            alias=alias
+            ApplicantDetails, case__alias=case_alias, alias=alias
         )
         serializer.save(applicant_details=applicant_details)
+
+
+class DirectorShareholderListCreateApiView(ListCreateAPIView):
+    serializer_class = DirectorShareholderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Filter DirectorShareholder records by:
+         - case__alias
+         - applicant_details__alias
+         - company_name
+        """
+        case_alias = self.kwargs["case_alias"]
+        alias = self.kwargs["alias"]
+        company_name = self.kwargs["company_name"]
+
+        return DirectorShareholder.objects.filter(
+            company__applicant_details__case__alias=case_alias,
+            company__applicant_details__alias=alias,
+            company__company_name=company_name,
+        )
+
+    def perform_create(self, serializer):
+        """
+        Automatically set the correct CompanyInfo for the newly created shareholder.
+        """
+        case_alias = self.kwargs["case_alias"]
+        alias = self.kwargs["alias"]
+        company_name = self.kwargs["company_name"]
+
+        # Look up the matching CompanyInfo record
+        company = get_object_or_404(
+            CompanyInfo,
+            applicant_details__case__alias=case_alias,
+            applicant_details__alias=alias,
+            company_name=company_name,
+        )
+
+        # Attach the company to the new DirectorShareholder record
+        serializer.save(company=company)
