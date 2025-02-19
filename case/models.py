@@ -349,9 +349,6 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
         return f"{self.application_type} - {self.mortgage_type if self.mortgage_type else 'No Mortgage Type'}"
 
 
-
-
-
 class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
         Case,
@@ -476,7 +473,7 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
 
 
 class CompanyInfo(models.Model):
-    applicant_details = models.ForeignKey(
+    applicant_details = models.OneToOneField(
         ApplicantDetails, on_delete=models.CASCADE, related_name="company"
     )
     company_name = models.CharField(max_length=255)

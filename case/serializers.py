@@ -348,6 +348,7 @@ class CompanyInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompanyInfo
         fields = [
+            "applicant_details",
             "company_name",
             "company_registration_number",
             "date_of_incorporation",
@@ -361,6 +362,9 @@ class CompanyInfoSerializer(serializers.ModelSerializer):
             "city",
             "county",
             "country",
+        ]
+        read_only_fields = [
+            "applicant_details",
         ]
 
 

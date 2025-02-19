@@ -17,7 +17,7 @@ from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
 from .filter import CaseFilter, FileFilter
-from .models import Case, Files, JointUser, LoanDetails, ApplicantDetails, Dependant
+from .models import Case, Files, JointUser, LoanDetails, ApplicantDetails, Dependant, CompanyInfo
 from .serializers import (
     CaseListCreateSerializer,
     CaseRetrieveUpdateDeleteSerializer,
@@ -26,7 +26,7 @@ from .serializers import (
     CaseUserListSerializer,
     LoanDetailsSerializer,
     ApplicantDetailsSerializer,
-    DependantSerializer,
+    DependantSerializer, CompanyInfoSerializer,
 )
 
 
@@ -343,4 +343,29 @@ class DependantListCreateApiView(ListCreateAPIView):
             alias=alias,
         )
 
+        serializer.save(applicant_details=applicant_details)
+
+
+class CompanyInfoListCreateApiView(ListCreateAPIView):
+    serializer_class = CompanyInfoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Return all CompanyInfo rows linked to the specified ApplicantDetails."""
+        case_alias = self.kwargs["case_alias"]
+        alias = self.kwargs["alias"]
+        return CompanyInfo.objects.filter(
+            applicant_details__case__alias=case_alias,
+            applicant_details__alias=alias
+        )
+
+    def perform_create(self, serializer):
+        """Attach the correct ApplicantDetails before saving the new CompanyInfo."""
+        case_alias = self.kwargs["case_alias"]
+        alias = self.kwargs["alias"]
+        applicant_details = get_object_or_404(
+            ApplicantDetails,
+            case__alias=case_alias,
+            alias=alias
+        )
         serializer.save(applicant_details=applicant_details)
