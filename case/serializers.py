@@ -459,6 +459,9 @@ class DependantSerializer(serializers.ModelSerializer):
             "name",
             "date_of_birth",
         ]
+        read_only_fields = [
+            "applicant_details",
+        ]
 
 
 class DirectorShareholderSerializer(serializers.ModelSerializer):
