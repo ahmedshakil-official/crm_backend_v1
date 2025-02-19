@@ -1,3 +1,4 @@
+from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 
 from common.enums import UserTypeChoices, RoleChoices
@@ -356,6 +357,7 @@ class CompanyInfoSerializer(serializers.ModelSerializer):
 
 class ApplicantDetailsSerializer(serializers.ModelSerializer):
     company = CompanyInfoSerializer(read_only=True)
+    nationality = CountryField(required=False, allow_blank=True, allow_null=True)
 
     class Meta:
         model = ApplicantDetails
