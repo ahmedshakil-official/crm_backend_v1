@@ -1,7 +1,7 @@
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework import status
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
@@ -320,16 +320,17 @@ class ApplicantDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
         serializer.save(updated_by=self.request.user)
 
 
-class DependantListCreateApiView(ListCreateAPIView):
+class DependantListCreateApiView(generics.ListCreateAPIView):
     serializer_class = DependantSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-
+        """Return dependants belonging to the ApplicantDetails object."""
         case_alias = self.kwargs.get("case_alias")
         alias = self.kwargs.get("alias")
         return Dependant.objects.filter(
-            applicant_details__case__alias=case_alias, applicant_details__alias=alias
+            applicant_details__case__alias=case_alias,
+            applicant_details__alias=alias
         )
 
     def perform_create(self, serializer):
@@ -337,10 +338,22 @@ class DependantListCreateApiView(ListCreateAPIView):
         case_alias = self.kwargs.get("case_alias")
         alias = self.kwargs.get("alias")
 
+        # 1. Fetch the Case and ApplicantDetails objects
+        case = get_object_or_404(Case, alias=case_alias)
         applicant_details = get_object_or_404(
             ApplicantDetails,
             case__alias=case_alias,
-            alias=alias,
+            alias=alias
         )
 
+
+        is_lead_user = (applicant_details.applicant == case.lead)
+        is_joint_user = case.joint_users.filter(joint_user=applicant_details.applicant).exists()
+
+        if not (is_lead_user or is_joint_user):
+            raise PermissionDenied(
+                "This ApplicantDetails.user must be the case lead or a joint user."
+            )
+
+        # 3. Save Dependant with the valid ApplicantDetails
         serializer.save(applicant_details=applicant_details)
