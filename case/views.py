@@ -17,7 +17,7 @@ from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
 from .filter import CaseFilter, FileFilter
-from .models import Case, Files, JointUser, LoanDetails, ApplicantDetails
+from .models import Case, Files, JointUser, LoanDetails, ApplicantDetails, Dependant
 from .serializers import (
     CaseListCreateSerializer,
     CaseRetrieveUpdateDeleteSerializer,
@@ -26,6 +26,7 @@ from .serializers import (
     CaseUserListSerializer,
     LoanDetailsSerializer,
     ApplicantDetailsSerializer,
+    DependantSerializer,
 )
 
 
@@ -317,3 +318,29 @@ class ApplicantDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
+
+class DependantListCreateApiView(ListCreateAPIView):
+    serializer_class = DependantSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+
+        case_alias = self.kwargs.get("case_alias")
+        alias = self.kwargs.get("alias")
+        return Dependant.objects.filter(
+            applicant_details__case__alias=case_alias, applicant_details__alias=alias
+        )
+
+    def perform_create(self, serializer):
+
+        case_alias = self.kwargs.get("case_alias")
+        alias = self.kwargs.get("alias")
+
+        applicant_details = get_object_or_404(
+            ApplicantDetails,
+            case__alias=case_alias,
+            alias=alias,
+        )
+
+        serializer.save(applicant_details=applicant_details)

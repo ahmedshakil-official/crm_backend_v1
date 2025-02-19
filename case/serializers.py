@@ -3,7 +3,16 @@ from rest_framework import serializers
 
 from common.enums import UserTypeChoices, RoleChoices
 from organization.models import Organization, OrganizationUser
-from .models import Case, Files, JointUser, LoanDetails, ApplicantDetails, CompanyInfo
+from .models import (
+    Case,
+    Files,
+    JointUser,
+    LoanDetails,
+    ApplicantDetails,
+    CompanyInfo,
+    Dependant,
+    DirectorShareholder,
+)
 from authentication.models import User
 from common.serializers import (
     CommonUserSerializer,
@@ -439,4 +448,25 @@ class ApplicantDetailsSerializer(serializers.ModelSerializer):
             "updated_by",
             "case",
             "applicant",
+        ]
+
+
+class DependantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dependant
+        fields = [
+            "applicant_details",
+            "name",
+            "date_of_birth",
+        ]
+
+
+class DirectorShareholderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DirectorShareholder
+        fields = [
+            "company",
+            "full_name",
+            "percentage_share",
+            "role",
         ]

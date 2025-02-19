@@ -14,6 +14,7 @@ from .views import (
     CaseUserListViewOnlyApiView,
     ApplicantDetailsListApiView,
     ApplicantDetailsRetrieveUpdateApiView,
+    DependantListCreateApiView,
 )
 
 urlpatterns = [
@@ -72,5 +73,10 @@ urlpatterns = [
         "<uuid:case_alias>/applicant/details/<uuid:alias>/",
         ApplicantDetailsRetrieveUpdateApiView.as_view(),
         name="applicant-details-detail",
+    ),
+    path(
+        "<uuid:case_alias>/applicant/details/<uuid:alias>/dependant",
+        DependantListCreateApiView.as_view(),
+        name="dependant-list",
     ),
 ]
