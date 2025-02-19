@@ -14,7 +14,11 @@ from case.models import (
 admin.site.register(Case)
 admin.site.register(Files)
 admin.site.register(JointUser)
-admin.site.register(ApplicantDetails)
+
 admin.site.register(CompanyInfo)
 admin.site.register(Dependant)
 admin.site.register(DirectorShareholder)
+
+@admin.register(ApplicantDetails)
+class ApplicantDetailsAdmin(admin.ModelAdmin):
+    list_display = ("alias", "created_at", "updated_at", "applicant")
