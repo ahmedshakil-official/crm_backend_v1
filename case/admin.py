@@ -1,6 +1,14 @@
 from django.contrib import admin
 
-from case.models import Case, Files, JointUser, ApplicantDetails, CompanyInfo, Dependant, DirectorShareholder
+from case.models import (
+    Case,
+    Files,
+    JointUser,
+    ApplicantDetails,
+    CompanyInfo,
+    Dependant,
+    DirectorShareholder,
+)
 
 # Register your models here.
 admin.site.register(Case)

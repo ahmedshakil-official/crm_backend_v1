@@ -24,7 +24,8 @@ from .serializers import (
     FileSerializer,
     JointUserSerializer,
     CaseUserListSerializer,
-    LoanDetailsSerializer, ApplicantDetailsSerializer,
+    LoanDetailsSerializer,
+    ApplicantDetailsSerializer,
 )
 
 

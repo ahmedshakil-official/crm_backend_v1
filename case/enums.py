@@ -334,11 +334,11 @@ class CurrentLenderChoices(models.TextChoices):
     UNKNOWN_DEFAULT = "UNKNOWN_DEFAULT", _("Unknown (Default)")
 
 
-
 class TitleChoices(models.TextChoices):
     MR = "MR", _("Mr")
     MRS = "MRS", _("Mrs")
     MS = "MS", _("Ms")
+
 
 class GenderChoices(models.TextChoices):
     MALE = "MALE", _("Male")
@@ -356,6 +356,7 @@ class MaritalStatusChoices(models.TextChoices):
     CIVIL_PARTNER = "CIVIL_PARTNER", _("Civil Partner")
     RELIGIOUSLY_MARRIED = "RELIGIOUSLY_MARRIED", _("Religiously Married")
 
+
 class MarketingPreferencesChoices(models.TextChoices):
     EMAIL = "EMAIL", _("Email")
     TELEPHONE = "TELEPHONE", _("Telephone")
@@ -370,7 +371,10 @@ class ResidentialStatus(models.TextChoices):
     RENTING_LOCAL_AUTHORITY = "RENTING_LOCAL_AUTHORITY", _("Renting - Local Authority")
     TIED_ACCOMMODATION = "TIED_ACCOMMODATION", _("Tied Accommodation")
     LIVING_WITH_PARENTS = "LIVING_WITH_PARENTS", _("Living with Parents")
-    LIVING_WITH_FRIENDS_FAMILY = "LIVING_WITH_FRIENDS_FAMILY", _("Living with Friends/Family")
+    LIVING_WITH_FRIENDS_FAMILY = "LIVING_WITH_FRIENDS_FAMILY", _(
+        "Living with Friends/Family"
+    )
+
 
 class MortgageType(models.TextChoices):
     SECURED_LOAN = "SECURED_LOAN", _("Secured Loan (Applicant Commitments)")
@@ -378,7 +382,10 @@ class MortgageType(models.TextChoices):
     HOLIDAY_HOME = "HOLIDAY_HOME", _("Holiday Home (Applicant Commitments)")
     BUY_TO_LET = "BUY_TO_LET", _("Buy to Let (Applicant Mortgage Details)")
     HOLIDAY_LET = "HOLIDAY_LET", _("Holiday Let (Applicant Mortgage Details)")
-    COMMERCIAL_INVESTMENT = "COMMERCIAL_INVESTMENT", _("Commercial Investment (Applicant Mortgage Details)")
+    COMMERCIAL_INVESTMENT = "COMMERCIAL_INVESTMENT", _(
+        "Commercial Investment (Applicant Mortgage Details)"
+    )
+
 
 class RepaymentType(models.TextChoices):
     CAPITAL_INTEREST = "CAPITAL_INTEREST", _("Capital and Interest")
@@ -388,6 +395,7 @@ class RepaymentType(models.TextChoices):
     ROLLED_UP = "ROLLED_UP", _("Rolled Up")
     RETAINED = "RETAINED", _("Retained")
     OTHER = "OTHER", _("Other")
+
 
 class InterestType(models.TextChoices):
     FIXED = "FIXED", _("Fixed")
@@ -400,10 +408,12 @@ class InterestType(models.TextChoices):
     LIFETIME = "LIFETIME", _("Lifetime")
     OTHER = "OTHER", _("Other")
 
+
 class ERCCompletionStatus(models.TextChoices):
     NA = "NA", _("N/A")
     YES = "YES", _("Yes")
     NO = "NO", _("No")
+
 
 class PropertyType(models.TextChoices):
     HOUSE = "HOUSE", _("House")
@@ -417,19 +427,24 @@ class PropertyType(models.TextChoices):
     MULTI_UNIT_BLOCK = "MULTI_UNIT_BLOCK", _("Multi-Unit Block (MUB)")
     HMO = "HMO", _("HMO")
 
+
 class TenureType(models.TextChoices):
     FREEHOLD = "FREEHOLD", _("Freehold")
     LEASEHOLD = "LEASEHOLD", _("Leasehold")
     COMMONHOLD = "COMMONHOLD", _("Commonhold")
     FEUDAL = "FEUDAL", _("Feudal")
 
+
 class CompanyType(models.TextChoices):
     PRIVATE_LIMITED = "PRIVATE_LIMITED", _("Private Limited Company")
     PUBLIC_LIMITED = "PUBLIC_LIMITED", _("Public Limited Company")
     SOLE_TRADER = "SOLE_TRADER", _("Sole Trader")
     PARTNERSHIP = "PARTNERSHIP", _("Partnership")
-    LIMITED_LIABILITY_PARTNERSHIP = "LIMITED_LIABILITY_PARTNERSHIP", _("Limited Liability Partnership")
+    LIMITED_LIABILITY_PARTNERSHIP = "LIMITED_LIABILITY_PARTNERSHIP", _(
+        "Limited Liability Partnership"
+    )
     OTHER = "OTHER", _("Other")
+
 
 class RoleType(models.TextChoices):
     DIRECTOR = "DIRECTOR", _("Director")

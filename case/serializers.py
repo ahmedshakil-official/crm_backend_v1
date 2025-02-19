@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from common.enums import UserTypeChoices, RoleChoices
 from organization.models import Organization, OrganizationUser
-from .models import Case, Files, JointUser, LoanDetails
+from .models import Case, Files, JointUser, LoanDetails, ApplicantDetails, CompanyInfo
 from authentication.models import User
 from common.serializers import (
     CommonUserSerializer,
@@ -334,5 +334,106 @@ class LoanDetailsSerializer(serializers.ModelSerializer):
         ]
 
 
+class CompanyInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyInfo
+        fields = [
+            "company_name",
+            "company_registration_number",
+            "date_of_incorporation",
+            "company_type",
+            "trade_business_type",
+            "sic_code",
+            "is_spv",
+            "postcode",
+            "house_number_or_name",
+            "address_line1",
+            "city",
+            "county",
+            "country",
+        ]
+
+
 class ApplicantDetailsSerializer(serializers.ModelSerializer):
-    pass
+    company = CompanyInfoSerializer(read_only=True)
+
+    class Meta:
+        model = ApplicantDetails
+        fields = [
+            "alias",
+            "case",
+            "is_company_application",
+            "company",
+            "applicant",
+            "title",
+            "maiden_name",
+            "date_of_birth",
+            "anticipated_retirement_age",
+            "state_retirement_age",
+            "is_smoker",
+            "gender",
+            "nationality",
+            "dual_nationality",
+            "marital_status",
+            "ni_number",
+            "country_of_birth",
+            "bank_name",
+            "home_phone",
+            "mobile_phone",
+            "work_phone",
+            "email",
+            "marketing_preferences",
+            "has_dependants",
+            "number_of_dependants",
+            "date_of_arrival_uk",
+            "indefinite_right_to_reside",
+            "visa_details",
+            "visa_expiry_date",
+            "postcode",
+            "house_number_or_name",
+            "address_line1",
+            "city",
+            "county",
+            "country",
+            "effective_from",
+            "time_at_address_years",
+            "time_at_address_months",
+            "residential_status",
+            "current_mortgage_balance",
+            "property_value",
+            "owner_monthly_payment",
+            "lender",
+            "mortgage_start_date",
+            "mortgage_type",
+            "current_interest_rate",
+            "remaining_term",
+            "repayment_type",
+            "current_interest_type",
+            "early_repayment_charge_applies",
+            "erc_expiry_date",
+            "erc_amount",
+            "erc_being_paid",
+            "mortgage_account_number",
+            "being_redeemed",
+            "is_mortgage_portable",
+            "is_mortgage_being_ported",
+            "mortgage_not_to_complete_until_erc_ended",
+            "mortgage_charter_scheme",
+            "property_type",
+            "bedrooms",
+            "tenure",
+            "year_built",
+            "notes",
+            "updated_at",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "company",
+            "applicant",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "case",
+            "applicant",
+        ]
