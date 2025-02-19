@@ -294,7 +294,7 @@ class CaseUserListViewOnlyApiView(ListAPIView):
         return User.objects.filter(id__in=user_ids)
 
 
-class ApplicantDetailsListApiView(RetrieveUpdateAPIView):
+class ApplicantDetailsListApiView(ListAPIView):
 
     serializer_class = ApplicantDetailsSerializer
     permission_classes = [IsAuthenticated]
