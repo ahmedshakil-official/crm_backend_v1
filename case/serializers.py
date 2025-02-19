@@ -365,7 +365,7 @@ class CompanyInfoSerializer(serializers.ModelSerializer):
 
 
 class ApplicantDetailsSerializer(serializers.ModelSerializer):
-    company = CompanyInfoSerializer(read_only=True)
+
     nationality = CountryField(required=False, allow_blank=True, allow_null=True)
     applicant = CommonUserWithIdSerializer(read_only=True)
 
@@ -375,7 +375,6 @@ class ApplicantDetailsSerializer(serializers.ModelSerializer):
             "alias",
             "case",
             "is_company_application",
-            "company",
             "applicant",
             "title",
             "maiden_name",
@@ -441,7 +440,6 @@ class ApplicantDetailsSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "alias",
-            "company",
             "applicant",
             "updated_at",
             "created_by",

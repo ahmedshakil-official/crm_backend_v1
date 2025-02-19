@@ -349,27 +349,7 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
         return f"{self.application_type} - {self.mortgage_type if self.mortgage_type else 'No Mortgage Type'}"
 
 
-class CompanyInfo(models.Model):
-    company_name = models.CharField(max_length=255)
-    company_registration_number = models.CharField(max_length=50, unique=True)
-    date_of_incorporation = models.DateField(blank=True, null=True)
-    company_type = models.CharField(
-        max_length=50, choices=CompanyType.choices, default=CompanyType.PRIVATE_LIMITED
-    )
-    trade_business_type = models.CharField(max_length=255, blank=True, null=True)
-    sic_code = models.CharField(max_length=255, blank=True, null=True)
-    is_spv = models.BooleanField(default=False)
 
-    # Address fields
-    postcode = models.CharField(max_length=20, blank=True, null=True)
-    house_number_or_name = models.CharField(max_length=255, blank=True, null=True)
-    address_line1 = models.CharField(max_length=255, blank=True, null=True)
-    city = models.CharField(max_length=100, blank=True, null=True)
-    county = models.CharField(max_length=100, blank=True, null=True)
-    country = models.CharField(max_length=100, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.company_name} ({self.company_registration_number})"
 
 
 class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
@@ -379,13 +359,7 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
         related_name="applicant_details",
     )
     is_company_application = models.BooleanField(default=False)
-    company = models.OneToOneField(
-        CompanyInfo,
-        on_delete=models.CASCADE,
-        related_name="applicant_company",
-        null=True,
-        blank=True,
-    )
+
     applicant = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -499,6 +473,32 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.company} ({self.applicant})"
+
+
+class CompanyInfo(models.Model):
+    applicant_details = models.ForeignKey(
+        ApplicantDetails, on_delete=models.CASCADE, related_name="company"
+    )
+    company_name = models.CharField(max_length=255)
+    company_registration_number = models.CharField(max_length=50, unique=True)
+    date_of_incorporation = models.DateField(blank=True, null=True)
+    company_type = models.CharField(
+        max_length=50, choices=CompanyType.choices, default=CompanyType.PRIVATE_LIMITED
+    )
+    trade_business_type = models.CharField(max_length=255, blank=True, null=True)
+    sic_code = models.CharField(max_length=255, blank=True, null=True)
+    is_spv = models.BooleanField(default=False)
+
+    # Address fields
+    postcode = models.CharField(max_length=20, blank=True, null=True)
+    house_number_or_name = models.CharField(max_length=255, blank=True, null=True)
+    address_line1 = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    county = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.company_name} ({self.company_registration_number})"
 
 
 class Dependant(models.Model):
