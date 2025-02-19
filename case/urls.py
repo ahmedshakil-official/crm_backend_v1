@@ -75,7 +75,7 @@ urlpatterns = [
         name="applicant-details-detail",
     ),
     path(
-        "<uuid:case_alias>/applicant/details/<uuid:alias>/dependant",
+        "<uuid:case_alias>/applicant/details/<uuid:alias>/dependants",
         DependantListCreateApiView.as_view(),
         name="dependant-list",
     ),
