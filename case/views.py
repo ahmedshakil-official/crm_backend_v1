@@ -294,6 +294,16 @@ class CaseUserListViewOnlyApiView(ListAPIView):
         return User.objects.filter(id__in=user_ids)
 
 
+class ApplicantDetailsListApiView(RetrieveUpdateAPIView):
+
+    serializer_class = ApplicantDetailsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs.get("case_alias")
+        return ApplicantDetails.objects.filter(case__alias=case_alias)
+
+
 class ApplicantDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
     queryset = ApplicantDetails.objects.all()
     serializer_class = ApplicantDetailsSerializer

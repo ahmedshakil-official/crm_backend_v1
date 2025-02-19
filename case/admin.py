@@ -19,6 +19,7 @@ admin.site.register(CompanyInfo)
 admin.site.register(Dependant)
 admin.site.register(DirectorShareholder)
 
+
 @admin.register(ApplicantDetails)
 class ApplicantDetailsAdmin(admin.ModelAdmin):
     list_display = ("alias", "created_at", "updated_at", "applicant")
