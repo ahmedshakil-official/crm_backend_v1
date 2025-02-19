@@ -332,3 +332,7 @@ class LoanDetailsSerializer(serializers.ModelSerializer):
             "updated_by",
             "case",
         ]
+
+
+class ApplicantDetailsSerializer(serializers.ModelSerializer):
+    pass

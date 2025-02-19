@@ -325,6 +325,11 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
     case_summary = models.TextField(blank=True, null=True)
     accepted_or_declined_by_lender = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ["-created_at", "-updated_at"]
+        verbose_name = "Loan Detail"
+        verbose_name_plural = "Loan Details"
+
     def __str__(self):
         return f"{self.application_type} - {self.mortgage_type if self.mortgage_type else 'No Mortgage Type'}"
 
@@ -457,6 +462,10 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     )
     year_built = models.PositiveIntegerField(default=0)
     notes = models.TextField(blank=True, null=True)
+    class Meta:
+        ordering = ["-created_at", "-updated_at"]
+        verbose_name = "Applicant Detail"
+        verbose_name_plural = "Applicant Details"
 
     def __str__(self):
         return f"{self.company} ({self.applicant})"
@@ -467,6 +476,7 @@ class Dependant(models.Model):
     applicant_details = models.ForeignKey(ApplicantDetails, on_delete=models.CASCADE, related_name='dependants')
     name = models.CharField(max_length=255)
     date_of_birth = models.DateField(blank=True, null=True)
+
     def __str__(self):
         return f"{self.name} ({self.date_of_birth})"
 

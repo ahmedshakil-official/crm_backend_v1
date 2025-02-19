@@ -17,14 +17,14 @@ from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
 from .filter import CaseFilter, FileFilter
-from .models import Case, Files, JointUser, LoanDetails
+from .models import Case, Files, JointUser, LoanDetails, ApplicantDetails
 from .serializers import (
     CaseListCreateSerializer,
     CaseRetrieveUpdateDeleteSerializer,
     FileSerializer,
     JointUserSerializer,
     CaseUserListSerializer,
-    LoanDetailsSerializer,
+    LoanDetailsSerializer, ApplicantDetailsSerializer,
 )
 
 
@@ -291,3 +291,18 @@ class CaseUserListViewOnlyApiView(ListAPIView):
 
         # Return a QuerySet of User objects matching the collected IDs
         return User.objects.filter(id__in=user_ids)
+
+
+class ApplicantDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    queryset = ApplicantDetails.objects.all()
+    serializer_class = ApplicantDetailsSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "alias"
+
+    def get_object(self):
+        case_alias = self.kwargs.get("case_alias")
+        alias = self.kwargs.get("alias")
+        return get_object_or_404(ApplicantDetails, case__alias=case_alias, alias=alias)
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
