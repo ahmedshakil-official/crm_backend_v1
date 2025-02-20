@@ -444,7 +444,7 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     )
     erc_being_paid = models.BooleanField(default=False)
     mortgage_account_number = models.CharField(
-        max_length=50, unique=True, blank=True, null=True
+        max_length=50, blank=True, null=True
     )
     being_redeemed = models.BooleanField(default=False)
     is_mortgage_portable = models.BooleanField(default=False)
