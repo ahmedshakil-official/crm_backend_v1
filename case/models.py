@@ -530,7 +530,7 @@ class DirectorShareholder(models.Model):
         return f"{self.full_name} - {self.role} ({self.percentage_share}%)"
 
 
-class EmploymentDetails(models.Model):
+class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
         Case,
         on_delete=models.CASCADE,

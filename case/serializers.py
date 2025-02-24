@@ -389,6 +389,7 @@ class ApplicantDetailsSerializer(serializers.ModelSerializer):
             "gender",
             "nationality",
             "dual_nationality",
+            "dual_nationality_country",
             "marital_status",
             "ni_number",
             "country_of_birth",
