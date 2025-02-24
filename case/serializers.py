@@ -372,6 +372,7 @@ class ApplicantDetailsSerializer(serializers.ModelSerializer):
 
     nationality = CountryField(required=False, allow_blank=True, allow_null=True)
     applicant = CommonUserWithIdSerializer(read_only=True)
+    dual_nationality = CountryField(required=False, allow_blank=True, allow_null=True)
 
     class Meta:
         model = ApplicantDetails
