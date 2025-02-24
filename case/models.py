@@ -546,7 +546,7 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
         related_name="employment_details",
     )
     employment_status = models.CharField(
-        max_length=50, choices=EmploymentStatus.choices
+        max_length=50, choices=EmploymentStatus.choices, default=EmploymentStatus.EMPLOYED
     )
 
     # For 'Employed' only:
