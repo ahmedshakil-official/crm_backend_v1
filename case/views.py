@@ -26,6 +26,7 @@ from .models import (
     Dependant,
     CompanyInfo,
     DirectorShareholder,
+    EmploymentDetails,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -38,6 +39,7 @@ from .serializers import (
     DependantSerializer,
     CompanyInfoSerializer,
     DirectorShareholderSerializer,
+    EmploymentDetailsSerializer,
 )
 
 
@@ -418,3 +420,56 @@ class DirectorShareholderListCreateApiView(ListCreateAPIView):
 
         # Attach the company to the new DirectorShareholder record
         serializer.save(company=company)
+
+
+class EmploymentDetailsListApiView(ListAPIView):
+    """
+    Returns a list of all EmploymentDetails associated with a specific case.
+    """
+
+    serializer_class = EmploymentDetailsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        return EmploymentDetails.objects.filter(case__alias=case_alias)
+
+
+class EmploymentDetailsCreateApiView(CreateAPIView):
+    """
+    Creates a new EmploymentDetails record.
+    """
+
+    serializer_class = EmploymentDetailsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return EmploymentDetails.objects.all()
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        user_obj = get_object_or_404(User, pk=self.kwargs["pk"])
+        case_obj = get_object_or_404(Case, alias=case_alias)
+
+        serializer.save(
+            case=case_obj,
+            user=user_obj,
+            created_by=self.request.user,
+        )
+
+
+class EmploymentDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    """
+    Retrieve or update a single EmploymentDetails instance by its 'alias' field.
+    """
+
+    serializer_class = EmploymentDetailsSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "alias"
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        return EmploymentDetails.objects.filter(case__alias=case_alias)
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
