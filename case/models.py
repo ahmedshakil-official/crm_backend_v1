@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.functions import Lead
 from django.db.models.signals import post_save
 from django_countries.fields import CountryField
 from multiselectfield import MultiSelectField
@@ -53,6 +54,8 @@ from .signals import (
     create_loan_details,
     create_applicant_details,
     create_applicant_details_for_joint_user,
+    create_employment_details_for_lead,
+    create_employment_details_for_joint_user,
 )
 from .utils import upload_to_case_files
 
@@ -621,30 +624,24 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
     is_accounts_available = models.BooleanField(default=False)
 
     year1 = models.PositiveSmallIntegerField(
-        blank=True, null=True,
-        help_text="e.g. 2014"
+        blank=True, null=True, help_text="e.g. 2014"
     )
     year1_net_profit = models.PositiveIntegerField(
-        default=0,
-        help_text="Net profit for Year 1 (default is 0 if not provided)"
+        default=0, help_text="Net profit for Year 1 (default is 0 if not provided)"
     )
 
     year2 = models.PositiveSmallIntegerField(
-        blank=True, null=True,
-        help_text="e.g. 2013"
+        blank=True, null=True, help_text="e.g. 2013"
     )
     year2_net_profit = models.PositiveIntegerField(
-        default=0,
-        help_text="Net profit for Year 2"
+        default=0, help_text="Net profit for Year 2"
     )
 
     year3 = models.PositiveSmallIntegerField(
-        blank=True, null=True,
-        help_text="e.g. 2012"
+        blank=True, null=True, help_text="e.g. 2012"
     )
     year3_net_profit = models.PositiveIntegerField(
-        default=0,
-        help_text="Net profit for Year 3"
+        default=0, help_text="Net profit for Year 3"
     )
     accountant_name = models.CharField(max_length=255, blank=True, null=True)
     accountant_qualifications = models.CharField(max_length=255, blank=True, null=True)
@@ -690,3 +687,5 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
 post_save.connect(create_loan_details, sender=Case)
 post_save.connect(create_applicant_details, sender=Case)
 post_save.connect(create_applicant_details_for_joint_user, sender=JointUser)
+post_save.connect(create_employment_details_for_lead, sender=Case)
+post_save.connect(create_employment_details_for_joint_user, sender=JointUser)
