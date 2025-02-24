@@ -676,8 +676,6 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
         max_digits=12, decimal_places=2, blank=True, null=True
     )
 
-    class Meta:
-        unique_together = ("case", "user")
 
     def __str__(self):
         return f"{self.employment_status}"
