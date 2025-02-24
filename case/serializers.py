@@ -458,6 +458,7 @@ class DependantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dependant
         fields = [
+            "id",
             "applicant_details",
             "name",
             "date_of_birth",
@@ -471,6 +472,7 @@ class DirectorShareholderSerializer(serializers.ModelSerializer):
     class Meta:
         model = DirectorShareholder
         fields = [
+            "id",
             "company",
             "full_name",
             "percentage_share",
