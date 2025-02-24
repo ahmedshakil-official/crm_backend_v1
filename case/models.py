@@ -379,7 +379,8 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
         max_length=6, choices=GenderChoices.choices, default=GenderChoices.MALE
     )
     nationality = CountryField(blank_label="Select Country", blank=True, null=True)
-    dual_nationality = models.BooleanField(default=False)
+    is_dual_nationality = models.BooleanField(default=False)
+    dual_nationality = CountryField(blank_label="Select Country", blank=True, null=True)
     marital_status = models.CharField(
         max_length=30,
         choices=MaritalStatusChoices.choices,

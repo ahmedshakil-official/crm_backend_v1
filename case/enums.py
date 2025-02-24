@@ -338,6 +338,7 @@ class TitleChoices(models.TextChoices):
     MR = "MR", _("Mr")
     MRS = "MRS", _("Mrs")
     MS = "MS", _("Ms")
+    MISS = "MISS", _("Miss")
 
 
 class GenderChoices(models.TextChoices):
