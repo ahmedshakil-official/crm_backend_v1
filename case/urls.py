@@ -15,7 +15,8 @@ from .views import (
     ApplicantDetailsListApiView,
     ApplicantDetailsRetrieveUpdateApiView,
     DependantListCreateApiView,
-    CompanyInfoListCreateApiView, DirectorShareholderListCreateApiView,
+    CompanyInfoListCreateApiView,
+    DirectorShareholderListCreateApiView,
 )
 
 urlpatterns = [

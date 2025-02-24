@@ -450,3 +450,39 @@ class RoleType(models.TextChoices):
     DIRECTOR = "DIRECTOR", _("Director")
     SHAREHOLDER = "SHAREHOLDER", _("Share Holder")
     BOTH = "BOTH", _("Both")
+
+
+class EmploymentStatus(models.TextChoices):
+    EMPLOYED = "EMPLOYED", _("Employed")
+    SELF_EMPLOYED = "SELF_EMPLOYED", _("Self Employed")
+    RETIRED = "RETIRED", _("Retired")
+    OTHER = "OTHER", _("Other")
+    UNEMPLOYED = "UNEMPLOYED", _("Unemployed")
+    HOUSEPERSON = "HOUSEPERSON", _("Houseperson")
+    CONTRACTOR = "CONTRACTOR", _("Contractor")
+
+
+class EmploymentType(models.TextChoices):
+    PERMANENT = "PERMANENT", _("Permanent")
+    CONTRACT = "CONTRACT", _("Contract")
+    TEMPORARY = "TEMPORARY", _("Temporary")
+
+
+class FrequencyChoice(models.TextChoices):
+    NEVER = "NEVER", _("Never")
+    DAILY = "DAILY", _("Daily")
+    WEEKLY = "WEEKLY", _("Weekly")
+    BI_WEEKLY = "BI_WEEKLY", _("Bi Weekly")
+    MONTHLY = "MONTHLY", _("Monthly")
+    BI_MONTHLY = "BI_MONTHLY", _("Bi Monthly")
+    QUARTERLY = "QUARTERLY", _("Quarterly")
+    BI_ANNUALLY = "BI_ANNUALLY", _("Bi Annually")
+    ANNUALLY = "ANNUALLY", _("Annually")
+
+
+class CompanyTypeChoices(models.TextChoices):
+    SOLE_TRADER = "SOLE_TRADER", _("Sole Trader")
+    LIMITED_COMPANY = "LIMITED_COMPANY", _("Limited Company")
+    PARTNERSHIP = "PARTNERSHIP", _("Partnership")
+    LLP = "LLP", _("LLP")
+    INDIVIDUAL = "INDIVIDUAL", _("Individual")

@@ -44,6 +44,10 @@ from .enums import (
     TenureType,
     RoleType,
     CompanyType,
+    EmploymentStatus,
+    EmploymentType,
+    FrequencyChoice,
+    CompanyTypeChoices,
 )
 from .signals import (
     create_loan_details,
@@ -381,6 +385,9 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
         choices=MaritalStatusChoices.choices,
         default=MaritalStatusChoices.SINGLE,
     )
+    dual_nationality_country = CountryField(
+        blank_label="Select Country", blank=True, null=True
+    )
     ni_number = models.CharField(max_length=20, blank=True, null=True)
     country_of_birth = models.CharField(max_length=100, blank=True, null=True)
     bank_name = models.CharField(max_length=100, blank=True, null=True)
@@ -443,9 +450,7 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
         max_digits=10, decimal_places=2, null=True, blank=True
     )
     erc_being_paid = models.BooleanField(default=False)
-    mortgage_account_number = models.CharField(
-        max_length=50, blank=True, null=True
-    )
+    mortgage_account_number = models.CharField(max_length=50, blank=True, null=True)
     being_redeemed = models.BooleanField(default=False)
     is_mortgage_portable = models.BooleanField(default=False)
     is_mortgage_being_ported = models.BooleanField(default=False)
@@ -480,7 +485,9 @@ class CompanyInfo(models.Model):
     company_registration_number = models.CharField(max_length=50, unique=True)
     date_of_incorporation = models.DateField(blank=True, null=True)
     company_type = models.CharField(
-        max_length=50, choices=CompanyType.choices, default=CompanyType.PRIVATE_LIMITED
+        max_length=50,
+        choices=CompanyType.choices,
+        default=CompanyType.PRIVATE_LIMITED,
     )
     trade_business_type = models.CharField(max_length=255, blank=True, null=True)
     sic_code = models.CharField(max_length=255, blank=True, null=True)
@@ -521,6 +528,161 @@ class DirectorShareholder(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.role} ({self.percentage_share}%)"
+
+
+class EmploymentDetails(models.Model):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="employment_details",
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="employment_details",
+    )
+    employment_status = models.CharField(
+        max_length=50, choices=EmploymentStatus.choices
+    )
+
+    # For 'Employed' only:
+    employment_type = models.CharField(
+        max_length=50, choices=EmploymentType.choices, blank=True, null=True
+    )
+    occupation = models.CharField(max_length=255, blank=True, null=True)
+    industry = models.CharField(max_length=255, blank=True, null=True)
+    employer_name = models.CharField(max_length=255, blank=True, null=True)
+    employer_telephone = models.CharField(max_length=255, blank=True, null=True)
+    employer_email_for_reference = models.EmailField(blank=True, null=True)
+    employer_postcode = models.CharField(max_length=20, blank=True, null=True)
+    employer_house_name_or_number = models.CharField(
+        max_length=255, blank=True, null=True
+    )
+    employer_address_line_1 = models.CharField(max_length=255, blank=True, null=True)
+    employer_address_line_2 = models.CharField(max_length=255, blank=True, null=True)
+    employer_city = models.CharField(max_length=255, blank=True, null=True)
+    employer_county = models.CharField(max_length=255, blank=True, null=True)
+    employer_country = models.CharField(max_length=255, blank=True, null=True)
+    employment_commenced = models.DateField(blank=True, null=True)
+    employment_ended = models.DateField(blank=True, null=True)
+
+    gross_annual_income = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )
+    net_annual_income = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )
+
+    is_probationary_period = models.BooleanField(default=False)
+    is_income_in_foreign_currency = models.BooleanField(default=False)
+
+    bonus = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    is_bonus_guaranteed = models.BooleanField(default=False)
+    bonus_frequency = models.CharField(
+        max_length=50, choices=FrequencyChoice.choices, blank=True, null=True
+    )
+
+    overtime = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )
+    is_overtime_guaranteed = models.BooleanField(default=False)
+    overtime_frequency = models.CharField(
+        max_length=50, choices=FrequencyChoice.choices, blank=True, null=True
+    )
+
+    allowance = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )
+    is_allowance_guaranteed = models.BooleanField(default=False)
+    allowance_frequency = models.CharField(
+        max_length=50, choices=FrequencyChoice.choices, blank=True, null=True
+    )
+
+    # For 'Self-Employed' only:
+    business_name = models.CharField(max_length=255, blank=True, null=True)
+    business_telephone = models.CharField(max_length=255, blank=True, null=True)
+    business_house_name_or_number = models.CharField(
+        max_length=255, blank=True, null=True
+    )
+    business_postcode = models.CharField(max_length=20, blank=True, null=True)
+    business_address_line_1 = models.CharField(max_length=255, blank=True, null=True)
+    business_address_line_2 = models.CharField(max_length=255, blank=True, null=True)
+    business_city = models.CharField(max_length=255, blank=True, null=True)
+    business_county = models.CharField(max_length=255, blank=True, null=True)
+    business_country = models.CharField(max_length=255, blank=True, null=True)
+    job_title = models.CharField(max_length=255, blank=True, null=True)
+    company_type = models.CharField(
+        max_length=50, choices=CompanyType.choices, blank=True, null=True
+    )
+    percentage_of_business_owned = models.DecimalField(
+        max_digits=5, decimal_places=2, blank=True, null=True
+    )
+    is_accounts_available = models.BooleanField(default=False)
+
+    year1 = models.PositiveSmallIntegerField(
+        blank=True, null=True,
+        help_text="e.g. 2014"
+    )
+    year1_net_profit = models.PositiveIntegerField(
+        default=0,
+        help_text="Net profit for Year 1 (default is 0 if not provided)"
+    )
+
+    year2 = models.PositiveSmallIntegerField(
+        blank=True, null=True,
+        help_text="e.g. 2013"
+    )
+    year2_net_profit = models.PositiveIntegerField(
+        default=0,
+        help_text="Net profit for Year 2"
+    )
+
+    year3 = models.PositiveSmallIntegerField(
+        blank=True, null=True,
+        help_text="e.g. 2012"
+    )
+    year3_net_profit = models.PositiveIntegerField(
+        default=0,
+        help_text="Net profit for Year 3"
+    )
+    accountant_name = models.CharField(max_length=255, blank=True, null=True)
+    accountant_qualifications = models.CharField(max_length=255, blank=True, null=True)
+    salary = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    dividends = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )
+    turnover = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )
+
+    # For 'Retired':
+    further_details = models.TextField(blank=True, null=True)
+    income_source = models.CharField(max_length=255, blank=True, null=True)
+
+    # For 'Other':
+    other_income = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )
+    other_income_source = models.CharField(max_length=255, blank=True, null=True)
+    other_income_start_date = models.DateField(blank=True, null=True)
+
+    # For 'Contractor':
+    contractor_industry = models.CharField(max_length=255, blank=True, null=True)
+    current_contract_start = models.DateField(blank=True, null=True)
+    current_contract_end = models.DateField(blank=True, null=True)
+    time_contracting = models.CharField(max_length=255, blank=True, null=True)
+    day_rate = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )
+    hourly_rate = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )
+
+    class Meta:
+        unique_together = ("case", "user")
+
+    def __str__(self):
+        return f"{self.employment_status}"
 
 
 # Call all signals here.
