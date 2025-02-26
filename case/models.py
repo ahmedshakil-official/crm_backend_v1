@@ -603,6 +603,8 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
     )
 
     # For 'Self-Employed' only:
+    employment_time_year = models.PositiveIntegerField(blank=True, null=True, default=0)
+    employment_time_month = models.PositiveIntegerField(blank=True, null=True, default=0)
     business_name = models.CharField(max_length=255, blank=True, null=True)
     business_telephone = models.CharField(max_length=255, blank=True, null=True)
     business_house_name_or_number = models.CharField(

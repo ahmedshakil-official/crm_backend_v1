@@ -520,6 +520,8 @@ class EmploymentDetailsSerializer(serializers.ModelSerializer):
             "allowance",
             "is_allowance_guaranteed",
             "allowance_frequency",
+            "employment_time_year",
+            "employment_time_month",
             "business_name",
             "business_telephone",
             "business_house_name_or_number",
