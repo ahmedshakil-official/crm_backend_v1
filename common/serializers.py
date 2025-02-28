@@ -99,13 +99,12 @@ class CommonUserWithPasswordSerializer(UserCreateSerializer):
             "user_type",
         ]
 
+    def validate(self, attrs):
+        if not attrs.get("password"):
+            attrs["password"] = get_random_string(8)
+        return super().validate(attrs)
+
     def create(self, validated_data):
-        random_password = get_random_string(length=8)
-        validated_data["password"] = random_password
-        print("************************************")
-        print(validated_data["email"])
-        print(validated_data)
-        print("************************************")
         user = super().create(validated_data)
 
         return user
