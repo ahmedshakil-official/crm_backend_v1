@@ -6,6 +6,7 @@ from rest_framework.serializers import (
 from djoser.serializers import UserCreateSerializer
 
 from case.models import Case
+from case.utils import get_random_string
 from common.enums import UserTypeChoices, RoleChoices
 from common.models import User
 from organization.models import OrganizationUser, Organization
@@ -92,12 +93,18 @@ class CommonUserWithPasswordSerializer(UserCreateSerializer):
         fields = [
             "email",
             "phone",
-            "password",
             "first_name",
             "last_name",
             "profile_image",
             "user_type",
         ]
+
+    def create(self, validated_data):
+        random_password = get_random_string(length=8)
+        validated_data["password"] = random_password
+        user = super().create(validated_data)
+
+        return user
 
 
 class CommonOrganizationSerializer(serializers.ModelSerializer):
