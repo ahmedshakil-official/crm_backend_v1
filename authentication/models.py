@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin, CreatedAtUpdatedAtBaseModel):
     )
     first_name = models.CharField(max_length=64, blank=True)
     last_name = models.CharField(max_length=64, blank=True)
-    profile_image = TimestampThumbnailImageField(
+    profile_image = models.ImageField(
         upload_to="user/profile", blank=True, null=True
     )
 
