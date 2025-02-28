@@ -102,6 +102,10 @@ class CommonUserWithPasswordSerializer(UserCreateSerializer):
     def create(self, validated_data):
         random_password = get_random_string(length=8)
         validated_data["password"] = random_password
+        print("************************************")
+        print(validated_data["email"])
+        print(validated_data)
+        print("************************************")
         user = super().create(validated_data)
 
         return user
