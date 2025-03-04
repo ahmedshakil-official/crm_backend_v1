@@ -58,6 +58,15 @@ from .signals import (
     create_employment_details_for_joint_user,
 )
 from .utils import upload_to_case_files
+from .common import (
+    RegisterLoan,
+    PaymentCommitment,
+    PropertyRepossessed,
+    Bankrupt,
+    IndividualVoluntary,
+    DebtManagementPlan,
+    PayDayLoan,
+)
 
 
 class Case(CreatedAtUpdatedAtBaseModel):
@@ -546,7 +555,9 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
         related_name="employment_details",
     )
     employment_status = models.CharField(
-        max_length=50, choices=EmploymentStatus.choices, default=EmploymentStatus.EMPLOYED
+        max_length=50,
+        choices=EmploymentStatus.choices,
+        default=EmploymentStatus.EMPLOYED,
     )
 
     # For 'Employed' only:
@@ -604,7 +615,9 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
 
     # For 'Self-Employed' only:
     employment_time_year = models.PositiveIntegerField(blank=True, null=True, default=0)
-    employment_time_month = models.PositiveIntegerField(blank=True, null=True, default=0)
+    employment_time_month = models.PositiveIntegerField(
+        blank=True, null=True, default=0
+    )
     business_name = models.CharField(max_length=255, blank=True, null=True)
     business_telephone = models.CharField(max_length=255, blank=True, null=True)
     business_house_name_or_number = models.CharField(
@@ -678,9 +691,76 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
         max_digits=12, decimal_places=2, blank=True, null=True
     )
 
-
     def __str__(self):
         return f"{self.employment_status}"
+
+
+class Adverse(CreatedAtUpdatedAtBaseModel):
+    has_any_defaults_registered_in_the_last_six_years = models.BooleanField(
+        default=False
+    )
+    default_register = models.ForeignKey(
+        RegisterLoan,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="default_register",
+    )
+    has_any_ccj_registered_in_the_last_six_years = models.BooleanField(default=False)
+    ccj_register = models.ForeignKey(
+        RegisterLoan,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="ccj_register",
+    )
+    missed_any_payments_on_commitments_in_the_last_five_years = models.BooleanField(
+        default=False
+    )
+    payment_commitment = models.ForeignKey(
+        PaymentCommitment,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="payment_commitment",
+    )
+    is_a_property_repossessed = models.BooleanField(default=False)
+    property_repossessed = models.ForeignKey(
+        PropertyRepossessed,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="property_commitment",
+    )
+    has_ever_been_made_bankrupt = models.BooleanField(default=False)
+    bankrupt = models.ForeignKey(
+        Bankrupt,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="bankrupt",
+    )
+    is_ever_enter_into_a_debt_management_plan_or_debt_relief_order = (
+        models.BooleanField(default=False)
+    )
+    debt_management_plan = models.ForeignKey(
+        DebtManagementPlan,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="debt_management_plan",
+    )
+    is_ever_taken_out_a_pay_day_loan = models.BooleanField(default=False)
+    pay_day_loan = models.ForeignKey(
+        PayDayLoan, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    is_exceeded_your_overdraft_in_the_last_three_months = models.BooleanField(
+        default=False
+    )
+    is_direct_debit_returned_in_the_last_three_months = models.BooleanField(
+        default=False
+    )
+    why_did_the_adverse_occur = models.CharField(max_length=500, blank=True, null=True)
 
 
 # Call all signals here.

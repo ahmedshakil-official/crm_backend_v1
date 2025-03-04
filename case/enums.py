@@ -487,3 +487,33 @@ class CompanyTypeChoices(models.TextChoices):
     PARTNERSHIP = "PARTNERSHIP", _("Partnership")
     LLP = "LLP", _("LLP")
     INDIVIDUAL = "INDIVIDUAL", _("Individual")
+
+
+class CommitmentTypeChoices(models.TextChoices):
+    CREDIT_CARD = "credit_card", _("Credit Card")
+    STORE_CARD = "store_card", _("Store Card")
+    LOAN = "loan", _("Loan")
+    HP = "hp", _("HP")
+    OVERDRAFT = "overdraft", _("Overdraft")
+    STUDENT_LOAN = "student_loan", _("Student Loan")
+    MAINTENANCE = "maintenance", _("Maintenance")
+    LEASE = "lease", _("Lease")
+    UNSECURED = "unsecured", _("Unsecured")
+    MORTGATE_RENT = "mortgate/rent", _("Mortgate/Rent")
+    PUBLIC_UTILITY = "public_utility", _("Public Utility")
+    COMMUNICATIONS = "communications", _("Communications")
+    INSURANCE = "insurance", _("Insurance")
+    SECURED = "secured", _("Secured")
+    PCP = "pcp", _("PCP")
+    MAIL_ORDER = "mail _order", _("Mail Order")
+    CHILDCARE = "childcare", _("Childcare")
+    CAR_FINANCE = "car_finance", _("Car Finance")
+    BUY_NOW_PAY_LATER = "buy_now_pay_later(bnpl)", _("Buy Now Pay Later (BNPL)")
+    CREDIT_COMMITMENT = "credit_commitment", _("Credit Commitment")
+    DMP = "dmp", _("DMP")
+    UNKNOWN = "unknown", _("Unknown")
+
+
+class PlanChoices(models.TextChoices):
+    DIRECT = "DIRECT", _("Direct")
+    THIRD_PARTY = "THIRD_PARTY", _("Third Party")
