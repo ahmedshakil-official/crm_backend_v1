@@ -72,7 +72,6 @@ def create_employment_details_for_joint_user(sender, instance, created, **kwargs
         )
 
 
-
 @receiver(post_save, sender="case.Case")
 def create_adverse_for_lead(sender, instance, created, **kwargs):
     """

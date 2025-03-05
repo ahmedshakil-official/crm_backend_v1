@@ -20,6 +20,8 @@ from .views import (
     EmploymentDetailsListApiView,
     EmploymentDetailsCreateApiView,
     EmploymentDetailsRetrieveUpdateApiView,
+    AdverseListApiView,
+    AdverseRetrieveUpdateApiView,
 )
 
 urlpatterns = [
@@ -108,5 +110,15 @@ urlpatterns = [
         "<uuid:case_alias>/employment/details/<uuid:alias>/",
         EmploymentDetailsRetrieveUpdateApiView.as_view(),
         name="employment-details-detail",
+    ),
+    path(
+        "<uuid:case_alias>/adverse/",
+        AdverseListApiView.as_view(),
+        name="adverse-list",
+    ),
+    path(
+        "<uuid:case_alias>/adverse/<uuid:alias>/",
+        AdverseRetrieveUpdateApiView.as_view(),
+        name="adverse-detail",
     ),
 ]

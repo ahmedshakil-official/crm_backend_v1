@@ -27,6 +27,7 @@ from .models import (
     CompanyInfo,
     DirectorShareholder,
     EmploymentDetails,
+    Adverse,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -40,6 +41,7 @@ from .serializers import (
     CompanyInfoSerializer,
     DirectorShareholderSerializer,
     EmploymentDetailsSerializer,
+    AdverseSerializer,
 )
 
 
@@ -470,6 +472,33 @@ class EmploymentDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
     def get_queryset(self):
         case_alias = self.kwargs["case_alias"]
         return EmploymentDetails.objects.filter(case__alias=case_alias)
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+
+
+class AdverseListApiView(ListAPIView):
+
+    serializer_class = AdverseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs.get("case_alias")
+        return Adverse.objects.filter(case__alias=case_alias)
+
+
+class AdverseRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    """
+    Retrieve or update a single EmploymentDetails instance by its 'alias' field.
+    """
+
+    serializer_class = AdverseSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "alias"
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        return Adverse.objects.filter(case__alias=case_alias)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)

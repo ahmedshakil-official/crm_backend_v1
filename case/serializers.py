@@ -13,6 +13,7 @@ from .models import (
     Dependant,
     DirectorShareholder,
     EmploymentDetails,
+    Adverse,
 )
 from authentication.models import User
 from common.serializers import (
@@ -571,5 +572,42 @@ class EmploymentDetailsSerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
             "case",
+            "user",
+        ]
+
+
+class AdverseSerializer(serializers.ModelSerializer):
+    user = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = Adverse
+        fields = [
+            "alias",
+            "user",
+            "has_any_defaults_registered_in_the_last_six_years",
+            "default_register",
+            "has_any_ccj_registered_in_the_last_six_years",
+            "ccj_register",
+            "missed_any_payments_on_commitments_in_the_last_five_years",
+            "payment_commitment",
+            "is_a_property_repossessed",
+            "property_repossessed",
+            "has_ever_been_made_bankrupt",
+            "bankrupt",
+            "is_ever_enter_into_a_debt_management_plan_or_debt_relief_order",
+            "debt_management_plan",
+            "is_ever_taken_out_a_pay_day_loan",
+            "pay_day_loan",
+            "is_exceeded_your_overdraft_in_the_last_three_months",
+            "is_direct_debit_returned_in_the_last_three_months",
+            "why_did_the_adverse_occur",
+        ]
+
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
             "user",
         ]
