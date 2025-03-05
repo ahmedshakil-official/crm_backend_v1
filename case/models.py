@@ -56,6 +56,8 @@ from .signals import (
     create_applicant_details_for_joint_user,
     create_employment_details_for_lead,
     create_employment_details_for_joint_user,
+    create_adverse_for_lead,
+    create_adverse_for_joint_user,
 )
 from .utils import upload_to_case_files
 from .common import (
@@ -771,3 +773,5 @@ post_save.connect(create_applicant_details, sender=Case)
 post_save.connect(create_applicant_details_for_joint_user, sender=JointUser)
 post_save.connect(create_employment_details_for_lead, sender=Case)
 post_save.connect(create_employment_details_for_joint_user, sender=JointUser)
+post_save.connect(create_adverse_for_lead, sender=Adverse)
+post_save.connect(create_adverse_for_joint_user, sender=JointUser)
