@@ -696,6 +696,8 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
 
 
 class Adverse(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="adverse")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="adverse_user")
     has_any_defaults_registered_in_the_last_six_years = models.BooleanField(
         default=False
     )

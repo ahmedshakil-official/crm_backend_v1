@@ -70,3 +70,34 @@ def create_employment_details_for_joint_user(sender, instance, created, **kwargs
             user=instance.joint_user,
             # Optionally set default values for some fields here
         )
+
+
+
+@receiver(post_save, sender="case.Case")
+def create_adverse_for_lead(sender, instance, created, **kwargs):
+    """
+    When a new Case is created, automatically create an EmploymentDetails record
+    for the 'lead' user.
+    """
+    if created:
+        Adverse = apps.get_model("adverse", "Adverse")
+        Adverse.objects.create(
+            case=instance,
+            user=instance.lead,
+            # Optionally set default values for some fields here
+        )
+
+
+@receiver(post_save, sender="case.JointUser")
+def create_adverse_for_joint_user(sender, instance, created, **kwargs):
+    """
+    When a new JointUser is created for a case, automatically create an EmploymentDetails
+    record for that joint user.
+    """
+    if created:
+        Adverse = apps.get_model("adverse", "Adverse")
+        Adverse.objects.create(
+            case=instance.case,
+            user=instance.joint_user,
+            # Optionally set default values for some fields here
+        )
