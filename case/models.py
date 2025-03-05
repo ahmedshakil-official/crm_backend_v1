@@ -48,7 +48,6 @@ from .enums import (
     EmploymentStatus,
     EmploymentType,
     FrequencyChoice,
-    CompanyTypeChoices,
 )
 from .signals import (
     create_loan_details,
@@ -60,15 +59,6 @@ from .signals import (
     create_adverse_for_joint_user,
 )
 from .utils import upload_to_case_files
-from .common import (
-    RegisterLoan,
-    PaymentCommitment,
-    PropertyRepossessed,
-    Bankrupt,
-    IndividualVoluntary,
-    DebtManagementPlan,
-    PayDayLoan,
-)
 
 
 class Case(CreatedAtUpdatedAtBaseModel):
@@ -493,7 +483,7 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
 
 
 class CompanyInfo(models.Model):
-    applicant_details = models.OneToOneField(
+    applicant_details = models.ForeignKey(
         ApplicantDetails, on_delete=models.CASCADE, related_name="company"
     )
     company_name = models.CharField(max_length=255)
@@ -705,61 +695,23 @@ class Adverse(CreatedAtUpdatedAtBaseModel):
     has_any_defaults_registered_in_the_last_six_years = models.BooleanField(
         default=False
     )
-    default_register = models.ForeignKey(
-        RegisterLoan,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="default_register",
-    )
+
     has_any_ccj_registered_in_the_last_six_years = models.BooleanField(default=False)
-    ccj_register = models.ForeignKey(
-        RegisterLoan,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="ccj_register",
-    )
+
     missed_any_payments_on_commitments_in_the_last_five_years = models.BooleanField(
         default=False
     )
-    payment_commitment = models.ForeignKey(
-        PaymentCommitment,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="payment_commitment",
-    )
+
     is_a_property_repossessed = models.BooleanField(default=False)
-    property_repossessed = models.ForeignKey(
-        PropertyRepossessed,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="property_commitment",
-    )
+
     has_ever_been_made_bankrupt = models.BooleanField(default=False)
-    bankrupt = models.ForeignKey(
-        Bankrupt,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="bankrupt",
-    )
+
     is_ever_enter_into_a_debt_management_plan_or_debt_relief_order = (
         models.BooleanField(default=False)
     )
-    debt_management_plan = models.ForeignKey(
-        DebtManagementPlan,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="debt_management_plan",
-    )
+
     is_ever_taken_out_a_pay_day_loan = models.BooleanField(default=False)
-    pay_day_loan = models.ForeignKey(
-        PayDayLoan, on_delete=models.SET_NULL, null=True, blank=True
-    )
+
     is_exceeded_your_overdraft_in_the_last_three_months = models.BooleanField(
         default=False
     )

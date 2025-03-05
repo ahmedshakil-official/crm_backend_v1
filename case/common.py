@@ -1,10 +1,16 @@
 from django.db import models
 
+from authentication.models import User
 from case.enums import CommitmentTypeChoices, PlanChoices
+from case.models import Adverse
 from common.models import CreatedAtUpdatedAtBaseModel
 
 
 class RegisterLoan(CreatedAtUpdatedAtBaseModel):
+    adverse = models.ForeignKey(
+        Adverse, on_delete=models.CASCADE, related_name="register"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="register_user")
     amount = models.DecimalField(decimal_places=2, max_digits=20)
     loan_company_name = models.CharField(max_length=200, null=True, blank=True)
     date_registered = models.DateField(null=True, blank=True)
@@ -16,6 +22,10 @@ class RegisterLoan(CreatedAtUpdatedAtBaseModel):
 
 
 class PaymentCommitment(CreatedAtUpdatedAtBaseModel):
+    adverse = models.ForeignKey(
+        Adverse, on_delete=models.CASCADE, related_name="payment_commitment"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payment_commitment_user")
     commitment_type = models.CharField(
         max_length=50,
         choices=CommitmentTypeChoices.choices,
@@ -44,6 +54,10 @@ class PaymentCommitment(CreatedAtUpdatedAtBaseModel):
 
 
 class PropertyRepossessed(CreatedAtUpdatedAtBaseModel):
+    adverse = models.ForeignKey(
+        Adverse, on_delete=models.CASCADE, related_name="property_repossessed"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="property_repossessed_user")
     lender = models.CharField(max_length=100, null=True, blank=True)
     date_of_registration = models.DateField(null=True, blank=True)
     date_of_satisfaction = models.DateField(null=True, blank=True)
@@ -60,6 +74,10 @@ class Bankrupt(CreatedAtUpdatedAtBaseModel):
 
 
 class IndividualVoluntary(CreatedAtUpdatedAtBaseModel):
+    adverse = models.ForeignKey(
+        Adverse, on_delete=models.CASCADE, related_name="individual_voluntary"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="individual_voluntary_user")
     date_registered = models.DateField(null=True, blank=True)
     outstanding_balance = models.DecimalField(
         decimal_places=2, max_digits=20, null=True, blank=True
@@ -72,6 +90,10 @@ class IndividualVoluntary(CreatedAtUpdatedAtBaseModel):
 
 
 class DebtManagementPlan(CreatedAtUpdatedAtBaseModel):
+    adverse = models.ForeignKey(
+        Adverse, on_delete=models.CASCADE, related_name="debt_management_plan"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="debt_management_plan_user")
     plan = models.CharField(
         max_length=20, choices=PlanChoices.choices, default=PlanChoices.DIRECT
     )
@@ -88,6 +110,10 @@ class DebtManagementPlan(CreatedAtUpdatedAtBaseModel):
 
 
 class PayDayLoan(CreatedAtUpdatedAtBaseModel):
+    adverse = models.ForeignKey(
+        Adverse, on_delete=models.CASCADE, related_name="payday_loan"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payday_loan_user")
     loan_amount = models.DecimalField(
         decimal_places=2, max_digits=20, null=True, blank=True
     )
@@ -95,3 +121,5 @@ class PayDayLoan(CreatedAtUpdatedAtBaseModel):
     has_the_pay_day_loan_been_repaid = models.BooleanField(default=False)
     date_repaid = models.DateField(null=True, blank=True)
     lender_name = models.CharField(max_length=200, null=True, blank=True)
+    class Meta:
+        ordering = ["-created_at", "-updated_at"]
