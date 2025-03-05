@@ -1,5 +1,6 @@
 from django.urls import path
 
+from .common import RegisterLoan
 from .models import LoanDetails
 from .views import (
     CaseListCreateApiView,
@@ -121,4 +122,39 @@ urlpatterns = [
         AdverseRetrieveUpdateApiView.as_view(),
         name="adverse-detail",
     ),
+    # path(
+    #     "<uuid:case_alias>/adverse/<uuid:alias>/register/loans/",
+    #     RegisterLoanListCreateApiView.as_view(),
+    #     name="register-loan-list-create",
+    # ),
+    # path(
+    #     "<uuid:case_alias>/adverse/<uuid:alias>/payment/commitments/",
+    #     PaymentCommitmentListCreateApiView.as_view(),
+    #     name="payment-commitment-list-create",
+    # ),
+    # path(
+    #     "<uuid:case_alias>/adverse/<uuid:alias>/property/repossessed/",
+    #     PropertyRepossessedListCreateApiView.as_view(),
+    #     name="property-repossessed-list-create",
+    # ),
+    # path(
+    #     "<uuid:case_alias>/adverse/<uuid:alias>/bankrupts/",
+    #     BankruptListCreateApiView.as_view(),
+    #     name="bankrupt-list-create",
+    # ),
+    # path(
+    #     "<uuid:case_alias>/adverse/<uuid:alias>/individual/voluntary/",
+    #     IndividualVoluntaryListCreateApiView.as_view(),
+    #     name="individual-voluntary-list-create",
+    # ),
+    # path(
+    #     "<uuid:case_alias>/adverse/<uuid:alias>/debt/management/",
+    #     DebtManagementPlanListCreateApiView.as_view(),
+    #     name="debt-management-list-create",
+    # ),
+    # path(
+    #     "<uuid:case_alias>/adverse/<uuid:alias>/pay/day/loan/",
+    #     PayDayLoanListCreateApiView.as_view(),
+    #     name="pay-day-loan-list-create",
+    # ),
 ]
