@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
+from .common import RegisterLoan, PaymentCommitment,PropertyRepossessed
 from .filter import CaseFilter, FileFilter
 from .models import (
     Case,
@@ -42,6 +43,8 @@ from .serializers import (
     DirectorShareholderSerializer,
     EmploymentDetailsSerializer,
     AdverseSerializer,
+    RegisterLoanSerializers,
+
 )
 
 
@@ -502,3 +505,60 @@ class AdverseRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
+class RegisterLoanListCreateApiView(ListCreateAPIView):
+    serializer_class = RegisterLoanSerializers
+    permission_classes = [IsAuthenticated]
+    lookup_field = "alias"
+
+    def get_queryset(self):
+        alias = self.kwargs["alias"]
+        return RegisterLoan.objects.filter(
+            adverse__alias=alias
+        )
+
+    def perform_create(self, serializer):
+
+        alias = self.kwargs["alias"]
+        adverse = get_object_or_404(Adverse, alias=alias)
+        # register_loan = get_object_or_404(
+        #     RegisterLoan,  adverse=adverse
+        # )
+        serializer.save(adverse=adverse, created_by=self.request.user)
+
+'''class PaymentCommitmentListCreateApiView(ListCreateAPIView):
+    serializer_class = PaymentCommitmentSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'alias'
+    
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        alias = self.kwargs["alias"]
+        return PaymentCommitment.objects.filter(
+            payment_commitment_case__alias=case_alias, 
+            payment_commitment__alias=alias
+        )
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        alias = self.kwargs["alias"]
+        payment_commitment = get_object_or_404(
+            PaymentCommitment,
+            case__alias=case_alias,
+            alias=alias
+        )
+        return serializer.save(payment_commitment=payment_commitment)
+
+class PropertyRepossessedListCreateApiView(ListCreateAPIView):
+    serializer_class = PropertyRepossessedSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'alias'
+    
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        alias = self.kwargs["alias"]
+        return PropertyRepossessed.objects.filter(
+            property_repossessed_case__alias=case_alias,
+            property_repossessed__alias=alias
+        )
+    
+    def perform_create(self, serializer):'''

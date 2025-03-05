@@ -3,6 +3,8 @@ from rest_framework import serializers
 
 from common.enums import UserTypeChoices, RoleChoices
 from organization.models import Organization, OrganizationUser
+from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed, Bankrupt, IndividualVoluntary, \
+    DebtManagementPlan, PayDayLoan
 from .models import (
     Case,
     Files,
@@ -604,3 +606,148 @@ class AdverseSerializer(serializers.ModelSerializer):
             "updated_by",
             "user",
         ]
+
+class RegisterLoanSerializers(serializers.ModelSerializer):
+    created_by = CommonUserSerializer(read_only=True)
+    updated_by = CommonUserSerializer(read_only=True)
+    class Meta:
+        model = RegisterLoan
+        fields = [
+            "alias",
+            "adverse",
+            "amount",
+            "loan_company_name",
+            "date_registered",
+            "has_satisfied",
+            "date_satisfied",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "adverse",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+"""class PaymentCommitmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentCommitment
+        fields = [
+            "alias",
+            "adverse",
+            "commitment_type",
+            "loan_company_name",
+            "date_cleared",
+            "missed_payments_in_the_last_three_months",
+            "missed_payments_in_the_last_twelve_months",
+            "missed_payments_in_the_last_twenty_four_months",
+            "missed_payments_in_the_last_thirty_six_months",
+            "missed_payments_in_the_last_sixty_months",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+class PropertyRepossessedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PropertyRepossessed
+        fields = [
+            "alias",
+            "adverse",
+            "lender",
+            "date_of_registration",
+            "date_of_satisfaction",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+class BankruptSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bankrupt
+        fields = [
+            "alias",
+            #"adverse",
+            "date_discharged",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+class IndividualVoluntarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IndividualVoluntary
+        fields = [
+            "alias",
+            "adverse",
+            "date_registered",
+            "outstanding_balance",
+            "satisfied",
+            "date_satisfied",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+class DebtManagementPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DebtManagementPlan
+        fields = [
+            "alias",
+            "adverse",
+            "plan",
+            "loan_company_name",
+            "date_registered",
+            "outstanding_balance",
+            "satisfied",
+            "date_satisfied",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+class PayDayLoanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PayDayLoan
+        fields = [
+            "alias",
+            "adverse",
+            "loan_amount",
+            "loan_date",
+            "has_the_pay_day_loan_been_repaid",
+            "date_repaid",
+            "lender_name",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+"""
