@@ -80,7 +80,7 @@ def create_adverse_for_lead(sender, instance, created, **kwargs):
     for the 'lead' user.
     """
     if created:
-        Adverse = apps.get_model("adverse", "Adverse")
+        Adverse = apps.get_model("case", "Adverse")
         Adverse.objects.create(
             case=instance,
             user=instance.lead,
@@ -95,7 +95,7 @@ def create_adverse_for_joint_user(sender, instance, created, **kwargs):
     record for that joint user.
     """
     if created:
-        Adverse = apps.get_model("adverse", "Adverse")
+        Adverse = apps.get_model("case", "Adverse")
         Adverse.objects.create(
             case=instance.case,
             user=instance.joint_user,
