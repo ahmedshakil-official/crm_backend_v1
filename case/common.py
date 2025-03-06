@@ -1,5 +1,4 @@
 from django.db import models
-
 from authentication.models import User
 from case.enums import CommitmentTypeChoices, PlanChoices
 from case.models import Adverse

@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from common.enums import UserTypeChoices, RoleChoices
 from organization.models import Organization, OrganizationUser
+from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed, Bankrupt
 from .models import (
     Case,
     Files,
@@ -604,3 +605,36 @@ class AdverseSerializer(serializers.ModelSerializer):
             "updated_by",
             "user",
         ]
+
+# Serializer for RegisterLoan..
+class RegisterLoanSerializer(serializers.ModelSerializer):
+    created_at = CommonUserWithIdSerializer(read_only=True)
+    updated_at = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = RegisterLoan
+        fields =[
+            "alias",
+            "adverse",
+            "amount",
+            "loan_company_name",
+            "date_registered",
+            "has_satisfied",
+            "date_satisfied",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "user_ip",
+        ]
+        read_only_fields = [
+            "alias",
+            "adverse",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "user_ip",
+        ]
+
+
