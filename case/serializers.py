@@ -667,6 +667,30 @@ class PaymentCommitmentSerializer(serializers.ModelSerializer):
             "updated_by",
         ]
 
-
+# Serializer for PropertyRepossessed
+class PropertyRepossessedSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    class Meta:
+        model = PropertyRepossessed
+        fields = [
+            "alias",
+            "adverse",
+            "lender",
+            "date_of_registration",
+            "date_of_satisfaction",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "adverse",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
 
 
