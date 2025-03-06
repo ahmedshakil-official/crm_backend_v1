@@ -608,8 +608,8 @@ class AdverseSerializer(serializers.ModelSerializer):
 
 # Serializer for RegisterLoan..
 class RegisterLoanSerializer(serializers.ModelSerializer):
-    created_at = CommonUserWithIdSerializer(read_only=True)
-    updated_at = CommonUserWithIdSerializer(read_only=True)
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
 
     class Meta:
         model = RegisterLoan
@@ -625,7 +625,7 @@ class RegisterLoanSerializer(serializers.ModelSerializer):
             "updated_at",
             "created_by",
             "updated_by",
-            "user_ip",
+
         ]
         read_only_fields = [
             "alias",
@@ -634,7 +634,39 @@ class RegisterLoanSerializer(serializers.ModelSerializer):
             "updated_at",
             "created_by",
             "updated_by",
-            "user_ip",
         ]
+
+# Serializer for PaymentCommitment.
+class PaymentCommitmentSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    class Meta:
+        model = PaymentCommitment
+        fields = [
+            'alias',
+            'adverse',
+            'commitment_type',
+            'loan_company_name',
+            'date_cleared',
+            'missed_payments_in_the_last_three_months',
+            'missed_payments_in_the_last_twelve_months',
+            'missed_payments_in_the_last_twenty_four_months',
+            'missed_payments_in_the_last_thirty_six_months',
+            'missed_payments_in_the_last_sixty_months',
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "adverse",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+
 
 

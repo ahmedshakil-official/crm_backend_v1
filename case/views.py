@@ -43,7 +43,7 @@ from .serializers import (
     DirectorShareholderSerializer,
     EmploymentDetailsSerializer,
     AdverseSerializer,
-    RegisterLoanSerializer,
+    RegisterLoanSerializer, PaymentCommitmentSerializer,
 
 )
 
@@ -522,3 +522,14 @@ class RegisterLoanListCreateApiView(ListCreateAPIView):
 
 
 
+class PaymentCommitmentListCreateApiView(ListCreateAPIView):
+    serializer_class = PaymentCommitmentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        alias = self.kwargs.get("alias")
+        return PaymentCommitment.objects.filter(adverse__alias=alias)
+    def perform_create(self, serializer):
+        alias = self.kwargs["alias"]
+        adverse = get_object_or_404(Adverse, alias=alias)
+        serializer.save(adverse=adverse, created_by=self.request.user)
