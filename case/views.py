@@ -16,7 +16,8 @@ from rest_framework.response import Response
 from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
-from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed, Bankrupt, IndividualVoluntary
+from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed, Bankrupt, IndividualVoluntary, \
+    DebtManagementPlan
 from .filter import CaseFilter, FileFilter
 from .models import (
     Case,
@@ -44,7 +45,7 @@ from .serializers import (
     EmploymentDetailsSerializer,
     AdverseSerializer,
     RegisterLoanSerializer, PaymentCommitmentSerializer, PropertyRepossessedSerializer, BankruptSerializer,
-    IndividualVoluntarySerializer,
+    IndividualVoluntarySerializer, DebtManagementPlanSerializer,
 
 )
 
@@ -570,6 +571,19 @@ class IndividualVoluntaryListCreateApiView(ListCreateAPIView):
     def get_queryset(self):
         alias = self.kwargs.get("alias")
         return IndividualVoluntary.objects.filter(adverse__alias=alias)
+
+    def perform_create(self, serializer):
+        alias = self.kwargs["alias"]
+        adverse = get_object_or_404(Adverse, alias=alias)
+        serializer.save(adverse=adverse, created_by=self.request.user)
+
+class DebtManagementPlanListCreateApiView(ListCreateAPIView):
+    serializer_class = DebtManagementPlanSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        alias = self.kwargs.get("alias")
+        return DebtManagementPlan.objects.filter(adverse__alias=alias)
 
     def perform_create(self, serializer):
         alias = self.kwargs["alias"]

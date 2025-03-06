@@ -24,6 +24,7 @@ from .views import (
     AdverseListApiView,
     AdverseRetrieveUpdateApiView, RegisterLoanListCreateApiView, PaymentCommitmentListCreateApiView,
     PropertyRepossessedListCreateApiView, BankruptListCreateApiView, IndividualVoluntaryListCreateApiView,
+    DebtManagementPlanListCreateApiView,
 )
 
 urlpatterns = [
@@ -148,11 +149,11 @@ urlpatterns = [
         IndividualVoluntaryListCreateApiView.as_view(),
         name="individual-voluntary-list-create",
     ),
-    # path(
-    #     "<uuid:case_alias>/adverse/<uuid:alias>/debt/management/",
-    #     DebtManagementPlanListCreateApiView.as_view(),
-    #     name="debt-management-list-create",
-    # ),
+    path(
+        "<uuid:case_alias>/adverse/<uuid:alias>/debt/management/",
+        DebtManagementPlanListCreateApiView.as_view(),
+        name="debt-management-list-create",
+    ),
     # path(
     #     "<uuid:case_alias>/adverse/<uuid:alias>/pay/day/loan/",
     #     PayDayLoanListCreateApiView.as_view(),
