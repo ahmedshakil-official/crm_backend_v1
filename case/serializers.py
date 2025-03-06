@@ -694,3 +694,23 @@ class PropertyRepossessedSerializer(serializers.ModelSerializer):
         ]
 
 
+class BankruptSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    class Meta:
+        model = Bankrupt
+        fields = [
+            "alias",
+            "date_discharged",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
