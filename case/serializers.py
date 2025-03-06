@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from common.enums import UserTypeChoices, RoleChoices
 from organization.models import Organization, OrganizationUser
-from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed, Bankrupt
+from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed, Bankrupt, IndividualVoluntary
 from .models import (
     Case,
     Files,
@@ -701,6 +701,7 @@ class BankruptSerializer(serializers.ModelSerializer):
         model = Bankrupt
         fields = [
             "alias",
+            "adverse",
             "date_discharged",
             "created_at",
             "updated_at",
@@ -709,6 +710,33 @@ class BankruptSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "alias",
+            "adverse",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+class IndividualVoluntarySerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    class Meta:
+        model = IndividualVoluntary
+        fields = [
+            "alias",
+            "adverse",
+            "date_registered",
+            "outstanding_balance",
+            "satisfied",
+            "date_satisfied",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "adverse",
             "created_at",
             "updated_at",
             "created_by",
