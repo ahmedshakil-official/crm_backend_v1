@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
-from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed
+from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed, Bankrupt
 from .filter import CaseFilter, FileFilter
 from .models import (
     Case,
@@ -43,7 +43,7 @@ from .serializers import (
     DirectorShareholderSerializer,
     EmploymentDetailsSerializer,
     AdverseSerializer,
-    RegisterLoanSerializer, PaymentCommitmentSerializer, PropertyRepossessedSerializer,
+    RegisterLoanSerializer, PaymentCommitmentSerializer, PropertyRepossessedSerializer, BankruptSerializer,
 
 )
 
@@ -542,6 +542,20 @@ class PropertyRepossessedListCreateApiView(ListCreateAPIView):
     def get_queryset(self):
         alias = self.kwargs.get("alias")
         return PropertyRepossessed.objects.filter(adverse__alias=alias)
+
+    def perform_create(self, serializer):
+        alias = self.kwargs["alias"]
+        adverse = get_object_or_404(Adverse, alias=alias)
+        serializer.save(adverse=adverse, created_by=self.request.user)
+
+
+class BankruptListCreateApiView(ListCreateAPIView):
+    serializer_class = BankruptSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        alias = self.kwargs.get("alias")
+        return Bankrupt.objects.filter(adverse__alias=alias)
 
     def perform_create(self, serializer):
         alias = self.kwargs["alias"]

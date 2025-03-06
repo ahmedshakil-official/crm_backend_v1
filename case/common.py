@@ -66,6 +66,9 @@ class PropertyRepossessed(CreatedAtUpdatedAtBaseModel):
 
 
 class Bankrupt(CreatedAtUpdatedAtBaseModel):
+    adverse = models.ForeignKey(
+        Adverse, on_delete=models.CASCADE, related_name="bankrupt"
+    )
     date_discharged = models.DateField(null=True, blank=True)
 
     class Meta:
