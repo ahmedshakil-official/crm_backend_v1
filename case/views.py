@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
+from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed
 from .filter import CaseFilter, FileFilter
 from .models import (
     Case,
@@ -42,6 +43,8 @@ from .serializers import (
     DirectorShareholderSerializer,
     EmploymentDetailsSerializer,
     AdverseSerializer,
+    RegisterLoanSerializer,
+
 )
 
 
@@ -502,3 +505,20 @@ class AdverseRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
+# views for RegisterLoan
+class RegisterLoanListCreateApiView(ListCreateAPIView):
+    serializer_class = RegisterLoanSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        alias = self.kwargs.get("alias")
+        return RegisterLoan.objects.filter(adverse__alias=alias)
+
+    def perform_create(self, serializer):
+        alias = self.kwargs["alias"]
+        adverse = get_object_or_404(Adverse, alias=alias)
+        serializer.save(adverse=adverse, created_by=self.request.user)
+
+
+
