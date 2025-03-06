@@ -4,7 +4,7 @@ from rest_framework import serializers
 from common.enums import UserTypeChoices, RoleChoices
 from organization.models import Organization, OrganizationUser
 from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed, Bankrupt, IndividualVoluntary, \
-    DebtManagementPlan
+    DebtManagementPlan, PayDayLoan
 from .models import (
     Case,
     Files,
@@ -758,6 +758,33 @@ class DebtManagementPlanSerializer(serializers.ModelSerializer):
             "outstanding_balance",
             "satisfied",
             "date_satisfied",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "adverse",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+class PayDayLoanSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    class Meta:
+        model = PayDayLoan
+        fields = [
+            "alias",
+            "adverse",
+            "loan_amount",
+            "loan_date",
+            "has_the_pay_day_loan_been_repaid",
+            "date_repaid",
+            "lender_name",
             "created_at",
             "updated_at",
             "created_by",
