@@ -705,7 +705,7 @@ class Adverse(CreatedAtUpdatedAtBaseModel):
     is_a_property_repossessed = models.BooleanField(default=False)
 
     has_ever_been_made_bankrupt = models.BooleanField(default=False)
-
+    have_you_ever_entered_into_an_individual_voluntary_arrangement = models.BooleanField(default=False)
     is_ever_enter_into_a_debt_management_plan_or_debt_relief_order = (
         models.BooleanField(default=False)
     )
