@@ -591,6 +591,7 @@ class AdverseSerializer(serializers.ModelSerializer):
             "missed_any_payments_on_commitments_in_the_last_five_years",
             "is_a_property_repossessed",
             "has_ever_been_made_bankrupt",
+            "have_you_ever_entered_into_an_individual_voluntary_arrangement",
             "is_ever_enter_into_a_debt_management_plan_or_debt_relief_order",
             "is_ever_taken_out_a_pay_day_loan",
             "is_exceeded_your_overdraft_in_the_last_three_months",
