@@ -4,7 +4,7 @@ from rest_framework import serializers
 from common.enums import UserTypeChoices, RoleChoices
 from organization.models import Organization, OrganizationUser
 from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed, Bankrupt, IndividualVoluntary, \
-    DebtManagementPlan, PayDayLoan
+    DebtManagementPlan, PayDayLoan, CCJ
 from .models import (
     Case,
     Files,
@@ -636,6 +636,38 @@ class RegisterLoanSerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
         ]
+
+
+
+class CCJSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = CCJ
+        fields =[
+            "alias",
+            "adverse",
+            "amount",
+            "loan_company_name",
+            "date_registered",
+            "has_satisfied",
+            "date_satisfied",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+
+        ]
+        read_only_fields = [
+            "alias",
+            "adverse",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
 
 # Serializer for PaymentCommitment.
 class PaymentCommitmentSerializer(serializers.ModelSerializer):

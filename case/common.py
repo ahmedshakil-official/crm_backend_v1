@@ -20,6 +20,23 @@ class RegisterLoan(CreatedAtUpdatedAtBaseModel):
         ordering = ["-created_at", "-updated_at"]
 
 
+class CCJ(CreatedAtUpdatedAtBaseModel):
+    adverse = models.ForeignKey(
+        Adverse, on_delete=models.CASCADE, related_name="ccj"
+    )
+
+    amount = models.DecimalField(decimal_places=2, max_digits=20)
+    loan_company_name = models.CharField(max_length=200, null=True, blank=True)
+    date_registered = models.DateField(null=True, blank=True)
+    has_satisfied = models.BooleanField(default=False)
+    date_satisfied = models.DateField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at", "-updated_at"]
+
+
+
+
 class PaymentCommitment(CreatedAtUpdatedAtBaseModel):
     adverse = models.ForeignKey(
         Adverse, on_delete=models.CASCADE, related_name="payment_commitment"
