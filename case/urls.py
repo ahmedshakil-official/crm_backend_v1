@@ -173,7 +173,7 @@ urlpatterns = [
     ),
     path(
         "<uuid:case_alias>/properties",
-        propertyListCreateApiView.as_view(),
+        PropertyListCreateApiView.as_view(),
         name="property-list-create",
     ),
 ]
