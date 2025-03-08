@@ -172,7 +172,7 @@ urlpatterns = [
         name="pay-day-loan-list-create",
     ),
     path(
-        "<uuid:case_alias>/properties",
+        "<uuid:case_alias>/properties/",
         PropertyListCreateApiView.as_view(),
         name="property-list-create",
     ),

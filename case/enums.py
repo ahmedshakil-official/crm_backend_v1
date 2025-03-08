@@ -543,3 +543,7 @@ class EPCRatingChoices(models.TextChoices):
     E = "e", _("E")
     F = "f", _("F")
     G = "g", _("G")
+
+class UserTypeChoices(models.TextChoices):
+    Accountant = "Accountant", _("Accountant")
+    Solicitor = "Solicitor", _("Solicitor")

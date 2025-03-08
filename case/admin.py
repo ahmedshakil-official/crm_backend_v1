@@ -9,6 +9,7 @@ from case.models import (
     Dependant,
     DirectorShareholder,
     Adverse,
+Property
 )
 
 # Register your models here.
@@ -20,6 +21,7 @@ admin.site.register(CompanyInfo)
 admin.site.register(Dependant)
 admin.site.register(DirectorShareholder)
 admin.site.register(Adverse)
+admin.site.register(Property)
 
 
 @admin.register(ApplicantDetails)
