@@ -3,8 +3,16 @@ from rest_framework import serializers
 
 from common.enums import UserTypeChoices, RoleChoices
 from organization.models import Organization, OrganizationUser
-from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed, Bankrupt, IndividualVoluntary, \
-    DebtManagementPlan, PayDayLoan, CCJ
+from .common import (
+    RegisterLoan,
+    PaymentCommitment,
+    PropertyRepossessed,
+    Bankrupt,
+    IndividualVoluntary,
+    DebtManagementPlan,
+    PayDayLoan,
+    CCJ,
+)
 from .models import (
     Case,
     Files,
@@ -608,6 +616,7 @@ class AdverseSerializer(serializers.ModelSerializer):
             "user",
         ]
 
+
 # Serializer for RegisterLoan..
 class RegisterLoanSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
@@ -615,7 +624,7 @@ class RegisterLoanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RegisterLoan
-        fields =[
+        fields = [
             "alias",
             "adverse",
             "amount",
@@ -627,7 +636,6 @@ class RegisterLoanSerializer(serializers.ModelSerializer):
             "updated_at",
             "created_by",
             "updated_by",
-
         ]
         read_only_fields = [
             "alias",
@@ -639,14 +647,13 @@ class RegisterLoanSerializer(serializers.ModelSerializer):
         ]
 
 
-
 class CCJSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
 
     class Meta:
         model = CCJ
-        fields =[
+        fields = [
             "alias",
             "adverse",
             "amount",
@@ -658,7 +665,6 @@ class CCJSerializer(serializers.ModelSerializer):
             "updated_at",
             "created_by",
             "updated_by",
-
         ]
         read_only_fields = [
             "alias",
@@ -674,19 +680,20 @@ class CCJSerializer(serializers.ModelSerializer):
 class PaymentCommitmentSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = PaymentCommitment
         fields = [
-            'alias',
-            'adverse',
-            'commitment_type',
-            'loan_company_name',
-            'date_cleared',
-            'missed_payments_in_the_last_three_months',
-            'missed_payments_in_the_last_twelve_months',
-            'missed_payments_in_the_last_twenty_four_months',
-            'missed_payments_in_the_last_thirty_six_months',
-            'missed_payments_in_the_last_sixty_months',
+            "alias",
+            "adverse",
+            "commitment_type",
+            "loan_company_name",
+            "date_cleared",
+            "missed_payments_in_the_last_three_months",
+            "missed_payments_in_the_last_twelve_months",
+            "missed_payments_in_the_last_twenty_four_months",
+            "missed_payments_in_the_last_thirty_six_months",
+            "missed_payments_in_the_last_sixty_months",
             "created_at",
             "updated_at",
             "created_by",
@@ -701,10 +708,12 @@ class PaymentCommitmentSerializer(serializers.ModelSerializer):
             "updated_by",
         ]
 
+
 # Serializer for PropertyRepossessed
 class PropertyRepossessedSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = PropertyRepossessed
         fields = [
@@ -731,6 +740,7 @@ class PropertyRepossessedSerializer(serializers.ModelSerializer):
 class BankruptSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = Bankrupt
         fields = [
@@ -751,9 +761,11 @@ class BankruptSerializer(serializers.ModelSerializer):
             "updated_by",
         ]
 
+
 class IndividualVoluntarySerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = IndividualVoluntary
         fields = [
@@ -777,9 +789,11 @@ class IndividualVoluntarySerializer(serializers.ModelSerializer):
             "updated_by",
         ]
 
+
 class DebtManagementPlanSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = DebtManagementPlan
         fields = [
@@ -805,9 +819,11 @@ class DebtManagementPlanSerializer(serializers.ModelSerializer):
             "updated_by",
         ]
 
+
 class PayDayLoanSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = PayDayLoan
         fields = [

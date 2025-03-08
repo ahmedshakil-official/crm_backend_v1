@@ -16,8 +16,16 @@ from rest_framework.response import Response
 from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
-from .common import RegisterLoan, PaymentCommitment, PropertyRepossessed, Bankrupt, IndividualVoluntary, \
-    DebtManagementPlan, PayDayLoan, CCJ
+from .common import (
+    RegisterLoan,
+    PaymentCommitment,
+    PropertyRepossessed,
+    Bankrupt,
+    IndividualVoluntary,
+    DebtManagementPlan,
+    PayDayLoan,
+    CCJ,
+)
 from .filter import CaseFilter, FileFilter
 from .models import (
     Case,
@@ -44,9 +52,14 @@ from .serializers import (
     DirectorShareholderSerializer,
     EmploymentDetailsSerializer,
     AdverseSerializer,
-    RegisterLoanSerializer, PaymentCommitmentSerializer, PropertyRepossessedSerializer, BankruptSerializer,
-    IndividualVoluntarySerializer, DebtManagementPlanSerializer, PayDayLoanSerializer, CCJSerializer,
-
+    RegisterLoanSerializer,
+    PaymentCommitmentSerializer,
+    PropertyRepossessedSerializer,
+    BankruptSerializer,
+    IndividualVoluntarySerializer,
+    DebtManagementPlanSerializer,
+    PayDayLoanSerializer,
+    CCJSerializer,
 )
 
 
@@ -508,6 +521,7 @@ class AdverseRetrieveUpdateApiView(RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
+
 # views for RegisterLoan
 class RegisterLoanListCreateApiView(ListCreateAPIView):
     serializer_class = RegisterLoanSerializer
@@ -537,7 +551,6 @@ class CCJListCreateApiView(ListCreateAPIView):
         serializer.save(adverse=adverse, created_by=self.request.user)
 
 
-
 class PaymentCommitmentListCreateApiView(ListCreateAPIView):
     serializer_class = PaymentCommitmentSerializer
     permission_classes = [IsAuthenticated]
@@ -545,12 +558,14 @@ class PaymentCommitmentListCreateApiView(ListCreateAPIView):
     def get_queryset(self):
         alias = self.kwargs.get("alias")
         return PaymentCommitment.objects.filter(adverse__alias=alias)
+
     def perform_create(self, serializer):
         alias = self.kwargs["alias"]
         adverse = get_object_or_404(Adverse, alias=alias)
         serializer.save(adverse=adverse, created_by=self.request.user)
 
-#views for Property Repossessed
+
+# views for Property Repossessed
 class PropertyRepossessedListCreateApiView(ListCreateAPIView):
     serializer_class = PropertyRepossessedSerializer
     permission_classes = [IsAuthenticated]
@@ -578,6 +593,7 @@ class BankruptListCreateApiView(ListCreateAPIView):
         adverse = get_object_or_404(Adverse, alias=alias)
         serializer.save(adverse=adverse, created_by=self.request.user)
 
+
 class IndividualVoluntaryListCreateApiView(ListCreateAPIView):
     serializer_class = IndividualVoluntarySerializer
     permission_classes = [IsAuthenticated]
@@ -590,6 +606,7 @@ class IndividualVoluntaryListCreateApiView(ListCreateAPIView):
         alias = self.kwargs["alias"]
         adverse = get_object_or_404(Adverse, alias=alias)
         serializer.save(adverse=adverse, created_by=self.request.user)
+
 
 class DebtManagementPlanListCreateApiView(ListCreateAPIView):
     serializer_class = DebtManagementPlanSerializer
@@ -604,6 +621,7 @@ class DebtManagementPlanListCreateApiView(ListCreateAPIView):
         adverse = get_object_or_404(Adverse, alias=alias)
         serializer.save(adverse=adverse, created_by=self.request.user)
 
+
 class PayDayLoanListCreateApiView(ListCreateAPIView):
     serializer_class = PayDayLoanSerializer
     permission_classes = [IsAuthenticated]
@@ -616,3 +634,13 @@ class PayDayLoanListCreateApiView(ListCreateAPIView):
         alias = self.kwargs["alias"]
         adverse = get_object_or_404(Adverse, alias=alias)
         serializer.save(adverse=adverse, created_by=self.request.user)
+
+
+class PropertyListCreateApiView(ListCreateAPIView):
+    """
+    Remember some points:
+    1. It has foreign key with case
+    2. Many to many field with users. So property could be lead user from case model or joint users of this case.
+    3. request.user should be created_by.
+    """
+    pass

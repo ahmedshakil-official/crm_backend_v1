@@ -48,6 +48,8 @@ from .enums import (
     EmploymentStatus,
     EmploymentType,
     FrequencyChoice,
+    RateTypeChoices,
+    EPCRatingChoices,
 )
 from .signals import (
     create_loan_details,
@@ -705,7 +707,9 @@ class Adverse(CreatedAtUpdatedAtBaseModel):
     is_a_property_repossessed = models.BooleanField(default=False)
 
     has_ever_been_made_bankrupt = models.BooleanField(default=False)
-    have_you_ever_entered_into_an_individual_voluntary_arrangement = models.BooleanField(default=False)
+    have_you_ever_entered_into_an_individual_voluntary_arrangement = (
+        models.BooleanField(default=False)
+    )
     is_ever_enter_into_a_debt_management_plan_or_debt_relief_order = (
         models.BooleanField(default=False)
     )
@@ -719,6 +723,75 @@ class Adverse(CreatedAtUpdatedAtBaseModel):
         default=False
     )
     why_did_the_adverse_occur = models.CharField(max_length=500, blank=True, null=True)
+
+
+class Property(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="property",
+    )
+
+    applicant = models.ManyToManyField(
+        User,
+        related_name="applicant_property",
+    )
+    is_property_owner = models.BooleanField(default=False)
+    postcode = models.CharField(max_length=255)
+    house_name_or_number = models.CharField(max_length=255)
+    address_1 = models.CharField(max_length=255)
+    address_2 = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255)
+    county = models.CharField(max_length=255, null=True, blank=True)
+    country = models.CharField(max_length=255)
+
+    property_value = models.DecimalField(max_digits=12, decimal_places=2)
+    current_mortgage_balance = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    monthly_rental_income = models.DecimalField(max_digits=12, decimal_places=2)
+    monthly_mortgage_payment = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    value_at_purchase = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    date_purchased = models.DateField(null=True, blank=True)
+    is_hmo = models.BooleanField(default=False)
+    is_mufb = models.BooleanField(default=False)
+
+    mortgage_lender = models.CharField(max_length=255, null=True, blank=True)
+    repayment_type = models.CharField(max_length=255, null=True, blank=True)
+    to_be_repaid = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+
+    current_rate = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    rate_type = models.CharField(
+        max_length=255, choices=RateTypeChoices.choices, null=True, blank=True
+    )
+    current_rate_end_date = models.DateField(null=True, blank=True)
+    erc_end_date = models.DateField(null=True, blank=True)
+
+    account_number = models.CharField(max_length=255, null=True, blank=True)
+    property_type = models.CharField(max_length=255)
+    ownership = models.CharField(max_length=255)
+    leasehold = models.IntegerField(null=True, blank=True)  # Years
+    year_built = models.IntegerField(null=True, blank=True)
+    number_of_bedrooms = models.IntegerField()
+    remaining_mortgage_term = models.IntegerField(null=True, blank=True)  # Years
+    is_limited_company = models.BooleanField(default=False)
+    epc_rating = models.CharField(
+        max_length=255, choices=EPCRatingChoices.choices, null=True, blank=True
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"Property {self.alias} - {self.property_value} ({self.city}, {self.country})"
 
 
 # Call all signals here.

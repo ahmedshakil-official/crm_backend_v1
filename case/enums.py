@@ -517,3 +517,29 @@ class CommitmentTypeChoices(models.TextChoices):
 class PlanChoices(models.TextChoices):
     DIRECT = "DIRECT", _("Direct")
     THIRD_PARTY = "THIRD_PARTY", _("Third Party")
+
+
+class RateTypeChoices(models.TextChoices):
+    UNKNOWN = "unknown", _("Unknown")
+    FIXED = "fixed", _("Fixed")
+    VARIABLE = "variable", _("Variable")
+    TRACKER = "tracker", _("Tracker")
+    LIBOR_LINKED = "libor_linked", _("Libor Linked")
+    DISCOUNT = "discount", _("Discount")
+    CAPPED = "capped", _("Capped")
+    ALL = "all", _("All")
+    SVR = "svr", _("SVR")
+    OFFSET = "offset", _("Offset")
+    LIFETIME = "lifetime", _("Lifetime")
+    OTHER = "other", _("Other")
+
+
+class EPCRatingChoices(models.TextChoices):
+    UNKNOWN = "unknown", _("Unknown")
+    A = "a", _("A")
+    B = "b", _("B")
+    C = "c", _("C")
+    D = "d", _("D")
+    E = "e", _("E")
+    F = "f", _("F")
+    G = "g", _("G")

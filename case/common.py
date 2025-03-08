@@ -21,9 +21,7 @@ class RegisterLoan(CreatedAtUpdatedAtBaseModel):
 
 
 class CCJ(CreatedAtUpdatedAtBaseModel):
-    adverse = models.ForeignKey(
-        Adverse, on_delete=models.CASCADE, related_name="ccj"
-    )
+    adverse = models.ForeignKey(Adverse, on_delete=models.CASCADE, related_name="ccj")
 
     amount = models.DecimalField(decimal_places=2, max_digits=20)
     loan_company_name = models.CharField(max_length=200, null=True, blank=True)
@@ -33,8 +31,6 @@ class CCJ(CreatedAtUpdatedAtBaseModel):
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
-
-
 
 
 class PaymentCommitment(CreatedAtUpdatedAtBaseModel):
@@ -140,5 +136,6 @@ class PayDayLoan(CreatedAtUpdatedAtBaseModel):
     has_the_pay_day_loan_been_repaid = models.BooleanField(default=False)
     date_repaid = models.DateField(null=True, blank=True)
     lender_name = models.CharField(max_length=200, null=True, blank=True)
+
     class Meta:
         ordering = ["-created_at", "-updated_at"]
