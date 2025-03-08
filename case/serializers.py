@@ -24,6 +24,7 @@ from .models import (
     DirectorShareholder,
     EmploymentDetails,
     Adverse,
+    Property,
 )
 from authentication.models import User
 from common.serializers import (
@@ -37,7 +38,7 @@ from common.serializers import (
 
 class CaseListCreateSerializer(serializers.ModelSerializer):
     organization = CommonOrganizationSerializer(read_only=True)
-    lead_user = CommonUserSerializer(read_only=True, source="lead")
+    lead_user = CommonUserWithIdSerializer(read_only=True, source="lead")
     lead = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.none(),
         write_only=True,
@@ -93,7 +94,7 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
 
 class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
     organization = CommonOrganizationSerializer(read_only=True)
-    lead_user = CommonUserSerializer(read_only=True, source="lead")
+    lead_user = CommonUserWithIdSerializer(read_only=True, source="lead")
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
 
@@ -214,7 +215,7 @@ class FileSerializer(serializers.ModelSerializer):
 
 class JointUserSerializer(serializers.ModelSerializer):
     joint_user = CommonUserWithPasswordSerializer(write_only=True)
-    joint_user_details = CommonUserSerializer(read_only=True, source="joint_user")
+    joint_user_details = CommonUserWithIdSerializer(read_only=True, source="joint_user")
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
     case = CommonCaseSerializer(read_only=True)
@@ -847,3 +848,124 @@ class PayDayLoanSerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
         ]
+
+
+class PropertySerializer(serializers.ModelSerializer):
+    """Serializer for Property model."""
+
+    case = CommonCaseSerializer(read_only=True)
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    # Read-only: Shows applicant details
+    applicant = CommonUserWithIdSerializer(many=True, read_only=True)
+
+    # Write-only: Accepts list of applicant IDs
+    applicant_ids = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        many=True,
+        write_only=True,
+        source="applicant"
+    )
+
+    class Meta:
+        model = Property
+        fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "case",
+            "applicant",
+            "applicant_ids",
+            "is_property_owner",
+            "postcode",
+            "house_name_or_number",
+            "address_1",
+            "address_2",
+            "city",
+            "county",
+            "country",
+            "property_value",
+            "current_mortgage_balance",
+            "monthly_rental_income",
+            "monthly_mortgage_payment",
+            "value_at_purchase",
+            "date_purchased",
+            "is_hmo",
+            "is_mufb",
+            "mortgage_lender",
+            "repayment_type",
+            "to_be_repaid",
+            "current_rate",
+            "rate_type",
+            "current_rate_end_date",
+            "erc_end_date",
+            "account_number",
+            "property_type",
+            "ownership",
+            "leasehold",
+            "year_built",
+            "number_of_bedrooms",
+            "remaining_mortgage_term",
+            "is_limited_company",
+            "epc_rating",
+        ]
+        read_only_fields = [
+            "alias",
+            "case",
+            "created_at",
+            "updated_at"
+        ]
+
+    def validate_applicant_ids(self, value):
+        """Ensure applicants are only lead or joint users from the case"""
+
+        # Ensure that value is a list of integers, not a list of User objects
+        if any(isinstance(user, User) for user in value):
+            value = [user.id for user in value]  # Convert Users to IDs
+
+        case_alias = self.context["view"].kwargs.get("case_alias")
+        case = Case.objects.filter(alias=case_alias).first()
+
+        if not case:
+            raise serializers.ValidationError("Invalid case alias provided.")
+
+        # Get valid applicants (lead + joint users) as a set of IDs
+        valid_applicants = {case.lead.id}  # Lead user ID
+        valid_applicants.update(
+            JointUser.objects.filter(case=case).values_list("joint_user_id", flat=True)
+        )  # Joint user IDs
+
+        # Convert values to integer IDs (if necessary)
+        try:
+            input_applicant_ids = {int(user_id) for user_id in value}  # Ensure all IDs are integers
+        except (ValueError, TypeError):
+            raise serializers.ValidationError("Applicant IDs must be valid integers.")
+
+        # Check if all submitted IDs are valid
+        invalid_applicants = input_applicant_ids - valid_applicants
+
+        if invalid_applicants:
+            raise serializers.ValidationError(
+                f"Invalid applicant IDs: {list(invalid_applicants)}. "
+                f"Valid applicant IDs: {list(valid_applicants)}"
+            )
+
+        return value  # Return validated IDs
+
+    def create(self, validated_data):
+        """Ensure applicants are only lead or joint users from the case"""
+        applicant_ids = validated_data.pop("applicant", [])  # Source is "applicant"
+        property_instance = super().create(validated_data)
+        property_instance.applicant.set(applicant_ids)  # Correctly setting Many-to-Many field
+        return property_instance
+
+    def update(self, instance, validated_data):
+        """Allow updating applicant list if needed"""
+        applicant_ids = validated_data.pop("applicant", None)
+        instance = super().update(instance, validated_data)
+        if applicant_ids is not None:
+            instance.applicant.set(applicant_ids)
+        return instance

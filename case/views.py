@@ -38,6 +38,7 @@ from .models import (
     DirectorShareholder,
     EmploymentDetails,
     Adverse,
+    Property,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -60,6 +61,7 @@ from .serializers import (
     DebtManagementPlanSerializer,
     PayDayLoanSerializer,
     CCJSerializer,
+    PropertySerializer,
 )
 
 
@@ -643,4 +645,43 @@ class PropertyListCreateApiView(ListCreateAPIView):
     2. Many to many field with users. So property could be lead user from case model or joint users of this case.
     3. request.user should be created_by.
     """
-    pass
+
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Retrieve all properties for a given case."""
+        case = get_object_or_404(Case, alias=self.kwargs["case_alias"])
+        return Property.objects.filter(case=case)
+
+    def perform_create(self, serializer):
+        """Validate and create a new property entry."""
+        case = get_object_or_404(Case, alias=self.kwargs["case_alias"])
+
+        # Fetch valid applicants (lead + joint users)
+        valid_applicants = [case.lead.id]  # Lead user
+        joint_users = case.joint_users.values_list("joint_user_id", flat=True)  # Joint users
+        valid_applicants.extend(joint_users)
+
+        # Extract applicant list from request
+        applicant_ids = self.request.data.get("applicant_ids", [])  # FIXED HERE
+
+        # Validate that all provided applicants belong to the case
+        invalid_applicants = [
+            uid for uid in applicant_ids if uid not in valid_applicants
+        ]
+        if invalid_applicants:
+            return Response(
+                {"error": "Some applicants are not associated with this case."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Save the property with the validated applicants
+        property_instance = serializer.save(
+            case=case,
+            created_by=self.request.user,
+        )
+        property_instance.applicant.set(applicant_ids)  # FIXED HERE
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
