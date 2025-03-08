@@ -31,7 +31,7 @@ from .views import (
     IndividualVoluntaryListCreateApiView,
     DebtManagementPlanListCreateApiView,
     PayDayLoanListCreateApiView,
-    propertyListCreateApiView,
+    PropertyListCreateApiView,
 )
 
 urlpatterns = [
