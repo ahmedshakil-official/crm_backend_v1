@@ -801,6 +801,7 @@ class SolicitorAccountant(CreatedAtUpdatedAtBaseModel):
         on_delete=models.CASCADE,
         related_name="solicitor_accountant",
     )
+    name = models.CharField(max_length=255)
     user_type = models.CharField(choices=UserTypeChoices.choices, max_length=255, default=UserTypeChoices.Accountant)
     sra_number = models.CharField(max_length=255, null=True, blank=True)
     postcode = models.CharField(max_length=255)
