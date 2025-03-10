@@ -53,7 +53,8 @@ from .enums import (
     EPCRatingChoices,
     UserTypeChoices,
     PremiumPaymentChoices,
-    InTrustChoices, GuaranteedReviewableChoices, PolicyCancellationChoices,
+    InTrustChoices, GuaranteedReviewableChoices, PolicyCancellationChoices, TasksNotesChoices, CategoryChoices,
+    TaskPriorityChoices,
 )
 from .signals import (
     create_loan_details,
@@ -830,6 +831,11 @@ class SolicitorAccountant(CreatedAtUpdatedAtBaseModel):
 
 #existing-protection
 class ExistingProtection(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="existing_protection",
+    )
     have_any_existing_Protection_policies_in_place = models.BooleanField(default=False)
     policy_type = models.CharField(max_length=255, choices=ProductCategoryChoices.choices, null=True, blank=True)
     policy_provider = models.CharField(max_length=255, null=True, blank=True)
@@ -859,6 +865,29 @@ class ExistingProtection(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"ExistingProtection {self.alias} - {self.policy_type} - {self.policy_provider}"
+
+class Notes(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="notes_related",
+    )
+    note_task = models.CharField(max_length=255, choices=TasksNotesChoices.choices, default=TasksNotesChoices.NOTE)
+    note_visible_to_introducer = models.BooleanField(default=False)
+    note_visible_to_client = models.BooleanField(default=False)
+    category = models.CharField(max_length=255,choices=CategoryChoices.choices, null=True, blank=True)
+    task_priority = models.CharField(max_length=255,choices=TaskPriorityChoices.choices, null=True, blank=True)
+    due_date = models.DateTimeField(null=True, blank=True)
+    assigned_to = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"Notes {self.alias} - {self.note_task} - {self.note_visible_to_introducer}"
+
+
+
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
