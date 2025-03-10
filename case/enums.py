@@ -548,6 +548,7 @@ class UserTypeChoices(models.TextChoices):
     Accountant = "Accountant", _("Accountant")
     Solicitor = "Solicitor", _("Solicitor")
 
+
 class PolicyTypeChoices(models.TextChoices):
     LIFT_ASSURANCE_LEVEL = "LIFT_ASSURANCE_LEVEL", _("Lift Assurance Level")
     LIFT_ASSURANCE_DECREASING = "LIFT_ASSURANCE_DECREASING", _("Lift Assurance Decreasing")
@@ -577,3 +578,21 @@ class GuaranteedReviewableChoices(models.TextChoices):
 
 class PolicyCancellationChoices(models.TextChoices):
     NOT_VALUES_YET = "NOT_VALUES_YET", _("Not Values Yet")
+
+class TasksNotesChoices(models.TextChoices):
+    NOTE = "NOTE", _("Note")
+    TASK = "TASK", _("Task")
+
+class CategoryChoices(models.TextChoices):
+    UNCATEGORISED = "UNCATEGORISED", _("Uncategorised")
+    EMAIL_CORRESPONDENCE = "EMAIL_CORRESPONDENCE", _("Email Correspondence")
+    TELEPHONE_CONVERSATION = "TELEPHONE_CONVERSATION", _("Telephone Conversation")
+    LENDER_CORRESPONDENCE = "LENDER_CORRESPONDENCE", _("Lender Correspondence")
+    SOLICITOR_CORRESPONDENCE = "SOLICITOR_CORRESPONDENCE", _("Solicitor Correspondence")
+    COMPLIANCE_CORRESPONDENCE = "COMPLIANCE_CORRESPONDENCE", _("Compliance Correspondence")
+
+class TaskPriorityChoices(models.TextChoices):
+    LOW = "LOW", _("Low")
+    NORMAL = "NORMAL", _("Normal")
+    HIGH = "HIGH", _("High")
+    URGENT = "URGENT", _("Urgent")
