@@ -308,7 +308,7 @@ class LoanDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
 
 class CaseUserListViewOnlyApiView(ListAPIView):
-    serializer_class = CommonUserSerializer
+    serializer_class = CommonUserWithIdSerializer
 
     def get_queryset(self):
         # Retrieve the Case by alias from the URL
