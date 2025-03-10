@@ -547,3 +547,33 @@ class EPCRatingChoices(models.TextChoices):
 class UserTypeChoices(models.TextChoices):
     Accountant = "Accountant", _("Accountant")
     Solicitor = "Solicitor", _("Solicitor")
+
+class PolicyTypeChoices(models.TextChoices):
+    LIFT_ASSURANCE_LEVEL = "LIFT_ASSURANCE_LEVEL", _("Lift Assurance Level")
+    LIFT_ASSURANCE_DECREASING = "LIFT_ASSURANCE_DECREASING", _("Lift Assurance Decreasing")
+    CRITICAL_ILLNESS_COVER_DECREASING= "CRITICAL_ILLNESS_COVER_DECREASING", _("Critical_Illness_Cover_Decreasing")
+    MORTGAGE_PAYMENT_PROTECTION= "MORTGAGE_PAYMENT_PROTECTION", _("Mortgage Payment Protection")
+    BUILDINGS_AND_CONTENTS = "BUILDINGS_AND_CONTENTS", _("Buildings And Contents")
+    PRIVATE_PENSION = "PRIVATE_PENSION", _("Private Pension")
+    DEATH_IN_SERVICE_BENEFIT = "DEATH_IN_SERVICE_BENEFIT", _("Death In Service Benefit")
+    OTHER = "OTHER", _("Other")
+
+class  PremiumPaymentChoices(models.TextChoices):
+    MONTHLY = "MONTHLY", _("Monthly")
+    ANNUALLY = "ANNUALLY", _("Annually")
+
+class InTrustChoices(models.TextChoices):
+    NA = "NA", _("N/A")
+    YES = "YES", _("Yes")
+    NO = "NO", _("NO")
+    CLIENT_TO_ASCERTAIN = "CLIENT_TO_ASCERTAIN", _("Client To Ascertain")
+
+class GuaranteedReviewableChoices(models.TextChoices):
+    NA = "NA", _("N/A")
+    GUARANTEED = "GUARANTEED", _("Guaranteed")
+    REVIEWABLE = "REVIEWABLE", _("Reviewable")
+    CLIENT_TO_ASCERTAIN_AGE = "CLIENT_TO_ASCERTAIN_AGE", _("Client To Ascertain")
+    COSTED = "COSTED", _("Costed")
+
+class PolicyCancellationChoices(models.TextChoices):
+    NOT_VALUES_YET = "NOT_VALUES_YET", _("Not Values Yet")

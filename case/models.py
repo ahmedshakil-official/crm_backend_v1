@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.functions import Lead
 from django.db.models.signals import post_save
 from django_countries.fields import CountryField
+from django_filters.fields import ChoiceField
 from multiselectfield import MultiSelectField
 
 from authentication.models import User
@@ -49,7 +50,10 @@ from .enums import (
     EmploymentType,
     FrequencyChoice,
     RateTypeChoices,
-    EPCRatingChoices, UserTypeChoices,
+    EPCRatingChoices,
+    UserTypeChoices,
+    PremiumPaymentChoices,
+    InTrustChoices, GuaranteedReviewableChoices, PolicyCancellationChoices,
 )
 from .signals import (
     create_loan_details,
@@ -824,8 +828,37 @@ class SolicitorAccountant(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"SolicitorAccountant {self.alias} - {self.user_type} - {self.sra_number} ({self.city}, {self.country})"
 
+#existing-protection
+class ExistingProtection(CreatedAtUpdatedAtBaseModel):
+    have_any_existing_Protection_policies_in_place = models.BooleanField(default=False)
+    policy_type = models.CharField(max_length=255, choices=ProductCategoryChoices.choices, null=True, blank=True)
+    policy_provider = models.CharField(max_length=255, null=True, blank=True)
+    insurers_reference = models.CharField(max_length=255, null=True, blank=True)
+    sum_assured = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    premium = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    premium_payment_type = models.CharField(max_length=255, choices=PremiumPaymentChoices.choices, null=True, blank=True)
+    person_assured = models.CharField(max_length=255, null=True, blank=True)
+    in_trust = models.CharField(max_length=255, choices=InTrustChoices.choices, null=True, blank=True)
+    guaranteed_reviewable = models.CharField(max_length=255, choices=GuaranteedReviewableChoices.choices, null=True, blank=True)
+    remaining_policy_term = models.CharField(max_length=255, null=True, blank=True)
+    cancelled_lapsed_date = models.DateField(null=True, blank=True)
+    renewal_date = models.DateField(null=True, blank=True)
+    date_policy_started = models.DateField(null=True, blank=True)
+    waiver_of_premium = models.BooleanField(default=False)
+    indexation = models.BooleanField(default=False)
+    death_in_service_provision = models.BooleanField(default=False)
+    have_non_standard_terms_been_issued = models.BooleanField(default=False)
+    copy_and_paste_non_standard_terms_from_lender = models.TextField(null=True, blank=True)
+    will_this_policy_be_cancelled =models.BooleanField(default=False)
+    reason_for_policy_cancellation = models.CharField(max_length=255,choices=PolicyCancellationChoices.choices, null=True, blank=True)
+    policy_cancellation_notes = models.TextField(null=True, blank=True)
+    why_did_you_take_out_this_policy =models.TextField(null=True, blank=True)
 
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
 
+    def __str__(self):
+        return f"ExistingProtection {self.alias} - {self.policy_type} - {self.policy_provider}"
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
