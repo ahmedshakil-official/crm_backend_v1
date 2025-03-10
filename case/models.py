@@ -49,7 +49,7 @@ from .enums import (
     EmploymentType,
     FrequencyChoice,
     RateTypeChoices,
-    EPCRatingChoices,
+    EPCRatingChoices, UserTypeChoices,
 )
 from .signals import (
     create_loan_details,
@@ -792,6 +792,39 @@ class Property(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"Property {self.alias} - {self.property_value} ({self.city}, {self.country})"
+
+
+
+class SolicitorAccountant(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="solicitor_accountant",
+    )
+    name = models.CharField(max_length=255)
+    user_type = models.CharField(choices=UserTypeChoices.choices, max_length=255, default=UserTypeChoices.Accountant)
+    sra_number = models.CharField(max_length=255, null=True, blank=True)
+    postcode = models.CharField(max_length=255)
+    building_name_or_number = models.CharField(max_length=255, null=True, blank=True)
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    county = models.CharField(max_length=255, null=True, blank=True)
+    country = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=255, null=True, blank=True)
+    fax_number = models.CharField(max_length=255)
+    dx_number = models.CharField(max_length=255)
+    contact_name = models.CharField(max_length=255)
+    email_address = models.CharField(max_length=255, null=True, blank=True)
+    number_of_partners_in_firm = models.IntegerField(null=True, blank=True)
+    qualifications = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"SolicitorAccountant {self.alias} - {self.user_type} - {self.sra_number} ({self.city}, {self.country})"
+
+
 
 
 # Call all signals here.
