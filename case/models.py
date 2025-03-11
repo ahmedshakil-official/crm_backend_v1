@@ -55,7 +55,7 @@ from .enums import (
     PremiumPaymentChoices,
     InTrustChoices, GuaranteedReviewableChoices, PolicyCancellationChoices, TasksNotesChoices, CategoryChoices,
     TaskPriorityChoices, InitialRateTypeChoices, InitialRatePeriodTypeChoices, ProductClassChoices,
-    ArrangementFeeAddedToLoanChoices, BookingFeeAddedToLoanChoices,
+    ArrangementFeeAddedToLoanChoices, BookingFeeAddedToLoanChoices, DIPDecisionChoices,
 )
 from .signals import (
     create_loan_details,
@@ -928,6 +928,20 @@ class Product(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"Product {self.product_class} - {self.product_description}"
+
+class DipHistory(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="dip_history",
+    )
+    is_this_application_had_a_decision_in_principle = models.BooleanField(default=False)
+    notes = models.TextField(null=True, blank=True)
+    lender = models.CharField(max_length=255, choices=LenderChoices.choices, null=True, blank=True)
+    dip_date = models.DateField(null=True, blank=True)
+    dip_decision = models.CharField(max_length=255, choices=DIPDecisionChoices.choices, default=DIPDecisionChoices.ACCEPTED, null=True, blank=True)
+    dip_reference_number = models.CharField(max_length=20, null=True, blank=True)
+
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
