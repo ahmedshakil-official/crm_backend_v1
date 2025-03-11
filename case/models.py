@@ -917,6 +917,11 @@ class Product(CreatedAtUpdatedAtBaseModel):
     booking_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     booking_fee_added_to_loan = models.CharField(max_length=255, choices=BookingFeeAddedToLoanChoices.choices, null=True, blank=True, default=BookingFeeAddedToLoanChoices.SELECT)
     procuration_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    processing_consent = models.BooleanField(default=False)
+    processing_consent_description = models.TextField(null=True, blank=True)
+    application_review = models.BooleanField(default=False)
+    application_review_description = models.TextField(null=True, blank=True)
+
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
