@@ -54,7 +54,8 @@ from .enums import (
     UserTypeChoices,
     PremiumPaymentChoices,
     InTrustChoices, GuaranteedReviewableChoices, PolicyCancellationChoices, TasksNotesChoices, CategoryChoices,
-    TaskPriorityChoices,
+    TaskPriorityChoices, InitialRateTypeChoices, InitialRatePeriodTypeChoices, ProductClassChoices,
+    ArrangementFeeAddedToLoanChoices, BookingFeeAddedToLoanChoices,
 )
 from .signals import (
     create_loan_details,
@@ -885,6 +886,37 @@ class Notes(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"Notes {self.alias} - {self.note_task} - {self.note_visible_to_introducer}"
 
+class Product(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="products",
+    )
+    product_description = models.TextField()
+    initial_rate = models.DecimalField(max_digits=12, decimal_places=2)
+    initial_rate_type = models.CharField(max_length=255, choices=InitialRateTypeChoices.choices, default=InitialRateTypeChoices.PLEASE_SELECT_A_INITIAL_RATE_TYPE)
+    initial_rate_period_type = models.CharField(max_length=255, choices=InitialRatePeriodTypeChoices.choices, default=InitialRatePeriodTypeChoices.PLEASE_SELECT_A_INITIAL_RATE_PERIOD_TYPE)
+    reversion_rate =models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    initial_rate_period = models.PositiveIntegerField(null=True, blank=True)
+    initial_rate_date_period = models.DateField(null=True, blank=True)
+    max_ltv = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    annual_percentage_rate = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    product_class = models.CharField(max_length=255, choices=ProductClassChoices.choices, null=True, blank=True, default=ProductClassChoices.PLEASE_SELECT_A_PRODUCT_CLASS)
+    early_repayment_charge = models.PositiveIntegerField(null=True, blank=True)
+    early_repayment_charge_end_date = models.DateField(null=True, blank=True)
+    initial_monthly_payment = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    initial_monthly_payment_including_fees = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    monthly_payment_after_initial_Period = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    true_cost_over_initial_period = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    true_cost_over_term = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    true_cost_without_fees = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    loan_required_including_fees = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    arrangement_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    arrangement_fee_added_to_loan = models.CharField(max_length=255, choices=ArrangementFeeAddedToLoanChoices.choices, null=True, blank=True, default=ArrangementFeeAddedToLoanChoices.SELECT)
+    valuation_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    booking_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    booking_fee_added_to_loan = models.CharField(max_length=255, choices=BookingFeeAddedToLoanChoices.choices, null=True, blank=True, default=BookingFeeAddedToLoanChoices.SELECT)
+    procuration_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 
 
 
