@@ -918,7 +918,11 @@ class Product(CreatedAtUpdatedAtBaseModel):
     booking_fee_added_to_loan = models.CharField(max_length=255, choices=BookingFeeAddedToLoanChoices.choices, null=True, blank=True, default=BookingFeeAddedToLoanChoices.SELECT)
     procuration_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
 
+    def __str__(self):
+        return f"Product {self.alias} - {self.product_class} - {self.product_description}"
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
