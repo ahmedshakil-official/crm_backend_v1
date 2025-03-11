@@ -55,7 +55,8 @@ from .enums import (
     PremiumPaymentChoices,
     InTrustChoices, GuaranteedReviewableChoices, PolicyCancellationChoices, TasksNotesChoices, CategoryChoices,
     TaskPriorityChoices, InitialRateTypeChoices, InitialRatePeriodTypeChoices, ProductClassChoices,
-    ArrangementFeeAddedToLoanChoices, BookingFeeAddedToLoanChoices, DIPDecisionChoices,
+    ArrangementFeeAddedToLoanChoices, BookingFeeAddedToLoanChoices, DIPDecisionChoices, FeesChoices,
+    MethodChoices, FeesInFeeTypeChoices, FeesOutFeeTypeChoices,
 )
 from .signals import (
     create_loan_details,
@@ -947,6 +948,27 @@ class DipHistory(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"DipHistory {self.dip_decision} - {self.dip_date}"
+
+class Fees(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="fees",
+    )
+    fees = models.CharField(max_length=255, choices=FeesChoices.choices, null=True, blank=True)
+    amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    fee_in_type = models.CharField(max_length=255, choices=FeesInFeeTypeChoices.choices, default=FeesInFeeTypeChoices.UNKNOWN)
+    fee_out_type = models.CharField(max_length=255, choices=FeesOutFeeTypeChoices.choices, default=FeesOutFeeTypeChoices.UNKNOWN)
+    method = models.CharField(max_length=255, choices=MethodChoices.choices, default=MethodChoices.CREDIT_DEBIT_CARD)
+    notes = models.CharField(max_length=500, null=True, blank=True)
+    date_received = models.DateField(null=True, blank=True)
+    date_paid_out = models.DateField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"Fees {self.fees} - {self.amount}"
 
 
 # Call all signals here.
