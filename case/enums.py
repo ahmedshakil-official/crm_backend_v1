@@ -490,28 +490,28 @@ class CompanyTypeChoices(models.TextChoices):
 
 
 class CommitmentTypeChoices(models.TextChoices):
-    CREDIT_CARD = "credit_card", _("Credit Card")
-    STORE_CARD = "store_card", _("Store Card")
-    LOAN = "loan", _("Loan")
-    HP = "hp", _("HP")
-    OVERDRAFT = "overdraft", _("Overdraft")
-    STUDENT_LOAN = "student_loan", _("Student Loan")
-    MAINTENANCE = "maintenance", _("Maintenance")
-    LEASE = "lease", _("Lease")
-    UNSECURED = "unsecured", _("Unsecured")
-    MORTGATE_RENT = "mortgate/rent", _("Mortgate/Rent")
-    PUBLIC_UTILITY = "public_utility", _("Public Utility")
-    COMMUNICATIONS = "communications", _("Communications")
-    INSURANCE = "insurance", _("Insurance")
-    SECURED = "secured", _("Secured")
-    PCP = "pcp", _("PCP")
-    MAIL_ORDER = "mail _order", _("Mail Order")
-    CHILDCARE = "childcare", _("Childcare")
-    CAR_FINANCE = "car_finance", _("Car Finance")
-    BUY_NOW_PAY_LATER = "buy_now_pay_later(bnpl)", _("Buy Now Pay Later (BNPL)")
-    CREDIT_COMMITMENT = "credit_commitment", _("Credit Commitment")
-    DMP = "dmp", _("DMP")
-    UNKNOWN = "unknown", _("Unknown")
+    CREDIT_CARD = "CREDIT_CARD", _("Credit Card")
+    STORE_CARD = "STORE_CARD", _("Store Card")
+    LOAN = "LOAN", _("Loan")
+    HP = "HP", _("HP")
+    OVERDRAFT = "OVERDRAFT", _("Overdraft")
+    STUDENT_LOAN = "STUDENT_LOAN", _("Student Loan")
+    MAINTENANCE = "MAINTENANCE", _("Maintenance")
+    LEASE = "LEASE", _("Lease")
+    UNSECURED = "UNSECURED", _("Unsecured")
+    MORTGAGE_RENT = "MORTGAGE_RENT", _("Mortgage/Rent")
+    PUBLIC_UTILITY = "PUBLIC_UTILITY", _("Public Utility")
+    COMMUNICATIONS = "COMMUNICATIONS", _("Communications")
+    INSURANCE = "INSURANCE", _("Insurance")
+    SECURED = "SECURED", _("Secured")
+    PCP = "PCP", _("PCP")
+    MAIL_ORDER = "MAIL_ORDER", _("Mail Order")
+    CHILDCARE = "CHILDCARE", _("Childcare")
+    CAR_FINANCE = "CAR_FINANCE", _("Car Finance")
+    BUY_NOW_PAY_LATER = "BUY_NOW_PAY_LATER", _("Buy Now Pay Later (BNPL)")
+    CREDIT_COMMITMENT = "CREDIT_COMMITMENT", _("Credit Commitment")
+    DMP = "DMP", _("DMP")
+    UNKNOWN = "UNKNOWN", _("Unknown")
 
 
 class PlanChoices(models.TextChoices):
@@ -520,53 +520,61 @@ class PlanChoices(models.TextChoices):
 
 
 class RateTypeChoices(models.TextChoices):
-    UNKNOWN = "unknown", _("Unknown")
-    FIXED = "fixed", _("Fixed")
-    VARIABLE = "variable", _("Variable")
-    TRACKER = "tracker", _("Tracker")
-    LIBOR_LINKED = "libor_linked", _("Libor Linked")
-    DISCOUNT = "discount", _("Discount")
-    CAPPED = "capped", _("Capped")
-    ALL = "all", _("All")
-    SVR = "svr", _("SVR")
-    OFFSET = "offset", _("Offset")
-    LIFETIME = "lifetime", _("Lifetime")
-    OTHER = "other", _("Other")
+    UNKNOWN = "UNKNOWN", _("Unknown")
+    FIXED = "FIXED", _("Fixed")
+    VARIABLE = "VARIABLE", _("Variable")
+    TRACKER = "TRACKER", _("Tracker")
+    LIBOR_LINKED = "LIBOR_LINKED", _("Libor Linked")
+    DISCOUNT = "DISCOUNT", _("Discount")
+    CAPPED = "CAPPED", _("Capped")
+    ALL = "ALL", _("All")
+    SVR = "SVR", _("SVR")
+    OFFSET = "OFFSET", _("Offset")
+    LIFETIME = "LIFETIME", _("Lifetime")
+    OTHER = "OTHER", _("Other")
 
 
 class EPCRatingChoices(models.TextChoices):
-    UNKNOWN = "unknown", _("Unknown")
-    A = "a", _("A")
-    B = "b", _("B")
-    C = "c", _("C")
-    D = "d", _("D")
-    E = "e", _("E")
-    F = "f", _("F")
-    G = "g", _("G")
+    UNKNOWN = "UNKNOWN", _("Unknown")
+    A = "A", _("A")
+    B = "B", _("B")
+    C = "C", _("C")
+    D = "D", _("D")
+    E = "E", _("E")
+    F = "F", _("F")
+    G = "G", _("G")
+
 
 class UserTypeChoices(models.TextChoices):
-    Accountant = "Accountant", _("Accountant")
-    Solicitor = "Solicitor", _("Solicitor")
+    ACCOUNTANT = "ACCOUNTANT", _("Accountant")
+    SOLICITOR = "SOLICITOR", _("Solicitor")
+
 
 class PolicyTypeChoices(models.TextChoices):
     LIFT_ASSURANCE_LEVEL = "LIFT_ASSURANCE_LEVEL", _("Lift Assurance Level")
     LIFT_ASSURANCE_DECREASING = "LIFT_ASSURANCE_DECREASING", _("Lift Assurance Decreasing")
-    CRITICAL_ILLNESS_COVER_DECREASING= "CRITICAL_ILLNESS_COVER_DECREASING", _("Critical_Illness_Cover_Decreasing")
-    MORTGAGE_PAYMENT_PROTECTION= "MORTGAGE_PAYMENT_PROTECTION", _("Mortgage Payment Protection")
+    CRITICAL_ILLNESS_COVER_DECREASING = (
+        "CRITICAL_ILLNESS_COVER_DECREASING",
+        _("Critical Illness Cover Decreasing"),
+    )
+    MORTGAGE_PAYMENT_PROTECTION = "MORTGAGE_PAYMENT_PROTECTION", _("Mortgage Payment Protection")
     BUILDINGS_AND_CONTENTS = "BUILDINGS_AND_CONTENTS", _("Buildings And Contents")
     PRIVATE_PENSION = "PRIVATE_PENSION", _("Private Pension")
     DEATH_IN_SERVICE_BENEFIT = "DEATH_IN_SERVICE_BENEFIT", _("Death In Service Benefit")
     OTHER = "OTHER", _("Other")
 
-class  PremiumPaymentChoices(models.TextChoices):
+
+class PremiumPaymentChoices(models.TextChoices):
     MONTHLY = "MONTHLY", _("Monthly")
     ANNUALLY = "ANNUALLY", _("Annually")
+
 
 class InTrustChoices(models.TextChoices):
     NA = "NA", _("N/A")
     YES = "YES", _("Yes")
-    NO = "NO", _("NO")
+    NO = "NO", _("No")
     CLIENT_TO_ASCERTAIN = "CLIENT_TO_ASCERTAIN", _("Client To Ascertain")
+
 
 class GuaranteedReviewableChoices(models.TextChoices):
     NA = "NA", _("N/A")
@@ -574,6 +582,7 @@ class GuaranteedReviewableChoices(models.TextChoices):
     REVIEWABLE = "REVIEWABLE", _("Reviewable")
     CLIENT_TO_ASCERTAIN_AGE = "CLIENT_TO_ASCERTAIN_AGE", _("Client To Ascertain")
     COSTED = "COSTED", _("Costed")
+
 
 class PolicyCancellationChoices(models.TextChoices):
     NOT_VALUES_YET = "NOT_VALUES_YET", _("Not Values Yet")

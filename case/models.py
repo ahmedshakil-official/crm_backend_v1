@@ -421,7 +421,6 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     address_line1 = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     county = models.CharField(max_length=100, blank=True, null=True)
-    county = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     effective_from = models.DateField(blank=True, null=True)
     time_at_address_years = models.PositiveIntegerField(default=0)
@@ -806,7 +805,7 @@ class SolicitorAccountant(CreatedAtUpdatedAtBaseModel):
         related_name="solicitor_accountant",
     )
     name = models.CharField(max_length=255)
-    user_type = models.CharField(choices=UserTypeChoices.choices, max_length=255, default=UserTypeChoices.Accountant)
+    user_type = models.CharField(choices=UserTypeChoices.choices, max_length=255, default=UserTypeChoices.ACCOUNTANT)
     sra_number = models.CharField(max_length=255, null=True, blank=True)
     postcode = models.CharField(max_length=255)
     building_name_or_number = models.CharField(max_length=255, null=True, blank=True)
