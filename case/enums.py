@@ -644,3 +644,28 @@ class DIPDecisionChoices(models.TextChoices):
     ACCEPTED = "ACCEPTED", _("Accepted")
     DECLINED = "DECLINED", _("Declined")
     REFERED = "REFERED", _("Refered")
+
+class FeesChoices(models.TextChoices):
+    FEES_IN = "FEES_IN", _("Fees In")
+    FEES_OUT = "FEES_OUT", _("Fees Out")
+
+class FeesInFeeTypeChoices(models.TextChoices):
+    UNKNOWN = "UNKNOWN", _("Unknown")
+    BROKER_COMMITMENT_FEE = "BROKER_COMMITMENT_FEE", _("Broker Commit Fee")
+    PROCURATION_FEE = "PROCURATION_FEE", _("Procuration Fee")
+    MORTGAGE_OFFER_FEE = "MORTGAGE_OFFER_FEE", _("Mortgage Offer Fee")
+    BROKER_FEE = "BROKER_FEE", _("Broker Fee")
+    OTHER = "OTHER", _("Other")
+
+class MethodChoices(models.TextChoices):
+    CREDIT_DEBIT_CARD = "CREDIT_DEBIT_CARD", _("Credit Debit Card")
+    BACS = "BACS", _("BACS")
+    CHEQUE = "CHEQUE", _("Cheque")
+    CASH = "CASH", _("Cash")
+    ONLINE = "ONLINE", _("Online")
+    OTHER = "OTHER", _("Other")
+
+class FeesOutFeeTypeChoices(models.TextChoices):
+    UNKNOWN = "UNKNOWN", _("Unknown")
+    COMMISSION_PROC_FEE_SHARE = "COMMISSION_PROC_FEE_SHARE", _("Commission Proc Fee Share")
+
