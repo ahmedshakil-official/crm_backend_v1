@@ -605,3 +605,37 @@ class TaskPriorityChoices(models.TextChoices):
     NORMAL = "NORMAL", _("Normal")
     HIGH = "HIGH", _("High")
     URGENT = "URGENT", _("Urgent")
+
+class InitialRateTypeChoices(models.TextChoices):
+    PLEASE_SELECT_A_INITIAL_RATE_TYPE = "PLEASE_SELECT_A_INITIAL_RATE_TYPE", _("Please Select A Initial Rate Type")
+    FIXED = "FIXED", _("Fixed")
+    VARIABLE = "VARIABLE", _("Variable")
+    TRACKER = "TRACKER", _("Tracker")
+    DISCOUNTED = "DISCOUNTED", _("Discounted")
+    ALL = "ALL", _("All")
+
+class InitialRatePeriodTypeChoices(models.TextChoices):
+    PLEASE_SELECT_A_INITIAL_RATE_PERIOD_TYPE = "PLEASE_SELECT_A_INITIAL_RATE_PERIOD_TYPE", _("Please Select A Initial Rate Period Type")
+    MONTHS = "MONTHS", _("Months")
+    FIXED_DATE = "FIXED_DATE", _("Fixed Date")
+    END_OF_MORTGAGE_TERM = "END_OF_MORTGAGE_TERM", _("End of Mortgage Term")
+
+class ProductClassChoices(models.TextChoices):
+    PLEASE_SELECT_A_PRODUCT_CLASS ="PLEASE_SELECT_A_PRODUCT_CLASS", _("please Select A Product Class")
+    BTL = "BTL", _("BTL")
+    SECURED = "SECURED", _("Secured")
+    RESIDENTIAL = "RESIDENTIAL", _("Residential")
+    BRIDGING = "BRIDGING", _("Bridge")
+    COMMERCIAL = "COMMERCIAL", _("Commercial")
+    LET_TO_BUY = "LET_TO_BUY", _("Let To Buy")
+
+class ArrangementFeeAddedToLoanChoices(models.TextChoices):
+    SELECT = "SELECT", _("Select")
+    YES = "YES", _("Yes")
+    NO = "NO", _("No")
+
+class BookingFeeAddedToLoanChoices(models.TextChoices):
+    SELECT = "--SELECT--", _("--Select--")
+    NA = "NA", _("N/A")
+    YES = "YES", _("Yes")
+    NO = "NO", _("No")
