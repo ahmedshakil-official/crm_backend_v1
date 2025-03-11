@@ -639,3 +639,8 @@ class BookingFeeAddedToLoanChoices(models.TextChoices):
     NA = "NA", _("N/A")
     YES = "YES", _("Yes")
     NO = "NO", _("No")
+
+class DIPDecisionChoices(models.TextChoices):
+    ACCEPTED = "ACCEPTED", _("Accepted")
+    DECLINED = "DECLINED", _("Declined")
+    REFERED = "REFERED", _("Refered")

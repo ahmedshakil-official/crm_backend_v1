@@ -55,7 +55,7 @@ from .enums import (
     PremiumPaymentChoices,
     InTrustChoices, GuaranteedReviewableChoices, PolicyCancellationChoices, TasksNotesChoices, CategoryChoices,
     TaskPriorityChoices, InitialRateTypeChoices, InitialRatePeriodTypeChoices, ProductClassChoices,
-    ArrangementFeeAddedToLoanChoices, BookingFeeAddedToLoanChoices,
+    ArrangementFeeAddedToLoanChoices, BookingFeeAddedToLoanChoices, DIPDecisionChoices,
 )
 from .signals import (
     create_loan_details,
@@ -912,10 +912,10 @@ class Product(CreatedAtUpdatedAtBaseModel):
     true_cost_without_fees = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     loan_required_including_fees = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     arrangement_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    arrangement_fee_added_to_loan = models.CharField(max_length=255, choices=ArrangementFeeAddedToLoanChoices.choices, null=True, blank=True, default=ArrangementFeeAddedToLoanChoices.SELECT)
+    arrangement_fee_added_to_loan = models.CharField(max_length=255, choices=ArrangementFeeAddedToLoanChoices.choices, default=ArrangementFeeAddedToLoanChoices.SELECT)
     valuation_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     booking_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    booking_fee_added_to_loan = models.CharField(max_length=255, choices=BookingFeeAddedToLoanChoices.choices, null=True, blank=True, default=BookingFeeAddedToLoanChoices.SELECT)
+    booking_fee_added_to_loan = models.CharField(max_length=255, choices=BookingFeeAddedToLoanChoices.choices, default=BookingFeeAddedToLoanChoices.SELECT)
     procuration_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     processing_consent = models.BooleanField(default=False)
     processing_consent_description = models.TextField(null=True, blank=True)
@@ -928,6 +928,26 @@ class Product(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"Product {self.product_class} - {self.product_description}"
+
+class DipHistory(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="dip_history",
+    )
+    is_this_application_had_a_decision_in_principle = models.BooleanField(default=False)
+    notes = models.TextField(null=True, blank=True)
+    lender = models.CharField(max_length=255, choices=LenderChoices.choices, default=LenderChoices.ACCORD_MORTGAGES)
+    dip_date = models.DateField(null=True, blank=True)
+    dip_decision = models.CharField(max_length=255, choices=DIPDecisionChoices.choices, default=DIPDecisionChoices.ACCEPTED)
+    dip_reference_number = models.CharField(max_length=20, null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"DipHistory {self.dip_decision} - {self.dip_date}"
+
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
