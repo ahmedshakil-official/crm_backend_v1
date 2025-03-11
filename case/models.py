@@ -922,7 +922,7 @@ class Product(CreatedAtUpdatedAtBaseModel):
         ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
-        return f"Product {self.alias} - {self.product_class} - {self.product_description}"
+        return f"Product {self.product_class} - {self.product_description}"
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
