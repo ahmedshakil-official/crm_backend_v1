@@ -182,7 +182,7 @@ urlpatterns = [
         name='solicitors-list-create',
     ),
     path(
-        "<uuid:case_alias>/accountants/",
+        "accountants/",
         AccountantListCreateApiView.as_view(),
         name="accountant-list-create",
     )

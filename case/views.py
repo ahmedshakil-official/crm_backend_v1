@@ -698,6 +698,13 @@ class SolicitorListCreateApiView(ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user_type=UserTypeChoices.SOLICITOR, created_by=self.request.user)
 
+class AccountantListCreateApiView(ListCreateAPIView):
+    serializer_class = SolicitorAccountantSerializer
+    permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return SolicitorAccountant.objects.filter(user_type=UserTypeChoices.ACCOUNTANT)
 
+    def perform_create(self, serializer):
+        serializer.save(user_type=UserTypeChoices.ACCOUNTANT, created_by=self.request.user)
 
