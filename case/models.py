@@ -15,6 +15,7 @@ from common.enums import (
     FileTypeChoices,
     MeetingTypeChoices,
     MeetingStatusChoices,
+
 )
 from organization.models import Organization
 from .enums import (
@@ -56,7 +57,9 @@ from .enums import (
     InTrustChoices, GuaranteedReviewableChoices, PolicyCancellationChoices, TasksNotesChoices, CategoryChoices,
     TaskPriorityChoices, InitialRateTypeChoices, InitialRatePeriodTypeChoices, ProductClassChoices,
     ArrangementFeeAddedToLoanChoices, BookingFeeAddedToLoanChoices, DIPDecisionChoices, FeesChoices,
-    MethodChoices, FeesInFeeTypeChoices, FeesOutFeeTypeChoices,
+    MethodChoices, FeesInFeeTypeChoices, FeesOutFeeTypeChoices, SubTotalsTypeChoices, InsuranceTypeChoices,
+    LivingCostsTypeChoices, UnsecuredBorrowingTypeChoices, PriorityDebtTypeChoices, DebtRepaymentTypeChoices,
+    IncomeTypeChoices,
 )
 from .signals import (
     create_loan_details,
@@ -990,6 +993,185 @@ class Fees(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"Fees {self.fees} - {self.amount}"
+
+class Income(CreatedAtUpdatedAtBaseModel):
+    income_type = models.CharField(
+        max_length=255,
+        choices=IncomeTypeChoices.choices,
+        default=IncomeTypeChoices.CURRENT_INCOME
+    )
+    applicant_one_net_monthly_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    applicant_two_net_monthly_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    rental_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    part_time_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    jobseekers_allowance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    child_benefit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    tax_credits = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    working_tax_credits = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    maintenance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pension = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    other_benefits = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    total_income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"Income ({self.income_type}) - Total: £{self.total_income}"
+
+# Model for Debt Repayments
+class DebtRepayments(CreatedAtUpdatedAtBaseModel):
+    repayment_type = models.CharField(
+        max_length=50,
+        choices=DebtRepaymentTypeChoices.choices,
+        default=DebtRepaymentTypeChoices.CURRENT_DEBT_REPAYMENTS
+    )
+
+    mortgage_rent = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    second_mortgage = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    shared_ownership_rental = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    total_debt_repayment = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"Debt Repayments ({self.repayment_type}) - Total: £{self.total_debt_repayment}"
+
+
+class PriorityDebt(CreatedAtUpdatedAtBaseModel):
+    debt_type = models.CharField(
+        max_length=50,
+        choices=PriorityDebtTypeChoices.choices,
+        default=PriorityDebtTypeChoices.CURRENT_PRIORITY_DEBT
+    )
+
+    mortgage_arrears = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    gas_arrears = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    maintenance_arrears = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    defaults = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    ccjs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    debt_management_plans = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    magistrate_court_fines = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    council_tax_arrears = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    total_priority_debt = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"Priority Debt ({self.debt_type}) - Total: £{self.total_priority_debt}"
+
+
+# Model for Unsecured Borrowing
+class UnsecuredBorrowing(CreatedAtUpdatedAtBaseModel):
+    borrowing_type = models.CharField(
+        max_length=50,
+        choices=UnsecuredBorrowingTypeChoices.choices,
+        default=UnsecuredBorrowingTypeChoices.CURRENT_UNSECURED_BORROWING
+    )
+
+    credit_cards = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    loans = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    car_finance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    overdraft = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    store_cards = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    student_loans = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    other_borrowing = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    total_unsecured_borrowing = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"Unsecured Borrowing ({self.borrowing_type}) - Total: £{self.total_unsecured_borrowing}"
+
+
+class LivingCosts(CreatedAtUpdatedAtBaseModel):
+    cost_type = models.CharField(
+        max_length=50,
+        choices=LivingCostsTypeChoices.choices,
+        default=LivingCostsTypeChoices.CURRENT_LIVING_COSTS
+    )
+
+    electricity = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    gas = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    water = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    landline_mobile_phone = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    tv_license = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    council_tax = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    ground_rent_service_charges = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    buildings_contents = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    mortgage_payment_protection = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    endowment = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pension_contribution = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    childcare = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    maintenance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    food = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    car_maintenance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    fuel = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    public_transport = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    tv_broadband = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    recreation_holidays = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    clothing = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    medical_expenses = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    education = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    other_living_costs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    total_living_expenses = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"Living Costs ({self.cost_type}) - Total: £{self.total_living_expenses}"
+
+
+# Model for Insurances
+class Insurances(CreatedAtUpdatedAtBaseModel):
+    insurance_type = models.CharField(
+        max_length=50,
+        choices=InsuranceTypeChoices.choices,
+        default=InsuranceTypeChoices.CURRENT_INSURANCES
+    )
+
+    motor_insurance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    health_insurance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    payment_protection = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    life_insurance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    dental_insurance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    other_insurance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    total_insurance_expenses = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"Insurances ({self.insurance_type}) - Total: £{self.total_insurance_expenses}"
+
+
+class SubTotals(CreatedAtUpdatedAtBaseModel):
+    subtotal_type = models.CharField(
+        max_length=50,
+        choices=SubTotalsTypeChoices.choices,
+        default=SubTotalsTypeChoices.CURRENT_SUB_TOTALS
+    )
+
+    total_income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    total_debt_repayment = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    total_living_expenses = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    available_income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"SubTotals ({self.subtotal_type}) - Available Income: £{self.available_income}"
 
 
 # Call all signals here.

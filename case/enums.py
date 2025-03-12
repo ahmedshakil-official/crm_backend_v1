@@ -669,3 +669,30 @@ class FeesOutFeeTypeChoices(models.TextChoices):
     UNKNOWN = "UNKNOWN", _("Unknown")
     COMMISSION_PROC_FEE_SHARE = "COMMISSION_PROC_FEE_SHARE", _("Commission Proc Fee Share")
 
+class IncomeTypeChoices(models.TextChoices):
+    CURRENT_INCOME = "CurrentIncome", _("Current Income")
+    POST_COMPLETION_INCOME = "PostCompletionIncome", _("Post Completion Income")
+
+class DebtRepaymentTypeChoices(models.TextChoices):
+    CURRENT_DEBT_REPAYMENTS = "CurrentDebtRepayments", _("Current Debt Repayments")
+    POST_COMPLETION_DEBT_REPAYMENTS = "PostCompletionDebtRepayments", _("Post Completion Debt Repayments")
+
+class PriorityDebtTypeChoices(models.TextChoices):
+    CURRENT_PRIORITY_DEBT = "CurrentPriorityDebt", _("Current Priority Debt")
+    POST_COMPLETION_PRIORITY_DEBT = "PostCompletionPriorityDebt", _("Post Completion Priority Debt")
+
+class UnsecuredBorrowingTypeChoices(models.TextChoices):
+    CURRENT_UNSECURED_BORROWING = "CurrentUnsecuredBorrowing", _("Current Unsecured Borrowing")
+    POST_COMPLETION_UNSECURED_BORROWING = "PostCompletionUnsecuredBorrowing", _("Post Completion Unsecured Borrowing")
+
+class LivingCostsTypeChoices(models.TextChoices):
+    CURRENT_LIVING_COSTS = "CurrentLivingCosts", _("Current Living Costs")
+    POST_COMPLETION_LIVING_COSTS = "PostCompletionLivingCosts", _("Post Completion Living Costs")
+
+class InsuranceTypeChoices(models.TextChoices):
+    CURRENT_INSURANCES = "CurrentInsurances", _("Current Insurances")
+    POST_COMPLETION_INSURANCES = "PostCompletionInsurances", _("Post Completion Insurances")
+
+class SubTotalsTypeChoices(models.TextChoices):
+    CURRENT_SUB_TOTALS = "CurrentSubTotals", _("Current Sub Totals")
+    POST_COMPLETION_SUB_TOTALS = "PostCompletionSubTotals", _("Post Completion Sub Totals")
