@@ -24,7 +24,7 @@ from .models import (
     DirectorShareholder,
     EmploymentDetails,
     Adverse,
-    Property,
+    Property, SolicitorAccountant,
 )
 from authentication.models import User
 from common.serializers import (
@@ -969,3 +969,41 @@ class PropertySerializer(serializers.ModelSerializer):
         if applicant_ids is not None:
             instance.applicant.set(applicant_ids)
         return instance
+
+class SolicitorAccountantSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = SolicitorAccountant
+        fields = [
+            "alias",
+            "name",
+            "user_type",
+            "sra_number",
+            "postcode",
+            "building_name_or_number",
+            "street",
+            "city",
+            "county",
+            "country",
+            "phone_number",
+            "fax_number",
+            "dx_number",
+            "contact_name",
+            "email_address",
+            "number_of_partners_in_firm",
+            "qualifications",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "user_type",
+        ]

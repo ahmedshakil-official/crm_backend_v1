@@ -26,6 +26,7 @@ from .common import (
     PayDayLoan,
     CCJ,
 )
+from .enums import UserTypeChoices
 from .filter import CaseFilter, FileFilter
 from .models import (
     Case,
@@ -38,7 +39,7 @@ from .models import (
     DirectorShareholder,
     EmploymentDetails,
     Adverse,
-    Property,
+    Property, SolicitorAccountant,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -62,6 +63,7 @@ from .serializers import (
     PayDayLoanSerializer,
     CCJSerializer,
     PropertySerializer,
+    SolicitorAccountantSerializer,
 )
 
 
@@ -684,4 +686,18 @@ class PropertyListCreateApiView(ListCreateAPIView):
         property_instance.applicant.set(applicant_ids)  # FIXED HERE
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class SolicitorListCreateApiView(ListCreateAPIView):
+    serializer_class = SolicitorAccountantSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return SolicitorAccountant.objects.filter(user_type=UserTypeChoices.SOLICITOR)
+
+    def perform_create(self, serializer):
+        serializer.save(user_type=UserTypeChoices.SOLICITOR, created_by=self.request.user)
+
+
+
 

@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .common import RegisterLoan
-from .models import LoanDetails
+from .models import LoanDetails, SolicitorAccountant
 from .views import (
     CaseListCreateApiView,
     CaseRetrieveUpdateDeleteApiView,
@@ -31,7 +31,7 @@ from .views import (
     IndividualVoluntaryListCreateApiView,
     DebtManagementPlanListCreateApiView,
     PayDayLoanListCreateApiView,
-    PropertyListCreateApiView,
+    PropertyListCreateApiView, SolicitorListCreateApiView, AccountantListCreateApiView,
 )
 
 urlpatterns = [
@@ -176,4 +176,14 @@ urlpatterns = [
         PropertyListCreateApiView.as_view(),
         name="property-list-create",
     ),
+    path(
+        "solicitors/",
+        SolicitorListCreateApiView.as_view(),
+        name='solicitors-list-create',
+    ),
+    path(
+        "<uuid:case_alias>/accountants/",
+        AccountantListCreateApiView.as_view(),
+        name="accountant-list-create",
+    )
 ]
