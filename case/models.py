@@ -802,11 +802,7 @@ class Property(CreatedAtUpdatedAtBaseModel):
 
 
 class SolicitorAccountant(CreatedAtUpdatedAtBaseModel):
-    case = models.ForeignKey(
-        Case,
-        on_delete=models.CASCADE,
-        related_name="solicitor_accountant",
-    )
+
     name = models.CharField(max_length=255)
     user_type = models.CharField(choices=UserTypeChoices.choices, max_length=255, default=UserTypeChoices.ACCOUNTANT)
     sra_number = models.CharField(max_length=255, null=True, blank=True)
@@ -829,6 +825,31 @@ class SolicitorAccountant(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"SolicitorAccountant {self.alias} - {self.user_type} - {self.sra_number} ({self.city}, {self.country})"
+
+
+
+class CaseSolicitor(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="solicitor_case")
+    solicitor = models.ForeignKey(SolicitorAccountant, on_delete=models.CASCADE, related_name="solicitor_case_user")
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.solicitor} - {self.case}"
+
+
+class CaseAccountant(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="accountant_case")
+    accountant = models.ForeignKey(SolicitorAccountant, on_delete=models.CASCADE, related_name="accountant_case_user")
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.accountant} - {self.case}"
+
+
 
 #existing-protection
 class ExistingProtection(CreatedAtUpdatedAtBaseModel):
