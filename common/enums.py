@@ -122,32 +122,4 @@ class MeetingStatusChoices(models.TextChoices):
     ON_HOLD = "ON_HOLD", _("On Hold")
     SUCCESS = "SUCCESS", _("Success")
 
-class IncomeTypeChoices(models.TextChoices):
-    CURRENT = "CurrentIncome", "Current Income"
-    POST_COMPLETION = "PostCompletionIncome", "Post Completion Income"
-
-
-class DebtRepaymentTypeChoices(models.TextChoices):
-    CURRENT = "CurrentDebtRepayments", "Current Debt Repayments"
-    POST_COMPLETION = "PostCompletionDebtRepayments", "Post Completion Debt Repayments"
-
-class PriorityDebtTypeChoices(models.TextChoices):
-    CURRENT = "CurrentPriorityDebt", "Current Priority Debt"
-    POST_COMPLETION = "PostCompletionPriorityDebt", "Post Completion Priority Debt"
-
-class UnsecuredBorrowingTypeChoices(models.TextChoices):
-    CURRENT = "CurrentUnsecuredBorrowing", "Current Unsecured Borrowing"
-    POST_COMPLETION = "PostCompletionUnsecuredBorrowing", "Post Completion Unsecured Borrowing"
-
-class LivingCostsTypeChoices(models.TextChoices):
-    CURRENT = "CurrentLivingCosts", "Current Living Costs"
-    POST_COMPLETION = "PostCompletionLivingCosts", "Post Completion Living Costs"
-
-class InsuranceTypeChoices(models.TextChoices):
-    CURRENT = "CurrentInsurances", "Current Insurances"
-    POST_COMPLETION = "PostCompletionInsurances", "Post Completion Insurances"
-
-class SubTotalsTypeChoices(models.TextChoices):
-    CURRENT = "CurrentSubTotals", "Current Sub Totals"
-    POST_COMPLETION = "PostCompletionSubTotals", "Post Completion Sub Totals"
 

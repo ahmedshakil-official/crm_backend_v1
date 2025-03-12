@@ -14,8 +14,8 @@ from common.enums import (
     CaseStatusChoices,
     FileTypeChoices,
     MeetingTypeChoices,
-    MeetingStatusChoices, IncomeTypeChoices, DebtRepaymentTypeChoices, PriorityDebtTypeChoices,
-    UnsecuredBorrowingTypeChoices, LivingCostsTypeChoices, InsuranceTypeChoices, SubTotalsTypeChoices,
+    MeetingStatusChoices,
+
 )
 from organization.models import Organization
 from .enums import (
@@ -57,7 +57,9 @@ from .enums import (
     InTrustChoices, GuaranteedReviewableChoices, PolicyCancellationChoices, TasksNotesChoices, CategoryChoices,
     TaskPriorityChoices, InitialRateTypeChoices, InitialRatePeriodTypeChoices, ProductClassChoices,
     ArrangementFeeAddedToLoanChoices, BookingFeeAddedToLoanChoices, DIPDecisionChoices, FeesChoices,
-    MethodChoices, FeesInFeeTypeChoices, FeesOutFeeTypeChoices,
+    MethodChoices, FeesInFeeTypeChoices, FeesOutFeeTypeChoices, SubTotalsTypeChoices, InsuranceTypeChoices,
+    LivingCostsTypeChoices, UnsecuredBorrowingTypeChoices, PriorityDebtTypeChoices, DebtRepaymentTypeChoices,
+    IncomeTypeChoices,
 )
 from .signals import (
     create_loan_details,
@@ -992,11 +994,11 @@ class Fees(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"Fees {self.fees} - {self.amount}"
 
-class Income(models.Model):
+class Income(CreatedAtUpdatedAtBaseModel):
     income_type = models.CharField(
         max_length=255,
         choices=IncomeTypeChoices.choices,
-        default=IncomeTypeChoices.CURRENT
+        default=IncomeTypeChoices.CURRENT_INCOME
     )
     applicant_one_net_monthly_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     applicant_two_net_monthly_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -1013,17 +1015,17 @@ class Income(models.Model):
     total_income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
 
     class Meta:
-        ordering = ("-id",)
+        ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
         return f"Income ({self.income_type}) - Total: £{self.total_income}"
 
 # Model for Debt Repayments
-class DebtRepayments(models.Model):
+class DebtRepayments(CreatedAtUpdatedAtBaseModel):
     repayment_type = models.CharField(
         max_length=50,
         choices=DebtRepaymentTypeChoices.choices,
-        default=DebtRepaymentTypeChoices.CURRENT
+        default=DebtRepaymentTypeChoices.CURRENT_DEBT_REPAYMENTS
     )
 
     mortgage_rent = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -1033,17 +1035,17 @@ class DebtRepayments(models.Model):
     total_debt_repayment = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
 
     class Meta:
-        ordering = ("-id",)
+        ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
         return f"Debt Repayments ({self.repayment_type}) - Total: £{self.total_debt_repayment}"
 
 
-class PriorityDebt(models.Model):
+class PriorityDebt(CreatedAtUpdatedAtBaseModel):
     debt_type = models.CharField(
         max_length=50,
         choices=PriorityDebtTypeChoices.choices,
-        default=PriorityDebtTypeChoices.CURRENT
+        default=PriorityDebtTypeChoices.CURRENT_PRIORITY_DEBT
     )
 
     mortgage_arrears = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -1058,18 +1060,18 @@ class PriorityDebt(models.Model):
     total_priority_debt = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
 
     class Meta:
-        ordering = ("-id",)
+        ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
         return f"Priority Debt ({self.debt_type}) - Total: £{self.total_priority_debt}"
 
 
 # Model for Unsecured Borrowing
-class UnsecuredBorrowing(models.Model):
+class UnsecuredBorrowing(CreatedAtUpdatedAtBaseModel):
     borrowing_type = models.CharField(
         max_length=50,
         choices=UnsecuredBorrowingTypeChoices.choices,
-        default=UnsecuredBorrowingTypeChoices.CURRENT
+        default=UnsecuredBorrowingTypeChoices.CURRENT_UNSECURED_BORROWING
     )
 
     credit_cards = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -1083,17 +1085,17 @@ class UnsecuredBorrowing(models.Model):
     total_unsecured_borrowing = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
 
     class Meta:
-        ordering = ("-id",)
+        ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
         return f"Unsecured Borrowing ({self.borrowing_type}) - Total: £{self.total_unsecured_borrowing}"
 
 
-class LivingCosts(models.Model):
+class LivingCosts(CreatedAtUpdatedAtBaseModel):
     cost_type = models.CharField(
         max_length=50,
         choices=LivingCostsTypeChoices.choices,
-        default=LivingCostsTypeChoices.CURRENT
+        default=LivingCostsTypeChoices.CURRENT_LIVING_COSTS
     )
 
     electricity = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -1123,18 +1125,18 @@ class LivingCosts(models.Model):
     total_living_expenses = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
 
     class Meta:
-        ordering = ("-id",)
+        ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
         return f"Living Costs ({self.cost_type}) - Total: £{self.total_living_expenses}"
 
 
 # Model for Insurances
-class Insurances(models.Model):
+class Insurances(CreatedAtUpdatedAtBaseModel):
     insurance_type = models.CharField(
         max_length=50,
         choices=InsuranceTypeChoices.choices,
-        default=InsuranceTypeChoices.CURRENT
+        default=InsuranceTypeChoices.CURRENT_INSURANCES
     )
 
     motor_insurance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -1147,17 +1149,17 @@ class Insurances(models.Model):
     total_insurance_expenses = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
 
     class Meta:
-        ordering = ("-id",)
+        ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
         return f"Insurances ({self.insurance_type}) - Total: £{self.total_insurance_expenses}"
 
 
-class SubTotals(models.Model):
+class SubTotals(CreatedAtUpdatedAtBaseModel):
     subtotal_type = models.CharField(
         max_length=50,
         choices=SubTotalsTypeChoices.choices,
-        default=SubTotalsTypeChoices.CURRENT
+        default=SubTotalsTypeChoices.CURRENT_SUB_TOTALS
     )
 
     total_income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
@@ -1166,7 +1168,7 @@ class SubTotals(models.Model):
     available_income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
 
     class Meta:
-        ordering = ("-id",)
+        ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
         return f"SubTotals ({self.subtotal_type}) - Available Income: £{self.available_income}"
