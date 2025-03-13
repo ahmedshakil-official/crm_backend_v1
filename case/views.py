@@ -794,3 +794,10 @@ class SolicitorRetrieveUpdateApiView(RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
+class AccountantRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    queryset = SolicitorAccountant.objects.all()
+    serializer_class = SolicitorAccountantSerializer
+    lookup_field = "alias"
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
