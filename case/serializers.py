@@ -978,6 +978,7 @@ class SolicitorAccountantSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolicitorAccountant
         fields = [
+            "id",
             "alias",
             "name",
             "user_type",
