@@ -785,3 +785,12 @@ class CaseAccountantUpdateApiView(UpdateAPIView):
         case_accountant.save()
 
         return Response(self.get_serializer(case_accountant).data)
+
+class SolicitorRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    queryset = SolicitorAccountant.objects.all()
+    serializer_class = SolicitorAccountantSerializer
+    lookup_field = "alias"
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+
