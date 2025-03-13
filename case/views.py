@@ -734,7 +734,7 @@ class CaseSolicitorApiView(ListCreateAPIView):
     def perform_create(self, serializer):
         case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
-        serializer.save(case=case)
+        serializer.save(case=case, created_by=self.request.user)
 
 
 class CaseSolicitorUpdateApiView(UpdateAPIView):
@@ -748,6 +748,7 @@ class CaseSolicitorUpdateApiView(UpdateAPIView):
         solicitor = get_object_or_404(SolicitorAccountant, pk=solicitor_pk)
 
         case_solicitor.solicitor = solicitor
+        case_solicitor.updated_by = self.request.user
         case_solicitor.save()
 
         return Response(self.get_serializer(case_solicitor).data)
@@ -764,7 +765,7 @@ class CaseAccountantsApiView(ListCreateAPIView):
     def perform_create(self, serializer):
         case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
-        serializer.save(case=case)
+        serializer.save(case=case, created_by=self.request.user)
 
 
 class CaseAccountantUpdateApiView(UpdateAPIView):
@@ -777,6 +778,7 @@ class CaseAccountantUpdateApiView(UpdateAPIView):
         accountant = get_object_or_404(SolicitorAccountant, pk=accountant_pk)
 
         case_accountant.accountant = accountant
+        case_accountant.updated_by = self.request.user
         case_accountant.save()
 
         return Response(self.get_serializer(case_accountant).data)
