@@ -1010,6 +1010,7 @@ class SolicitorAccountantSerializer(serializers.ModelSerializer):
 
 
 class CaseSolicitorSerializer(serializers.ModelSerializer):
+    case = CommonCaseSerializer(read_only=True)
     class Meta:
         model = CaseSolicitor
         fields = [
