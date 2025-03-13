@@ -35,7 +35,7 @@ from .views import (
     SolicitorListCreateApiView,
     AccountantListCreateApiView,
     CaseAccountantsApiView,
-    CaseSolicitorApiView,
+    CaseSolicitorApiView, SolicitorRetrieveUpdateApiView,
 )
 
 urlpatterns = [
@@ -199,5 +199,10 @@ urlpatterns = [
         "<uuid:case_alias>/case/accountants/",
         CaseAccountantsApiView.as_view(),
         name="accountant-case-list-create",
+    ),
+    path(
+        "solicitors/<uuid:alias>/",
+        SolicitorRetrieveUpdateApiView.as_view(),
+        name="solicitors-list-create",
     ),
 ]
