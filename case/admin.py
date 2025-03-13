@@ -10,6 +10,9 @@ from case.models import (
     DirectorShareholder,
     Adverse,
     Property,
+    SolicitorAccountant,
+CaseSolicitor,
+CaseAccountant,
 )
 
 # Register your models here.
@@ -22,6 +25,10 @@ admin.site.register(Dependant)
 admin.site.register(DirectorShareholder)
 admin.site.register(Adverse)
 admin.site.register(Property)
+admin.site.register(SolicitorAccountant)
+admin.site.register(CaseSolicitor)
+admin.site.register(CaseAccountant)
+
 
 
 @admin.register(ApplicantDetails)

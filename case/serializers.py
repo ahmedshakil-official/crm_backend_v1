@@ -2,6 +2,7 @@ from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 
 from common.enums import UserTypeChoices, RoleChoices
+from case.enums import UserTypeChoices as SolicitorTypeChoices
 from organization.models import Organization, OrganizationUser
 from .common import (
     RegisterLoan,
@@ -1032,7 +1033,7 @@ class CaseSolicitorSerializer(serializers.ModelSerializer):
 
 
         def validate_solicitor(self, value):
-            if value.user_type != 'solicitor':
+            if value.user_type != SolicitorTypeChoices.SOLICITOR:
                 raise serializers.ValidationError("The solicitor must have user_type='solicitor'.")
             return value
 
@@ -1060,7 +1061,7 @@ class CaseAccountantSerializer(serializers.ModelSerializer):
         ]
 
         def validate_accountant(self, value):
-            if value.user_type != 'ACCOUNTANT':
+            if value.user_type != SolicitorTypeChoices.ACCOUNTANT:
                 raise serializers.ValidationError("The accountant must have user_type='ACCOUNTANT'.")
             return value
 
