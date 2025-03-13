@@ -1030,6 +1030,12 @@ class CaseSolicitorSerializer(serializers.ModelSerializer):
         ]
 
 
+        def validate_solicitor(self, value):
+            if value.user_type != 'solicitor':
+                raise serializers.ValidationError("The solicitor must have user_type='solicitor'.")
+            return value
+
+
 class CaseAccountantSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
 
@@ -1051,3 +1057,9 @@ class CaseAccountantSerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
         ]
+
+        def validate_accountant(self, value):
+            if value.user_type != 'ACCOUNTANT':
+                raise serializers.ValidationError("The accountant must have user_type='ACCOUNTANT'.")
+            return value
+
