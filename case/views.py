@@ -725,6 +725,7 @@ class AccountantListCreateApiView(ListCreateAPIView):
 
 class CaseSolicitorApiView(ListCreateAPIView):
     serializer_class = CaseSolicitorSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         case_alias = self.kwargs["case_alias"]
@@ -740,6 +741,7 @@ class CaseSolicitorApiView(ListCreateAPIView):
 class CaseSolicitorUpdateApiView(UpdateAPIView):
     queryset = CaseSolicitor.objects.all()
     serializer_class = CaseSolicitorSerializer
+    permission_classes = [IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
         case_solicitor = self.get_object()
@@ -756,6 +758,7 @@ class CaseSolicitorUpdateApiView(UpdateAPIView):
 
 class CaseAccountantsApiView(ListCreateAPIView):
     serializer_class = CaseAccountantSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         case_alias = self.kwargs["case_alias"]
@@ -771,7 +774,7 @@ class CaseAccountantsApiView(ListCreateAPIView):
 class CaseAccountantUpdateApiView(UpdateAPIView):
     queryset = CaseAccountant.objects.all()
     serializer_class = CaseAccountantSerializer
-
+    permission_classes = [IsAuthenticated]
     def update(self, request, *args, **kwargs):
         case_accountant = self.get_object()
         accountant_pk = request.data.get("accountant")
