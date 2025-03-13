@@ -9,7 +9,7 @@ from case.models import (
     Dependant,
     DirectorShareholder,
     Adverse,
-Property
+    Property,
 )
 
 # Register your models here.

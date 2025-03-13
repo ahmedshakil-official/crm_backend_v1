@@ -550,15 +550,18 @@ class UserTypeChoices(models.TextChoices):
     SOLICITOR = "SOLICITOR", _("Solicitor")
 
 
-
 class PolicyTypeChoices(models.TextChoices):
     LIFT_ASSURANCE_LEVEL = "LIFT_ASSURANCE_LEVEL", _("Lift Assurance Level")
-    LIFT_ASSURANCE_DECREASING = "LIFT_ASSURANCE_DECREASING", _("Lift Assurance Decreasing")
+    LIFT_ASSURANCE_DECREASING = "LIFT_ASSURANCE_DECREASING", _(
+        "Lift Assurance Decreasing"
+    )
     CRITICAL_ILLNESS_COVER_DECREASING = (
         "CRITICAL_ILLNESS_COVER_DECREASING",
         _("Critical Illness Cover Decreasing"),
     )
-    MORTGAGE_PAYMENT_PROTECTION = "MORTGAGE_PAYMENT_PROTECTION", _("Mortgage Payment Protection")
+    MORTGAGE_PAYMENT_PROTECTION = "MORTGAGE_PAYMENT_PROTECTION", _(
+        "Mortgage Payment Protection"
+    )
     BUILDINGS_AND_CONTENTS = "BUILDINGS_AND_CONTENTS", _("Buildings And Contents")
     PRIVATE_PENSION = "PRIVATE_PENSION", _("Private Pension")
     DEATH_IN_SERVICE_BENEFIT = "DEATH_IN_SERVICE_BENEFIT", _("Death In Service Benefit")
@@ -588,9 +591,11 @@ class GuaranteedReviewableChoices(models.TextChoices):
 class PolicyCancellationChoices(models.TextChoices):
     NOT_VALUES_YET = "NOT_VALUES_YET", _("Not Values Yet")
 
+
 class TasksNotesChoices(models.TextChoices):
     NOTE = "NOTE", _("Note")
     TASK = "TASK", _("Task")
+
 
 class CategoryChoices(models.TextChoices):
     UNCATEGORISED = "UNCATEGORISED", _("Uncategorised")
@@ -598,7 +603,10 @@ class CategoryChoices(models.TextChoices):
     TELEPHONE_CONVERSATION = "TELEPHONE_CONVERSATION", _("Telephone Conversation")
     LENDER_CORRESPONDENCE = "LENDER_CORRESPONDENCE", _("Lender Correspondence")
     SOLICITOR_CORRESPONDENCE = "SOLICITOR_CORRESPONDENCE", _("Solicitor Correspondence")
-    COMPLIANCE_CORRESPONDENCE = "COMPLIANCE_CORRESPONDENCE", _("Compliance Correspondence")
+    COMPLIANCE_CORRESPONDENCE = "COMPLIANCE_CORRESPONDENCE", _(
+        "Compliance Correspondence"
+    )
+
 
 class TaskPriorityChoices(models.TextChoices):
     LOW = "LOW", _("Low")
@@ -606,22 +614,32 @@ class TaskPriorityChoices(models.TextChoices):
     HIGH = "HIGH", _("High")
     URGENT = "URGENT", _("Urgent")
 
+
 class InitialRateTypeChoices(models.TextChoices):
-    PLEASE_SELECT_A_INITIAL_RATE_TYPE = "PLEASE_SELECT_A_INITIAL_RATE_TYPE", _("Please Select A Initial Rate Type")
+    PLEASE_SELECT_A_INITIAL_RATE_TYPE = "PLEASE_SELECT_A_INITIAL_RATE_TYPE", _(
+        "Please Select A Initial Rate Type"
+    )
     FIXED = "FIXED", _("Fixed")
     VARIABLE = "VARIABLE", _("Variable")
     TRACKER = "TRACKER", _("Tracker")
     DISCOUNTED = "DISCOUNTED", _("Discounted")
     ALL = "ALL", _("All")
 
+
 class InitialRatePeriodTypeChoices(models.TextChoices):
-    PLEASE_SELECT_A_INITIAL_RATE_PERIOD_TYPE = "PLEASE_SELECT_A_INITIAL_RATE_PERIOD_TYPE", _("Please Select A Initial Rate Period Type")
+    PLEASE_SELECT_A_INITIAL_RATE_PERIOD_TYPE = (
+        "PLEASE_SELECT_A_INITIAL_RATE_PERIOD_TYPE",
+        _("Please Select A Initial Rate Period Type"),
+    )
     MONTHS = "MONTHS", _("Months")
     FIXED_DATE = "FIXED_DATE", _("Fixed Date")
     END_OF_MORTGAGE_TERM = "END_OF_MORTGAGE_TERM", _("End of Mortgage Term")
 
+
 class ProductClassChoices(models.TextChoices):
-    PLEASE_SELECT_A_PRODUCT_CLASS ="PLEASE_SELECT_A_PRODUCT_CLASS", _("please Select A Product Class")
+    PLEASE_SELECT_A_PRODUCT_CLASS = "PLEASE_SELECT_A_PRODUCT_CLASS", _(
+        "please Select A Product Class"
+    )
     BTL = "BTL", _("BTL")
     SECURED = "SECURED", _("Secured")
     RESIDENTIAL = "RESIDENTIAL", _("Residential")
@@ -629,10 +647,12 @@ class ProductClassChoices(models.TextChoices):
     COMMERCIAL = "COMMERCIAL", _("Commercial")
     LET_TO_BUY = "LET_TO_BUY", _("Let To Buy")
 
+
 class ArrangementFeeAddedToLoanChoices(models.TextChoices):
     SELECT = "SELECT", _("Select")
     YES = "YES", _("Yes")
     NO = "NO", _("No")
+
 
 class BookingFeeAddedToLoanChoices(models.TextChoices):
     SELECT = "--SELECT--", _("--Select--")
@@ -640,14 +660,17 @@ class BookingFeeAddedToLoanChoices(models.TextChoices):
     YES = "YES", _("Yes")
     NO = "NO", _("No")
 
+
 class DIPDecisionChoices(models.TextChoices):
     ACCEPTED = "ACCEPTED", _("Accepted")
     DECLINED = "DECLINED", _("Declined")
     REFERED = "REFERED", _("Refered")
 
+
 class FeesChoices(models.TextChoices):
     FEES_IN = "FEES_IN", _("Fees In")
     FEES_OUT = "FEES_OUT", _("Fees Out")
+
 
 class FeesInFeeTypeChoices(models.TextChoices):
     UNKNOWN = "UNKNOWN", _("Unknown")
@@ -657,6 +680,7 @@ class FeesInFeeTypeChoices(models.TextChoices):
     BROKER_FEE = "BROKER_FEE", _("Broker Fee")
     OTHER = "OTHER", _("Other")
 
+
 class MethodChoices(models.TextChoices):
     CREDIT_DEBIT_CARD = "CREDIT_DEBIT_CARD", _("Credit Debit Card")
     BACS = "BACS", _("BACS")
@@ -665,34 +689,58 @@ class MethodChoices(models.TextChoices):
     ONLINE = "ONLINE", _("Online")
     OTHER = "OTHER", _("Other")
 
+
 class FeesOutFeeTypeChoices(models.TextChoices):
     UNKNOWN = "UNKNOWN", _("Unknown")
-    COMMISSION_PROC_FEE_SHARE = "COMMISSION_PROC_FEE_SHARE", _("Commission Proc Fee Share")
+    COMMISSION_PROC_FEE_SHARE = "COMMISSION_PROC_FEE_SHARE", _(
+        "Commission Proc Fee Share"
+    )
+
 
 class IncomeTypeChoices(models.TextChoices):
     CURRENT_INCOME = "CurrentIncome", _("Current Income")
     POST_COMPLETION_INCOME = "PostCompletionIncome", _("Post Completion Income")
 
+
 class DebtRepaymentTypeChoices(models.TextChoices):
     CURRENT_DEBT_REPAYMENTS = "CurrentDebtRepayments", _("Current Debt Repayments")
-    POST_COMPLETION_DEBT_REPAYMENTS = "PostCompletionDebtRepayments", _("Post Completion Debt Repayments")
+    POST_COMPLETION_DEBT_REPAYMENTS = "PostCompletionDebtRepayments", _(
+        "Post Completion Debt Repayments"
+    )
+
 
 class PriorityDebtTypeChoices(models.TextChoices):
     CURRENT_PRIORITY_DEBT = "CurrentPriorityDebt", _("Current Priority Debt")
-    POST_COMPLETION_PRIORITY_DEBT = "PostCompletionPriorityDebt", _("Post Completion Priority Debt")
+    POST_COMPLETION_PRIORITY_DEBT = "PostCompletionPriorityDebt", _(
+        "Post Completion Priority Debt"
+    )
+
 
 class UnsecuredBorrowingTypeChoices(models.TextChoices):
-    CURRENT_UNSECURED_BORROWING = "CurrentUnsecuredBorrowing", _("Current Unsecured Borrowing")
-    POST_COMPLETION_UNSECURED_BORROWING = "PostCompletionUnsecuredBorrowing", _("Post Completion Unsecured Borrowing")
+    CURRENT_UNSECURED_BORROWING = "CurrentUnsecuredBorrowing", _(
+        "Current Unsecured Borrowing"
+    )
+    POST_COMPLETION_UNSECURED_BORROWING = "PostCompletionUnsecuredBorrowing", _(
+        "Post Completion Unsecured Borrowing"
+    )
+
 
 class LivingCostsTypeChoices(models.TextChoices):
     CURRENT_LIVING_COSTS = "CurrentLivingCosts", _("Current Living Costs")
-    POST_COMPLETION_LIVING_COSTS = "PostCompletionLivingCosts", _("Post Completion Living Costs")
+    POST_COMPLETION_LIVING_COSTS = "PostCompletionLivingCosts", _(
+        "Post Completion Living Costs"
+    )
+
 
 class InsuranceTypeChoices(models.TextChoices):
     CURRENT_INSURANCES = "CurrentInsurances", _("Current Insurances")
-    POST_COMPLETION_INSURANCES = "PostCompletionInsurances", _("Post Completion Insurances")
+    POST_COMPLETION_INSURANCES = "PostCompletionInsurances", _(
+        "Post Completion Insurances"
+    )
+
 
 class SubTotalsTypeChoices(models.TextChoices):
     CURRENT_SUB_TOTALS = "CurrentSubTotals", _("Current Sub Totals")
-    POST_COMPLETION_SUB_TOTALS = "PostCompletionSubTotals", _("Post Completion Sub Totals")
+    POST_COMPLETION_SUB_TOTALS = "PostCompletionSubTotals", _(
+        "Post Completion Sub Totals"
+    )

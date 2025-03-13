@@ -121,5 +121,3 @@ class MeetingStatusChoices(models.TextChoices):
     CANCELLED = "CANCELLED", _("Canceled")
     ON_HOLD = "ON_HOLD", _("On Hold")
     SUCCESS = "SUCCESS", _("Success")
-
-

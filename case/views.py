@@ -8,10 +8,12 @@ from rest_framework.generics import (
     ListAPIView,
     CreateAPIView,
     RetrieveUpdateAPIView,
+    UpdateAPIView,
 )
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
@@ -39,7 +41,10 @@ from .models import (
     DirectorShareholder,
     EmploymentDetails,
     Adverse,
-    Property, SolicitorAccountant,
+    Property,
+    SolicitorAccountant,
+    CaseAccountant,
+    CaseSolicitor,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -64,6 +69,8 @@ from .serializers import (
     CCJSerializer,
     PropertySerializer,
     SolicitorAccountantSerializer,
+    CaseSolicitorSerializer,
+    CaseAccountantSerializer,
 )
 
 
@@ -662,7 +669,9 @@ class PropertyListCreateApiView(ListCreateAPIView):
 
         # Fetch valid applicants (lead + joint users)
         valid_applicants = [case.lead.id]  # Lead user
-        joint_users = case.joint_users.values_list("joint_user_id", flat=True)  # Joint users
+        joint_users = case.joint_users.values_list(
+            "joint_user_id", flat=True
+        )  # Joint users
         valid_applicants.extend(joint_users)
 
         # Extract applicant list from request
@@ -696,7 +705,10 @@ class SolicitorListCreateApiView(ListCreateAPIView):
         return SolicitorAccountant.objects.filter(user_type=UserTypeChoices.SOLICITOR)
 
     def perform_create(self, serializer):
-        serializer.save(user_type=UserTypeChoices.SOLICITOR, created_by=self.request.user)
+        serializer.save(
+            user_type=UserTypeChoices.SOLICITOR, created_by=self.request.user
+        )
+
 
 class AccountantListCreateApiView(ListCreateAPIView):
     serializer_class = SolicitorAccountantSerializer
@@ -706,5 +718,65 @@ class AccountantListCreateApiView(ListCreateAPIView):
         return SolicitorAccountant.objects.filter(user_type=UserTypeChoices.ACCOUNTANT)
 
     def perform_create(self, serializer):
-        serializer.save(user_type=UserTypeChoices.ACCOUNTANT, created_by=self.request.user)
+        serializer.save(
+            user_type=UserTypeChoices.ACCOUNTANT, created_by=self.request.user
+        )
 
+
+class CaseSolicitorApiView(ListCreateAPIView):
+    serializer_class = CaseSolicitorSerializer
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        return CaseSolicitor.objects.filter(case=case)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        serializer.save(case=case)
+
+
+class CaseSolicitorUpdateApiView(UpdateAPIView):
+    queryset = CaseSolicitor.objects.all()
+    serializer_class = CaseSolicitorSerializer
+
+    def update(self, request, *args, **kwargs):
+        case_solicitor = self.get_object()
+
+        solicitor_pk = request.data.get("solicitor")
+        solicitor = get_object_or_404(SolicitorAccountant, pk=solicitor_pk)
+
+        case_solicitor.solicitor = solicitor
+        case_solicitor.save()
+
+        return Response(self.get_serializer(case_solicitor).data)
+
+
+class CaseAccountantsApiView(ListCreateAPIView):
+    serializer_class = CaseAccountantSerializer
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        return CaseAccountant.objects.filter(case=case)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        serializer.save(case=case)
+
+
+class CaseAccountantUpdateApiView(UpdateAPIView):
+    queryset = CaseAccountant.objects.all()
+    serializer_class = CaseAccountantSerializer
+
+    def update(self, request, *args, **kwargs):
+        case_accountant = self.get_object()
+        accountant_pk = request.data.get("accountant")
+        accountant = get_object_or_404(SolicitorAccountant, pk=accountant_pk)
+
+        case_accountant.accountant = accountant
+        case_accountant.save()
+
+        return Response(self.get_serializer(case_accountant).data)

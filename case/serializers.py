@@ -24,7 +24,10 @@ from .models import (
     DirectorShareholder,
     EmploymentDetails,
     Adverse,
-    Property, SolicitorAccountant,
+    Property,
+    SolicitorAccountant,
+    CaseSolicitor,
+    CaseAccountant,
 )
 from authentication.models import User
 from common.serializers import (
@@ -862,10 +865,7 @@ class PropertySerializer(serializers.ModelSerializer):
 
     # Write-only: Accepts list of applicant IDs
     applicant_ids = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(),
-        many=True,
-        write_only=True,
-        source="applicant"
+        queryset=User.objects.all(), many=True, write_only=True, source="applicant"
     )
 
     class Meta:
@@ -912,12 +912,7 @@ class PropertySerializer(serializers.ModelSerializer):
             "is_limited_company",
             "epc_rating",
         ]
-        read_only_fields = [
-            "alias",
-            "case",
-            "created_at",
-            "updated_at"
-        ]
+        read_only_fields = ["alias", "case", "created_at", "updated_at"]
 
     def validate_applicant_ids(self, value):
         """Ensure applicants are only lead or joint users from the case"""
@@ -940,7 +935,9 @@ class PropertySerializer(serializers.ModelSerializer):
 
         # Convert values to integer IDs (if necessary)
         try:
-            input_applicant_ids = {int(user_id) for user_id in value}  # Ensure all IDs are integers
+            input_applicant_ids = {
+                int(user_id) for user_id in value
+            }  # Ensure all IDs are integers
         except (ValueError, TypeError):
             raise serializers.ValidationError("Applicant IDs must be valid integers.")
 
@@ -959,7 +956,9 @@ class PropertySerializer(serializers.ModelSerializer):
         """Ensure applicants are only lead or joint users from the case"""
         applicant_ids = validated_data.pop("applicant", [])  # Source is "applicant"
         property_instance = super().create(validated_data)
-        property_instance.applicant.set(applicant_ids)  # Correctly setting Many-to-Many field
+        property_instance.applicant.set(
+            applicant_ids
+        )  # Correctly setting Many-to-Many field
         return property_instance
 
     def update(self, instance, validated_data):
@@ -969,6 +968,7 @@ class PropertySerializer(serializers.ModelSerializer):
         if applicant_ids is not None:
             instance.applicant.set(applicant_ids)
         return instance
+
 
 class SolicitorAccountantSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
@@ -1006,4 +1006,48 @@ class SolicitorAccountantSerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
             "user_type",
+        ]
+
+
+class CaseSolicitorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CaseSolicitor
+        fields = [
+            "alias",
+            "case",
+            "solicitor",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+
+class CaseAccountantSerializer(serializers.ModelSerializer):
+    case = CommonCaseSerializer(read_only=True)
+
+    class Meta:
+        model = CaseAccountant
+        fields = [
+            "alias",
+            "case",
+            "accountant",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
         ]

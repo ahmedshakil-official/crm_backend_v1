@@ -15,7 +15,6 @@ from common.enums import (
     FileTypeChoices,
     MeetingTypeChoices,
     MeetingStatusChoices,
-
 )
 from organization.models import Organization
 from .enums import (
@@ -54,11 +53,28 @@ from .enums import (
     EPCRatingChoices,
     UserTypeChoices,
     PremiumPaymentChoices,
-    InTrustChoices, GuaranteedReviewableChoices, PolicyCancellationChoices, TasksNotesChoices, CategoryChoices,
-    TaskPriorityChoices, InitialRateTypeChoices, InitialRatePeriodTypeChoices, ProductClassChoices,
-    ArrangementFeeAddedToLoanChoices, BookingFeeAddedToLoanChoices, DIPDecisionChoices, FeesChoices,
-    MethodChoices, FeesInFeeTypeChoices, FeesOutFeeTypeChoices, SubTotalsTypeChoices, InsuranceTypeChoices,
-    LivingCostsTypeChoices, UnsecuredBorrowingTypeChoices, PriorityDebtTypeChoices, DebtRepaymentTypeChoices,
+    InTrustChoices,
+    GuaranteedReviewableChoices,
+    PolicyCancellationChoices,
+    TasksNotesChoices,
+    CategoryChoices,
+    TaskPriorityChoices,
+    InitialRateTypeChoices,
+    InitialRatePeriodTypeChoices,
+    ProductClassChoices,
+    ArrangementFeeAddedToLoanChoices,
+    BookingFeeAddedToLoanChoices,
+    DIPDecisionChoices,
+    FeesChoices,
+    MethodChoices,
+    FeesInFeeTypeChoices,
+    FeesOutFeeTypeChoices,
+    SubTotalsTypeChoices,
+    InsuranceTypeChoices,
+    LivingCostsTypeChoices,
+    UnsecuredBorrowingTypeChoices,
+    PriorityDebtTypeChoices,
+    DebtRepaymentTypeChoices,
     IncomeTypeChoices,
 )
 from .signals import (
@@ -803,11 +819,14 @@ class Property(CreatedAtUpdatedAtBaseModel):
         return f"Property {self.alias} - {self.property_value} ({self.city}, {self.country})"
 
 
-
 class SolicitorAccountant(CreatedAtUpdatedAtBaseModel):
 
     name = models.CharField(max_length=255)
-    user_type = models.CharField(choices=UserTypeChoices.choices, max_length=255, default=UserTypeChoices.ACCOUNTANT)
+    user_type = models.CharField(
+        choices=UserTypeChoices.choices,
+        max_length=255,
+        default=UserTypeChoices.ACCOUNTANT,
+    )
     sra_number = models.CharField(max_length=255, null=True, blank=True)
     postcode = models.CharField(max_length=255)
     building_name_or_number = models.CharField(max_length=255, null=True, blank=True)
@@ -830,10 +849,15 @@ class SolicitorAccountant(CreatedAtUpdatedAtBaseModel):
         return f"SolicitorAccountant {self.alias} - {self.user_type} - {self.sra_number} ({self.city}, {self.country})"
 
 
-
 class CaseSolicitor(CreatedAtUpdatedAtBaseModel):
-    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="solicitor_case")
-    solicitor = models.ForeignKey(SolicitorAccountant, on_delete=models.CASCADE, related_name="solicitor_case_user")
+    case = models.ForeignKey(
+        Case, on_delete=models.CASCADE, related_name="solicitor_case"
+    )
+    solicitor = models.ForeignKey(
+        SolicitorAccountant,
+        on_delete=models.CASCADE,
+        related_name="solicitor_case_user",
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -843,8 +867,14 @@ class CaseSolicitor(CreatedAtUpdatedAtBaseModel):
 
 
 class CaseAccountant(CreatedAtUpdatedAtBaseModel):
-    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="accountant_case")
-    accountant = models.ForeignKey(SolicitorAccountant, on_delete=models.CASCADE, related_name="accountant_case_user")
+    case = models.ForeignKey(
+        Case, on_delete=models.CASCADE, related_name="accountant_case"
+    )
+    accountant = models.ForeignKey(
+        SolicitorAccountant,
+        on_delete=models.CASCADE,
+        related_name="accountant_case_user",
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -853,8 +883,7 @@ class CaseAccountant(CreatedAtUpdatedAtBaseModel):
         return f"{self.accountant} - {self.case}"
 
 
-
-#existing-protection
+# existing-protection
 class ExistingProtection(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
         Case,
@@ -862,15 +891,30 @@ class ExistingProtection(CreatedAtUpdatedAtBaseModel):
         related_name="existing_protection",
     )
     have_any_existing_Protection_policies_in_place = models.BooleanField(default=False)
-    policy_type = models.CharField(max_length=255, choices=ProductCategoryChoices.choices, null=True, blank=True)
+    policy_type = models.CharField(
+        max_length=255, choices=ProductCategoryChoices.choices, null=True, blank=True
+    )
     policy_provider = models.CharField(max_length=255, null=True, blank=True)
     insurers_reference = models.CharField(max_length=255, null=True, blank=True)
-    sum_assured = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    premium = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    premium_payment_type = models.CharField(max_length=255, choices=PremiumPaymentChoices.choices, null=True, blank=True)
+    sum_assured = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    premium = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    premium_payment_type = models.CharField(
+        max_length=255, choices=PremiumPaymentChoices.choices, null=True, blank=True
+    )
     person_assured = models.CharField(max_length=255, null=True, blank=True)
-    in_trust = models.CharField(max_length=255, choices=InTrustChoices.choices, null=True, blank=True)
-    guaranteed_reviewable = models.CharField(max_length=255, choices=GuaranteedReviewableChoices.choices, null=True, blank=True)
+    in_trust = models.CharField(
+        max_length=255, choices=InTrustChoices.choices, null=True, blank=True
+    )
+    guaranteed_reviewable = models.CharField(
+        max_length=255,
+        choices=GuaranteedReviewableChoices.choices,
+        null=True,
+        blank=True,
+    )
     remaining_policy_term = models.CharField(max_length=255, null=True, blank=True)
     cancelled_lapsed_date = models.DateField(null=True, blank=True)
     renewal_date = models.DateField(null=True, blank=True)
@@ -879,11 +923,15 @@ class ExistingProtection(CreatedAtUpdatedAtBaseModel):
     indexation = models.BooleanField(default=False)
     death_in_service_provision = models.BooleanField(default=False)
     have_non_standard_terms_been_issued = models.BooleanField(default=False)
-    copy_and_paste_non_standard_terms_from_lender = models.TextField(null=True, blank=True)
-    will_this_policy_be_cancelled =models.BooleanField(default=False)
-    reason_for_policy_cancellation = models.CharField(max_length=255,choices=PolicyCancellationChoices.choices, null=True, blank=True)
+    copy_and_paste_non_standard_terms_from_lender = models.TextField(
+        null=True, blank=True
+    )
+    will_this_policy_be_cancelled = models.BooleanField(default=False)
+    reason_for_policy_cancellation = models.CharField(
+        max_length=255, choices=PolicyCancellationChoices.choices, null=True, blank=True
+    )
     policy_cancellation_notes = models.TextField(null=True, blank=True)
-    why_did_you_take_out_this_policy =models.TextField(null=True, blank=True)
+    why_did_you_take_out_this_policy = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -891,17 +939,26 @@ class ExistingProtection(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"ExistingProtection {self.alias} - {self.policy_type} - {self.policy_provider}"
 
+
 class Notes(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
         Case,
         on_delete=models.CASCADE,
         related_name="notes_related",
     )
-    note_task = models.CharField(max_length=255, choices=TasksNotesChoices.choices, default=TasksNotesChoices.NOTE)
+    note_task = models.CharField(
+        max_length=255,
+        choices=TasksNotesChoices.choices,
+        default=TasksNotesChoices.NOTE,
+    )
     note_visible_to_introducer = models.BooleanField(default=False)
     note_visible_to_client = models.BooleanField(default=False)
-    category = models.CharField(max_length=255,choices=CategoryChoices.choices, null=True, blank=True)
-    task_priority = models.CharField(max_length=255,choices=TaskPriorityChoices.choices, null=True, blank=True)
+    category = models.CharField(
+        max_length=255, choices=CategoryChoices.choices, null=True, blank=True
+    )
+    task_priority = models.CharField(
+        max_length=255, choices=TaskPriorityChoices.choices, null=True, blank=True
+    )
     due_date = models.DateTimeField(null=True, blank=True)
     assigned_to = models.IntegerField(null=True, blank=True)
 
@@ -909,7 +966,10 @@ class Notes(CreatedAtUpdatedAtBaseModel):
         ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
-        return f"Notes {self.alias} - {self.note_task} - {self.note_visible_to_introducer}"
+        return (
+            f"Notes {self.alias} - {self.note_task} - {self.note_visible_to_introducer}"
+        )
+
 
 class Product(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
@@ -919,40 +979,90 @@ class Product(CreatedAtUpdatedAtBaseModel):
     )
     product_description = models.TextField()
     initial_rate = models.DecimalField(max_digits=12, decimal_places=2)
-    initial_rate_type = models.CharField(max_length=255, choices=InitialRateTypeChoices.choices, default=InitialRateTypeChoices.PLEASE_SELECT_A_INITIAL_RATE_TYPE)
-    initial_rate_period_type = models.CharField(max_length=255, choices=InitialRatePeriodTypeChoices.choices, default=InitialRatePeriodTypeChoices.PLEASE_SELECT_A_INITIAL_RATE_PERIOD_TYPE)
-    reversion_rate =models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    initial_rate_type = models.CharField(
+        max_length=255,
+        choices=InitialRateTypeChoices.choices,
+        default=InitialRateTypeChoices.PLEASE_SELECT_A_INITIAL_RATE_TYPE,
+    )
+    initial_rate_period_type = models.CharField(
+        max_length=255,
+        choices=InitialRatePeriodTypeChoices.choices,
+        default=InitialRatePeriodTypeChoices.PLEASE_SELECT_A_INITIAL_RATE_PERIOD_TYPE,
+    )
+    reversion_rate = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
     initial_rate_period = models.PositiveIntegerField(null=True, blank=True)
     initial_rate_date_period = models.DateField(null=True, blank=True)
-    max_ltv = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    annual_percentage_rate = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    product_class = models.CharField(max_length=255, choices=ProductClassChoices.choices, null=True, blank=True, default=ProductClassChoices.PLEASE_SELECT_A_PRODUCT_CLASS)
+    max_ltv = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    annual_percentage_rate = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    product_class = models.CharField(
+        max_length=255,
+        choices=ProductClassChoices.choices,
+        null=True,
+        blank=True,
+        default=ProductClassChoices.PLEASE_SELECT_A_PRODUCT_CLASS,
+    )
     early_repayment_charge = models.PositiveIntegerField(null=True, blank=True)
     early_repayment_charge_end_date = models.DateField(null=True, blank=True)
-    initial_monthly_payment = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    initial_monthly_payment_including_fees = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    monthly_payment_after_initial_Period = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    true_cost_over_initial_period = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    true_cost_over_term = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    true_cost_without_fees = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    loan_required_including_fees = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    arrangement_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    arrangement_fee_added_to_loan = models.CharField(max_length=255, choices=ArrangementFeeAddedToLoanChoices.choices, default=ArrangementFeeAddedToLoanChoices.SELECT)
-    valuation_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    booking_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    booking_fee_added_to_loan = models.CharField(max_length=255, choices=BookingFeeAddedToLoanChoices.choices, default=BookingFeeAddedToLoanChoices.SELECT)
-    procuration_fee = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    initial_monthly_payment = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    initial_monthly_payment_including_fees = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    monthly_payment_after_initial_Period = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    true_cost_over_initial_period = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    true_cost_over_term = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    true_cost_without_fees = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    loan_required_including_fees = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    arrangement_fee = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    arrangement_fee_added_to_loan = models.CharField(
+        max_length=255,
+        choices=ArrangementFeeAddedToLoanChoices.choices,
+        default=ArrangementFeeAddedToLoanChoices.SELECT,
+    )
+    valuation_fee = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    booking_fee = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    booking_fee_added_to_loan = models.CharField(
+        max_length=255,
+        choices=BookingFeeAddedToLoanChoices.choices,
+        default=BookingFeeAddedToLoanChoices.SELECT,
+    )
+    procuration_fee = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
     processing_consent = models.BooleanField(default=False)
     processing_consent_description = models.TextField(null=True, blank=True)
     application_review = models.BooleanField(default=False)
     application_review_description = models.TextField(null=True, blank=True)
-
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
         return f"Product {self.product_class} - {self.product_description}"
+
 
 class DipHistory(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
@@ -962,9 +1072,17 @@ class DipHistory(CreatedAtUpdatedAtBaseModel):
     )
     is_this_application_had_a_decision_in_principle = models.BooleanField(default=False)
     notes = models.TextField(null=True, blank=True)
-    lender = models.CharField(max_length=255, choices=LenderChoices.choices, default=LenderChoices.ACCORD_MORTGAGES)
+    lender = models.CharField(
+        max_length=255,
+        choices=LenderChoices.choices,
+        default=LenderChoices.ACCORD_MORTGAGES,
+    )
     dip_date = models.DateField(null=True, blank=True)
-    dip_decision = models.CharField(max_length=255, choices=DIPDecisionChoices.choices, default=DIPDecisionChoices.ACCEPTED)
+    dip_decision = models.CharField(
+        max_length=255,
+        choices=DIPDecisionChoices.choices,
+        default=DIPDecisionChoices.ACCEPTED,
+    )
     dip_reference_number = models.CharField(max_length=20, null=True, blank=True)
 
     class Meta:
@@ -973,17 +1091,28 @@ class DipHistory(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"DipHistory {self.dip_decision} - {self.dip_date}"
 
+
 class Fees(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
         Case,
         on_delete=models.CASCADE,
         related_name="fees",
     )
-    fees = models.CharField(max_length=255, choices=FeesChoices.choices, null=True, blank=True)
+    fees = models.CharField(
+        max_length=255, choices=FeesChoices.choices, null=True, blank=True
+    )
     amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    fee_in_type = models.CharField(max_length=255, choices=FeesInFeeTypeChoices.choices, null=True, blank=True)
-    fee_out_type = models.CharField(max_length=255, choices=FeesOutFeeTypeChoices.choices, null=True, blank=True)
-    method = models.CharField(max_length=255, choices=MethodChoices.choices, default=MethodChoices.CREDIT_DEBIT_CARD)
+    fee_in_type = models.CharField(
+        max_length=255, choices=FeesInFeeTypeChoices.choices, null=True, blank=True
+    )
+    fee_out_type = models.CharField(
+        max_length=255, choices=FeesOutFeeTypeChoices.choices, null=True, blank=True
+    )
+    method = models.CharField(
+        max_length=255,
+        choices=MethodChoices.choices,
+        default=MethodChoices.CREDIT_DEBIT_CARD,
+    )
     notes = models.CharField(max_length=500, null=True, blank=True)
     date_received = models.DateField(null=True, blank=True)
     date_paid_out = models.DateField(null=True, blank=True)
@@ -994,23 +1123,46 @@ class Fees(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"Fees {self.fees} - {self.amount}"
 
+
 class Income(CreatedAtUpdatedAtBaseModel):
     income_type = models.CharField(
         max_length=255,
         choices=IncomeTypeChoices.choices,
-        default=IncomeTypeChoices.CURRENT_INCOME
+        default=IncomeTypeChoices.CURRENT_INCOME,
     )
-    applicant_one_net_monthly_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    applicant_two_net_monthly_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    rental_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    part_time_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    jobseekers_allowance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    child_benefit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    tax_credits = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    working_tax_credits = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    maintenance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    pension = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    other_benefits = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    applicant_one_net_monthly_income = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    applicant_two_net_monthly_income = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    rental_income = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    part_time_income = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    jobseekers_allowance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    child_benefit = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    tax_credits = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    working_tax_credits = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    maintenance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    pension = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    other_benefits = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
 
     total_income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
 
@@ -1020,19 +1172,28 @@ class Income(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"Income ({self.income_type}) - Total: £{self.total_income}"
 
+
 # Model for Debt Repayments
 class DebtRepayments(CreatedAtUpdatedAtBaseModel):
     repayment_type = models.CharField(
         max_length=50,
         choices=DebtRepaymentTypeChoices.choices,
-        default=DebtRepaymentTypeChoices.CURRENT_DEBT_REPAYMENTS
+        default=DebtRepaymentTypeChoices.CURRENT_DEBT_REPAYMENTS,
     )
 
-    mortgage_rent = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    second_mortgage = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    shared_ownership_rental = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    mortgage_rent = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    second_mortgage = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    shared_ownership_rental = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
 
-    total_debt_repayment = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    total_debt_repayment = models.DecimalField(
+        max_digits=15, decimal_places=2, default=0.00
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1045,19 +1206,35 @@ class PriorityDebt(CreatedAtUpdatedAtBaseModel):
     debt_type = models.CharField(
         max_length=50,
         choices=PriorityDebtTypeChoices.choices,
-        default=PriorityDebtTypeChoices.CURRENT_PRIORITY_DEBT
+        default=PriorityDebtTypeChoices.CURRENT_PRIORITY_DEBT,
     )
 
-    mortgage_arrears = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    gas_arrears = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    maintenance_arrears = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    defaults = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    mortgage_arrears = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    gas_arrears = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    maintenance_arrears = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    defaults = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
     ccjs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    debt_management_plans = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    magistrate_court_fines = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    council_tax_arrears = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    debt_management_plans = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    magistrate_court_fines = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    council_tax_arrears = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
 
-    total_priority_debt = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    total_priority_debt = models.DecimalField(
+        max_digits=15, decimal_places=2, default=0.00
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1071,18 +1248,32 @@ class UnsecuredBorrowing(CreatedAtUpdatedAtBaseModel):
     borrowing_type = models.CharField(
         max_length=50,
         choices=UnsecuredBorrowingTypeChoices.choices,
-        default=UnsecuredBorrowingTypeChoices.CURRENT_UNSECURED_BORROWING
+        default=UnsecuredBorrowingTypeChoices.CURRENT_UNSECURED_BORROWING,
     )
 
-    credit_cards = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    credit_cards = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
     loans = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    car_finance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    overdraft = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    store_cards = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    student_loans = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    other_borrowing = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    car_finance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    overdraft = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    store_cards = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    student_loans = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    other_borrowing = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
 
-    total_unsecured_borrowing = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    total_unsecured_borrowing = models.DecimalField(
+        max_digits=15, decimal_places=2, default=0.00
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1095,34 +1286,74 @@ class LivingCosts(CreatedAtUpdatedAtBaseModel):
     cost_type = models.CharField(
         max_length=50,
         choices=LivingCostsTypeChoices.choices,
-        default=LivingCostsTypeChoices.CURRENT_LIVING_COSTS
+        default=LivingCostsTypeChoices.CURRENT_LIVING_COSTS,
     )
 
-    electricity = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    electricity = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
     gas = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     water = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    landline_mobile_phone = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    tv_license = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    council_tax = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    ground_rent_service_charges = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    buildings_contents = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    mortgage_payment_protection = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    endowment = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    pension_contribution = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    childcare = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    maintenance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    landline_mobile_phone = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    tv_license = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    council_tax = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    ground_rent_service_charges = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    buildings_contents = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    mortgage_payment_protection = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    endowment = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    pension_contribution = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    childcare = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    maintenance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
     food = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    car_maintenance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    car_maintenance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
     fuel = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    public_transport = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    tv_broadband = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    recreation_holidays = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    clothing = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    medical_expenses = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    education = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    other_living_costs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    public_transport = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    tv_broadband = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    recreation_holidays = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    clothing = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    medical_expenses = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    education = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    other_living_costs = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
 
-    total_living_expenses = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    total_living_expenses = models.DecimalField(
+        max_digits=15, decimal_places=2, default=0.00
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1136,17 +1367,31 @@ class Insurances(CreatedAtUpdatedAtBaseModel):
     insurance_type = models.CharField(
         max_length=50,
         choices=InsuranceTypeChoices.choices,
-        default=InsuranceTypeChoices.CURRENT_INSURANCES
+        default=InsuranceTypeChoices.CURRENT_INSURANCES,
     )
 
-    motor_insurance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    health_insurance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    payment_protection = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    life_insurance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    dental_insurance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    other_insurance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    motor_insurance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    health_insurance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    payment_protection = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    life_insurance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    dental_insurance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    other_insurance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
 
-    total_insurance_expenses = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    total_insurance_expenses = models.DecimalField(
+        max_digits=15, decimal_places=2, default=0.00
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1159,13 +1404,19 @@ class SubTotals(CreatedAtUpdatedAtBaseModel):
     subtotal_type = models.CharField(
         max_length=50,
         choices=SubTotalsTypeChoices.choices,
-        default=SubTotalsTypeChoices.CURRENT_SUB_TOTALS
+        default=SubTotalsTypeChoices.CURRENT_SUB_TOTALS,
     )
 
     total_income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
-    total_debt_repayment = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
-    total_living_expenses = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
-    available_income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    total_debt_repayment = models.DecimalField(
+        max_digits=15, decimal_places=2, default=0.00
+    )
+    total_living_expenses = models.DecimalField(
+        max_digits=15, decimal_places=2, default=0.00
+    )
+    available_income = models.DecimalField(
+        max_digits=15, decimal_places=2, default=0.00
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
