@@ -11,8 +11,8 @@ from case.models import (
     Adverse,
     Property,
     SolicitorAccountant,
-CaseSolicitor,
-CaseAccountant,
+    CaseSolicitor,
+    CaseAccountant, ExistingProtection,
 )
 
 # Register your models here.
@@ -28,6 +28,7 @@ admin.site.register(Property)
 admin.site.register(SolicitorAccountant)
 admin.site.register(CaseSolicitor)
 admin.site.register(CaseAccountant)
+admin.site.register(ExistingProtection)
 
 
 
