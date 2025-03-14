@@ -1013,9 +1013,6 @@ class SolicitorAccountantSerializer(serializers.ModelSerializer):
 
 class CommonSolicitorAccountantSerializer(serializers.ModelSerializer):
 
-    created_by = CommonUserWithIdSerializer(read_only=True)
-    updated_by = CommonUserWithIdSerializer(read_only=True)
-
     class Meta:
         model = SolicitorAccountant
         fields = [
