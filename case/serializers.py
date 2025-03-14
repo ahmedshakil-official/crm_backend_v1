@@ -1031,7 +1031,7 @@ class CommonSolicitorAccountantSerializer(serializers.ModelSerializer):
 
 class CaseSolicitorSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
-    solicitor = CommonSolicitorAccountantSerializer(read_only=True)
+    solicitor_details = CommonSolicitorAccountantSerializer(read_only=True)
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
     class Meta:
@@ -1040,6 +1040,7 @@ class CaseSolicitorSerializer(serializers.ModelSerializer):
             "alias",
             "case",
             "solicitor",
+            "solicitor_details",
             "created_at",
             "updated_at",
             "created_by",
@@ -1062,7 +1063,7 @@ class CaseSolicitorSerializer(serializers.ModelSerializer):
 
 class CaseAccountantSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
-    accountant = CommonSolicitorAccountantSerializer(read_only=True)
+    accountant_details = CommonSolicitorAccountantSerializer(read_only=True)
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
 
@@ -1072,6 +1073,7 @@ class CaseAccountantSerializer(serializers.ModelSerializer):
             "alias",
             "case",
             "accountant",
+            "accountant_details",
             "created_at",
             "updated_at",
             "created_by",
