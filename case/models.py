@@ -890,6 +890,9 @@ class ExistingProtection(CreatedAtUpdatedAtBaseModel):
         on_delete=models.CASCADE,
         related_name="existing_protection",
     )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="protection_user"
+    )
     have_any_existing_Protection_policies_in_place = models.BooleanField(default=False)
     policy_type = models.CharField(
         max_length=255, choices=ProductCategoryChoices.choices, null=True, blank=True
