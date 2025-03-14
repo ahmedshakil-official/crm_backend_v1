@@ -1064,7 +1064,7 @@ class CaseSolicitorSerializer(serializers.ModelSerializer):
 
 class CaseAccountantSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
-    account = serializers.IntegerField(write_only=True)
+    accountant = serializers.IntegerField(write_only=True)
     accountant_details = CommonSolicitorAccountantSerializer(read_only=True, source="accountant")
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
