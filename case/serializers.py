@@ -1011,8 +1011,28 @@ class SolicitorAccountantSerializer(serializers.ModelSerializer):
         ]
 
 
+class CommonSolicitorAccountantSerializer(serializers.ModelSerializer):
+
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = SolicitorAccountant
+        fields = [
+            "alias",
+            "name",
+            "user_type",
+        ]
+        read_only_fields = [
+            "alias",
+            "name",
+            "user_type",
+        ]
+
+
 class CaseSolicitorSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
+    solicitor = CommonSolicitorAccountantSerializer(read_only=True)
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
     class Meta:
@@ -1043,6 +1063,7 @@ class CaseSolicitorSerializer(serializers.ModelSerializer):
 
 class CaseAccountantSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
+    accountant = CommonSolicitorAccountantSerializer(read_only=True)
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
 
