@@ -1016,11 +1016,13 @@ class CommonSolicitorAccountantSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolicitorAccountant
         fields = [
+            "id",
             "alias",
             "name",
             "user_type",
         ]
         read_only_fields = [
+            "id",
             "alias",
             "name",
             "user_type",
