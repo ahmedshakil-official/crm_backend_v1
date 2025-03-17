@@ -828,6 +828,7 @@ class SolicitorAccountant(CreatedAtUpdatedAtBaseModel):
         default=UserTypeChoices.ACCOUNTANT,
     )
     sra_number = models.CharField(max_length=255, null=True, blank=True)
+    company_name = models.CharField(max_length=255, null=True, blank=True)
     postcode = models.CharField(max_length=255)
     building_name_or_number = models.CharField(max_length=255, null=True, blank=True)
     street = models.CharField(max_length=255)
