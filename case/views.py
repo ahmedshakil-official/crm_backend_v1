@@ -1,7 +1,7 @@
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework import status
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
@@ -44,7 +44,7 @@ from .models import (
     Property,
     SolicitorAccountant,
     CaseAccountant,
-    CaseSolicitor,
+    CaseSolicitor, ExistingProtection,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -70,7 +70,7 @@ from .serializers import (
     PropertySerializer,
     SolicitorAccountantSerializer,
     CaseSolicitorSerializer,
-    CaseAccountantSerializer,
+    CaseAccountantSerializer, ExistingProtectionSerializer,
 )
 
 
@@ -801,3 +801,40 @@ class AccountantRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
+class ExistingProtectionListCreateApiView(ListCreateAPIView):
+    serializer_class = ExistingProtectionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        user_obj = get_object_or_404(User, pk=self.kwargs["pk"])
+        case_obj = get_object_or_404(Case, alias=case_alias)
+        valid_applicants = {case_obj.lead.id}  # Lead user ID
+        valid_applicants.update(
+            JointUser.objects.filter(case=case_obj).values_list("joint_user_id", flat=True)
+        )  # Joint user IDs
+
+        if user_obj.id not in valid_applicants:
+            raise PermissionDenied("You are not authorized to create this record.")
+        return ExistingProtection.objects.filter(case__alias=case_alias, user=user_obj)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        user_obj = get_object_or_404(User, pk=self.kwargs["pk"])
+        case_obj = get_object_or_404(Case, alias=case_alias)
+
+        # Check if the user is a valid applicant
+        valid_applicants = {case_obj.lead.id}  # Lead user ID
+        valid_applicants.update(
+            JointUser.objects.filter(case=case_obj).values_list("joint_user_id", flat=True)
+        )  # Joint user IDs
+
+        if user_obj.id not in valid_applicants:
+            raise PermissionDenied("You are not authorized to create this record.")
+
+        serializer.save(
+            case=case_obj,
+            user=user_obj,
+            created_by=self.request.user,
+        )
