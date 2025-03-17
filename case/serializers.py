@@ -981,6 +981,7 @@ class SolicitorAccountantSerializer(serializers.ModelSerializer):
             "id",
             "alias",
             "name",
+            "company_name",
             "user_type",
             "sra_number",
             "postcode",
