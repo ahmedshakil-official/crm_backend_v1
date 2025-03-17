@@ -28,7 +28,7 @@ from .models import (
     Property,
     SolicitorAccountant,
     CaseSolicitor,
-    CaseAccountant,
+    CaseAccountant, ExistingProtection,
 )
 from authentication.models import User
 from common.serializers import (
@@ -1091,3 +1091,50 @@ class CaseAccountantSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("The accountant must have user_type='ACCOUNTANT'.")
         return value
 
+class ExistingProtectionSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    user = CommonUserWithIdSerializer(read_only=True)
+    class Meta:
+        model = ExistingProtection
+        fields = [
+            "alias",
+            "case",
+            "user",
+            "have_any_existing_Protection_policies_in_place",
+            "policy_type",
+            "policy_provider",
+            "insurers_reference",
+            "sum_assured",
+            "premium",
+            "premium_payment_type",
+            "person_assured",
+            "in_trust",
+            "guaranteed_reviewable",
+            "remaining_policy_term",
+            "cancelled_lapsed_date",
+            "renewal_date",
+            "date_policy_started",
+            "waiver_of_premium",
+            "indexation",
+            "death_in_service_provision",
+            "have_non_standard_terms_been_issued",
+            "copy_and_paste_non_standard_terms_from_lender",
+            "will_this_policy_be_cancelled",
+            "reason_for_policy_cancellation",
+            "policy_cancellation_notes",
+            "why_did_you_take_out_this_policy",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "case",
+            "user",
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
