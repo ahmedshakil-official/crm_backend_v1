@@ -1165,6 +1165,7 @@ class NotesSerializer(serializers.ModelSerializer):
             "task_priority",
             "due_date",
             "assigned_to",
+            "note",
             "created_by",
             "updated_by",
             "created_at",
