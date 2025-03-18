@@ -223,7 +223,7 @@ urlpatterns = [
         name="existing-protection-list-create",
     ),
     path(
-        "<uuid:case_alias>/existing/protection/<int:pk>/",
+        "<uuid:case_alias>/existing/protections/<int:pk>/",
         ExistingProtectionCreateApiView.as_view(),
         name="existing-protection-list-create",
     ),
