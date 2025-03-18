@@ -838,3 +838,10 @@ class ExistingProtectionListCreateApiView(ListCreateAPIView):
             user=user_obj,
             created_by=self.request.user,
         )
+
+class ExistingProtectionRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    queryset = ExistingProtection.objects.all()
+    serializer_class = ExistingProtectionSerializer
+    lookup_field = "alias"
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
