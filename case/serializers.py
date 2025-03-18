@@ -1150,6 +1150,7 @@ class ExistingProtectionSerializer(serializers.ModelSerializer):
         ]
 
 class NotesSerializer(serializers.ModelSerializer):
+    case = CommonCaseSerializer(read_only=True)
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
     class Meta:

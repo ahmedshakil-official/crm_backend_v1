@@ -225,6 +225,6 @@ urlpatterns = [
     path(
         "<uuid:case_alias>/notes/",
         NoteListCreateApiView.as_view(),
-        name="notes-list-create",
+        name="note-list-create",
     ),
 ]
