@@ -844,4 +844,4 @@ class ExistingProtectionRetrieveUpdateApiView(RetrieveUpdateAPIView):
     serializer_class = ExistingProtectionSerializer
     lookup_field = "alias"
     def perform_update(self, serializer):
-        serializer.save(created_by=self.request.user)
+        serializer.save(updated_by=self.request.user)
