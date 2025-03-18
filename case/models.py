@@ -965,6 +965,7 @@ class Notes(CreatedAtUpdatedAtBaseModel):
     )
     due_date = models.DateTimeField(null=True, blank=True)
     assigned_to = models.IntegerField(null=True, blank=True)
+    note = models.CharField(max_length=1500, null=True, blank=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
