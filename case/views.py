@@ -44,7 +44,9 @@ from .models import (
     Property,
     SolicitorAccountant,
     CaseAccountant,
-    CaseSolicitor, ExistingProtection, Notes,
+    CaseSolicitor,
+    ExistingProtection,
+    Notes,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -70,7 +72,9 @@ from .serializers import (
     PropertySerializer,
     SolicitorAccountantSerializer,
     CaseSolicitorSerializer,
-    CaseAccountantSerializer, ExistingProtectionSerializer, NotesSerializer,
+    CaseAccountantSerializer,
+    ExistingProtectionSerializer,
+    NotesSerializer,
 )
 
 
@@ -775,6 +779,7 @@ class CaseAccountantUpdateApiView(UpdateAPIView):
     queryset = CaseAccountant.objects.all()
     serializer_class = CaseAccountantSerializer
     permission_classes = [IsAuthenticated]
+
     def update(self, request, *args, **kwargs):
         case_accountant = self.get_object()
         accountant_pk = request.data.get("accountant")
@@ -786,6 +791,7 @@ class CaseAccountantUpdateApiView(UpdateAPIView):
 
         return Response(self.get_serializer(case_accountant).data)
 
+
 class SolicitorRetrieveUpdateApiView(RetrieveUpdateAPIView):
     queryset = SolicitorAccountant.objects.all()
     serializer_class = SolicitorAccountantSerializer
@@ -793,6 +799,7 @@ class SolicitorRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
 
 class AccountantRetrieveUpdateApiView(RetrieveUpdateAPIView):
     queryset = SolicitorAccountant.objects.all()
@@ -802,22 +809,20 @@ class AccountantRetrieveUpdateApiView(RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
-class ExistingProtectionListCreateApiView(ListCreateAPIView):
+
+class ExistingProtectionListApiView(ListAPIView):
     serializer_class = ExistingProtectionSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         case_alias = self.kwargs["case_alias"]
-        user_obj = get_object_or_404(User, pk=self.kwargs["pk"])
         case_obj = get_object_or_404(Case, alias=case_alias)
-        valid_applicants = {case_obj.lead.id}  # Lead user ID
-        valid_applicants.update(
-            JointUser.objects.filter(case=case_obj).values_list("joint_user_id", flat=True)
-        )  # Joint user IDs
+        return ExistingProtection.objects.filter(case=case_obj)
 
-        if user_obj.id not in valid_applicants:
-            raise PermissionDenied("You are not authorized to create this record.")
-        return ExistingProtection.objects.filter(case__alias=case_alias, user=user_obj)
+
+class ExistingProtectionCreateApiView(CreateAPIView):
+    serializer_class = ExistingProtectionSerializer
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         case_alias = self.kwargs["case_alias"]
@@ -827,7 +832,9 @@ class ExistingProtectionListCreateApiView(ListCreateAPIView):
         # Check if the user is a valid applicant
         valid_applicants = {case_obj.lead.id}  # Lead user ID
         valid_applicants.update(
-            JointUser.objects.filter(case=case_obj).values_list("joint_user_id", flat=True)
+            JointUser.objects.filter(case=case_obj).values_list(
+                "joint_user_id", flat=True
+            )
         )  # Joint user IDs
 
         if user_obj.id not in valid_applicants:
@@ -839,12 +846,15 @@ class ExistingProtectionListCreateApiView(ListCreateAPIView):
             created_by=self.request.user,
         )
 
+
 class ExistingProtectionRetrieveUpdateApiView(RetrieveUpdateAPIView):
     queryset = ExistingProtection.objects.all()
     serializer_class = ExistingProtectionSerializer
     lookup_field = "alias"
+
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
 
 class NoteListCreateApiView(ListCreateAPIView):
     serializer_class = NotesSerializer
@@ -860,9 +870,11 @@ class NoteListCreateApiView(ListCreateAPIView):
         case = get_object_or_404(Case, alias=case_alias)
         serializer.save(case=case, created_by=self.request.user)
 
+
 class NoteRetrieveUpdateApiView(RetrieveUpdateAPIView):
     queryset = Notes.objects.all()
     serializer_class = NotesSerializer
     lookup_field = "alias"
+
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)

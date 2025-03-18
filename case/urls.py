@@ -35,9 +35,14 @@ from .views import (
     SolicitorListCreateApiView,
     AccountantListCreateApiView,
     CaseAccountantsApiView,
-    CaseSolicitorApiView, SolicitorRetrieveUpdateApiView, AccountantRetrieveUpdateApiView,
-    ExistingProtectionListCreateApiView, ExistingProtectionRetrieveUpdateApiView,
-    NoteListCreateApiView, NoteRetrieveUpdateApiView,
+    CaseSolicitorApiView,
+    SolicitorRetrieveUpdateApiView,
+    AccountantRetrieveUpdateApiView,
+    ExistingProtectionRetrieveUpdateApiView,
+    NoteListCreateApiView,
+    NoteRetrieveUpdateApiView,
+    ExistingProtectionListApiView,
+    ExistingProtectionCreateApiView,
 )
 
 urlpatterns = [
@@ -213,8 +218,13 @@ urlpatterns = [
         name="solicitors-list-create",
     ),
     path(
-        "<uuid:case_alias>/existing/protection/<int:pk>",
-        ExistingProtectionListCreateApiView.as_view(),
+        "<uuid:case_alias>/existing/protections/",
+        ExistingProtectionListApiView.as_view(),
+        name="existing-protection-list-create",
+    ),
+    path(
+        "<uuid:case_alias>/existing/protection/<int:pk>/",
+        ExistingProtectionCreateApiView.as_view(),
         name="existing-protection-list-create",
     ),
     path(

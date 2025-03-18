@@ -745,6 +745,7 @@ class SubTotalsTypeChoices(models.TextChoices):
         "Post Completion Sub Totals"
     )
 
+
 class RegionChoices(models.TextChoices):
     PLEASE_SELECT_A_REGION = "PLEASE_SELECT_A_REGION", _("Please Select a Region")
     NORTH = "NORTH", _("North")
@@ -760,12 +761,14 @@ class RegionChoices(models.TextChoices):
     SCOTLAND = "SCOTLAND", _("Scotland")
     NORTHERN_IRELAND = "NORTHERN_IRELAND", _("Northern Ireland")
 
+
 class CountryChoices(models.TextChoices):
     UNITED_KINGDOM = "UNITED_KINGDOM", _("United Kingdom")
     ENGLAND = "ENGLAND", _("England")
     SCOTLAND = "SCOTLAND", _("Scotland")
     WALES = "WALES", _("Wales")
     NORTHERN_IRELAND = "NORTHERN_IRELAND", _("Northern Ireland")
+
 
 class PropertyTypeChoices(models.TextChoices):
     SELECT = "SELECT", _("Select")
@@ -780,6 +783,7 @@ class PropertyTypeChoices(models.TextChoices):
     MULTI_UNIT_BLOCK = "MULTI_UNIT_BLOCK", _("Multi-Unit Block")
     HMO = "HMO", _("HMO")
 
+
 class HouseTypeChoice(models.TextChoices):
     SELECT = "SELECT", _("Select")
     DETACHED = "DETACHED", _("Detached")
@@ -788,22 +792,29 @@ class HouseTypeChoice(models.TextChoices):
     END_TERRACED = "END_TERRACED", _("End-Terraced")
     TOWN_HOUSE = "TOWN_HOUSE", _("Town House")
 
+
 class FlatTypeChoices(models.TextChoices):
     SELECT = "SELECT", _("Select")
     PURPOSE_BUILT = "PURPOSE_BUILT", _("Purpose Built")
     CONVERTED = "CONVERTED", _("Converted")
     STUDIO = "STUDIO", _("Studio")
 
+
 class ConstructionOfWallsChoices(models.TextChoices):
-    PLEASE_SELECT_A_CONSTRUCTION_TYPE = "PLEASE_SELECT_A_CONSTRUCTION_TYPE", _("Please Select A Construction Type")
+    PLEASE_SELECT_A_CONSTRUCTION_TYPE = "PLEASE_SELECT_A_CONSTRUCTION_TYPE", _(
+        "Please Select A Construction Type"
+    )
     CONCRETE = "CONCRETE", _("Concrete")
     TIMBER_FRAMED = "TIMBER_FRAMED", _("Timber Framed")
     STEEL_FRAMED = "STEEL_FRAMED", _("Steel Framed")
     BRICK = "BRICK", _("Brick")
     MUNDIC_BLOCK = "MUNDIC_BLOCK", _("Mundic Block")
-    PRC_REPAIR_WITH_CERTIFICATE = "PRC_REPAIR_WITH_CERTIFICATE", _("PRC Repair with Certificate")
+    PRC_REPAIR_WITH_CERTIFICATE = "PRC_REPAIR_WITH_CERTIFICATE", _(
+        "PRC Repair with Certificate"
+    )
     STONE = "STONE", _("Stone")
     COB = "COB", _("Cob")
+
 
 class ConstructionOfRoofChoices(models.TextChoices):
     TILE_ANY_TYPE = "TILE_ANY_TYPE", _("Tile (Any Type)")
@@ -814,11 +825,14 @@ class ConstructionOfRoofChoices(models.TextChoices):
     THATCHED = "THATCHED", _("Thatched")
     METAL = "METAL", _("Metal")
     WOOD = "WOOD", _("Wood")
-    PLASTIC_EG_EPDM_PVC_CPE = "PLASTIC_EG_EPDM_PVC_CPE", _("Plastic (e.g. EPDM, PVC, CPE)")
+    PLASTIC_EG_EPDM_PVC_CPE = "PLASTIC_EG_EPDM_PVC_CPE", _(
+        "Plastic (e.g. EPDM, PVC, CPE)"
+    )
     BITUMEN = "BITUMEN", _("Bitumen")
     GREEN_ROOF = "GREEN_ROOF", _("Green Roof")
     SHINGLES = "SHINGLES", _("Shingles")
     OTHER = "OTHER", _("Other")
+
 
 class ChargeTypeChoices(models.TextChoices):
     ONE = "ONE", _("One")
@@ -832,6 +846,7 @@ class ChargeTypeChoices(models.TextChoices):
     NINE = "NINE", _("Nine")
     TEN = "TEN", _("Ten")
 
+
 class EpcRatingChoices(models.TextChoices):
     SELECT = "SELECT", _("Select")
     A = "A", _("A")
@@ -842,12 +857,14 @@ class EpcRatingChoices(models.TextChoices):
     F = "F", _("F")
     G = "G", _("G")
 
+
 class TenureChoices(models.TextChoices):
     SELECT = "SELECT", _("Select")
     FREEHOLD = "FREEHOLD", _("Freehold")
     LEASEHOLD = "LEASEHOLD", _("Leasehold")
     COMMONHOLD = "COMMONHOLD", _("Commonhold")
     FEUDAL = "FEUDAL", _("Feudal")
+
 
 class ListedStatusOfTheBuildingChoices(models.TextChoices):
     SELECT = "SELECT", _("Select")
@@ -857,6 +874,7 @@ class ListedStatusOfTheBuildingChoices(models.TextChoices):
     GRADE_A = "GRADE_A", _("Grade A")
     GRADE_B = "GRADE_B", _("Grade B")
     GRADE_C = "GRADE_C", _("Grade C")
+
 
 class NewBuildWarrantyProviderChoices(models.TextChoices):
     SELECT_WARRANTY_PROVIDER = "SELECT_WARRANTY_PROVIDER", _("Select Warranty Provider")
@@ -871,16 +889,21 @@ class NewBuildWarrantyProviderChoices(models.TextChoices):
     GLOBAL = "GLOBAL", _("Global")
     OTHER = "OTHER", _("Other")
 
+
 class ValuationTypeChoices(models.TextChoices):
     STANDARD_VAL = "standard_val", _("Standard Val")
     HOMEBUYERS = "homebuyers", _("Homebuyers")
-    FULL_STANDARD_BUILDING_SURVEY = "full_standard_building_survey", _("Full Standard Building Survey")
+    FULL_STANDARD_BUILDING_SURVEY = "full_standard_building_survey", _(
+        "Full Standard Building Survey"
+    )
     AVM = "avm", _("AVM")
     DRIVE_BY = "drive_by", _("Drive By")
+
 
 class SelectApplicantListChoices(models.TextChoices):
     SELECT = "SELECT", _("Select")
     DEMO_X = "demo_x", _("Demo X")
+
 
 class RelationshipChoices(models.TextChoices):
     PARTNER = "partner", _("Partner")

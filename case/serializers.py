@@ -28,7 +28,9 @@ from .models import (
     Property,
     SolicitorAccountant,
     CaseSolicitor,
-    CaseAccountant, ExistingProtection, Notes,
+    CaseAccountant,
+    ExistingProtection,
+    Notes,
 )
 from authentication.models import User
 from common.serializers import (
@@ -1033,9 +1035,12 @@ class CommonSolicitorAccountantSerializer(serializers.ModelSerializer):
 class CaseSolicitorSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
 
-    solicitor_details = CommonSolicitorAccountantSerializer(read_only=True, source="solicitor")
+    solicitor_details = CommonSolicitorAccountantSerializer(
+        read_only=True, source="solicitor"
+    )
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = CaseSolicitor
         fields = [
@@ -1059,17 +1064,20 @@ class CaseSolicitorSerializer(serializers.ModelSerializer):
             "solicitor",
         ]
 
-
     def validate_solicitor(self, value):
         if value.user_type != SolicitorTypeChoices.SOLICITOR:
-            raise serializers.ValidationError("The solicitor must have user_type='solicitor'.")
+            raise serializers.ValidationError(
+                "The solicitor must have user_type='solicitor'."
+            )
         return value
 
 
 class CaseAccountantSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
 
-    accountant_details = CommonSolicitorAccountantSerializer(read_only=True, source="accountant")
+    accountant_details = CommonSolicitorAccountantSerializer(
+        read_only=True, source="accountant"
+    )
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
 
@@ -1098,13 +1106,17 @@ class CaseAccountantSerializer(serializers.ModelSerializer):
 
     def validate_accountant(self, value):
         if value.user_type != SolicitorTypeChoices.ACCOUNTANT:
-            raise serializers.ValidationError("The accountant must have user_type='ACCOUNTANT'.")
+            raise serializers.ValidationError(
+                "The accountant must have user_type='ACCOUNTANT'."
+            )
         return value
+
 
 class ExistingProtectionSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
     user = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = ExistingProtection
         fields = [
@@ -1149,10 +1161,12 @@ class ExistingProtectionSerializer(serializers.ModelSerializer):
             "updated_by",
         ]
 
+
 class NotesSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = Notes
         fields = [

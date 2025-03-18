@@ -101,6 +101,7 @@ def create_adverse_for_joint_user(sender, instance, created, **kwargs):
             # Optionally set default values for some fields here
         )
 
+
 @receiver(post_save, sender="case.Case")
 def create_existing_protection_for_lead(sender, instance, created, **kwargs):
     if created:
@@ -109,6 +110,7 @@ def create_existing_protection_for_lead(sender, instance, created, **kwargs):
             case=instance,
             user=instance.lead,
         )
+
 
 @receiver(post_save, sender="case.JointUser")
 def create_existing_protection_for_joint_user(sender, instance, created, **kwargs):

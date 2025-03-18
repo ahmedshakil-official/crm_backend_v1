@@ -12,7 +12,8 @@ from case.models import (
     Property,
     SolicitorAccountant,
     CaseSolicitor,
-    CaseAccountant, ExistingProtection,
+    CaseAccountant,
+    ExistingProtection,
 )
 
 # Register your models here.
@@ -29,7 +30,6 @@ admin.site.register(SolicitorAccountant)
 admin.site.register(CaseSolicitor)
 admin.site.register(CaseAccountant)
 admin.site.register(ExistingProtection)
-
 
 
 @admin.register(ApplicantDetails)
