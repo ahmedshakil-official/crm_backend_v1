@@ -37,6 +37,7 @@ from .views import (
     CaseAccountantsApiView,
     CaseSolicitorApiView, SolicitorRetrieveUpdateApiView, AccountantRetrieveUpdateApiView,
     ExistingProtectionListCreateApiView, ExistingProtectionRetrieveUpdateApiView,
+    NoteListCreateApiView,
 )
 
 urlpatterns = [
@@ -220,5 +221,10 @@ urlpatterns = [
         "<uuid:case_alias>/existing/protection/<uuid:alias>/",
         ExistingProtectionRetrieveUpdateApiView.as_view(),
         name="existing-protection-retrieve-update",
+    ),
+    path(
+        "<uuid:case_alias>/notes/",
+        NoteListCreateApiView.as_view(),
+        name="note-list-create",
     ),
 ]
