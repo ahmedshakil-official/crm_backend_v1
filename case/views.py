@@ -44,7 +44,7 @@ from .models import (
     Property,
     SolicitorAccountant,
     CaseAccountant,
-    CaseSolicitor, ExistingProtection,
+    CaseSolicitor, ExistingProtection, Notes,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -70,7 +70,7 @@ from .serializers import (
     PropertySerializer,
     SolicitorAccountantSerializer,
     CaseSolicitorSerializer,
-    CaseAccountantSerializer, ExistingProtectionSerializer,
+    CaseAccountantSerializer, ExistingProtectionSerializer, NotesSerializer,
 )
 
 
@@ -845,3 +845,17 @@ class ExistingProtectionRetrieveUpdateApiView(RetrieveUpdateAPIView):
     lookup_field = "alias"
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
+class NoteListCreateApiView(ListCreateAPIView):
+    serializer_class = NotesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        return Notes.objects.filter(case=case)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        serializer.save(case=case, created_by=self.request.user)

@@ -28,7 +28,7 @@ from .models import (
     Property,
     SolicitorAccountant,
     CaseSolicitor,
-    CaseAccountant, ExistingProtection,
+    CaseAccountant, ExistingProtection, Notes,
 )
 from authentication.models import User
 from common.serializers import (
@@ -1142,6 +1142,35 @@ class ExistingProtectionSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "case",
             "user",
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+class NotesSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    class Meta:
+        model = Notes
+        fields = [
+            "alias",
+            "case",
+            "note_task",
+            "note_visible_to_introducer",
+            "note_visible_to_client",
+            "category",
+            "task_priority",
+            "due_date",
+            "assigned_to",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "case",
             "alias",
             "created_at",
             "updated_at",
