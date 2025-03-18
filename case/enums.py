@@ -744,3 +744,160 @@ class SubTotalsTypeChoices(models.TextChoices):
     POST_COMPLETION_SUB_TOTALS = "PostCompletionSubTotals", _(
         "Post Completion Sub Totals"
     )
+
+class RegionChoices(models.TextChoices):
+    PLEASE_SELECT_A_REGION = "PLEASE_SELECT_A_REGION", _("Please Select a Region")
+    NORTH = "NORTH", _("North")
+    NORTH_WEST = "NORTH_WEST", _("North West")
+    YORKSHIRE_AND_HUMBERSIDE = "YORKSHIRE_AND_HUMBERSIDE", _("Yorkshire and Humberside")
+    EAST_MIDLANDS = "EAST_MIDLANDS", _("East Midlands")
+    WEST_MIDLANDS = "WEST_MIDLANDS", _("West Midlands")
+    EAST_ANGLIA = "EAST_ANGLIA", _("East Anglia")
+    LONDON = "LONDON", _("London")
+    SOUTH_EAST = "SOUTH_EAST", _("South East (Not London)")
+    SOUTH_WEST = "SOUTH_WEST", _("South West")
+    WALES = "WALES", _("Wales")
+    SCOTLAND = "SCOTLAND", _("Scotland")
+    NORTHERN_IRELAND = "NORTHERN_IRELAND", _("Northern Ireland")
+
+class CountryChoices(models.TextChoices):
+    UNITED_KINGDOM = "UNITED_KINGDOM", _("United Kingdom")
+    ENGLAND = "ENGLAND", _("England")
+    SCOTLAND = "SCOTLAND", _("Scotland")
+    WALES = "WALES", _("Wales")
+    NORTHERN_IRELAND = "NORTHERN_IRELAND", _("Northern Ireland")
+
+class PropertyTypeChoices(models.TextChoices):
+    SELECT = "SELECT", _("Select")
+    HOUSE = "HOUSE", _("House")
+    FLAT = "FLAT", _("Flat")
+    MAISONETTE = "MAISONETTE", _("Maisonette")
+    BUNGALOW = "BUNGALOW", _("Bungalow")
+    WAREHOUSE = "WAREHOUSE", _("Warehouse")
+    LAND = "LAND", _("Land")
+    COMMERCIAL = "COMMERCIAL", _("Commercial")
+    SEMI_COMMERCIAL = "SEMI_COMMERCIAL", _("Semi-Commercial")
+    MULTI_UNIT_BLOCK = "MULTI_UNIT_BLOCK", _("Multi-Unit Block")
+    HMO = "HMO", _("HMO")
+
+class HouseTypeChoice(models.TextChoices):
+    SELECT = "SELECT", _("Select")
+    DETACHED = "DETACHED", _("Detached")
+    SEMI_DETACHED = "SEMI_DETACHED", _("Semi-Detached")
+    MID_TERRACED = "MID_TERRACED", _("Mid-Terraced")
+    END_TERRACED = "END_TERRACED", _("End-Terraced")
+    TOWN_HOUSE = "TOWN_HOUSE", _("Town House")
+
+class FlatTypeChoices(models.TextChoices):
+    SELECT = "SELECT", _("Select")
+    PURPOSE_BUILT = "PURPOSE_BUILT", _("Purpose Built")
+    CONVERTED = "CONVERTED", _("Converted")
+    STUDIO = "STUDIO", _("Studio")
+
+class ConstructionOfWallsChoices(models.TextChoices):
+    PLEASE_SELECT_A_CONSTRUCTION_TYPE = "PLEASE_SELECT_A_CONSTRUCTION_TYPE", _("Please Select A Construction Type")
+    CONCRETE = "CONCRETE", _("Concrete")
+    TIMBER_FRAMED = "TIMBER_FRAMED", _("Timber Framed")
+    STEEL_FRAMED = "STEEL_FRAMED", _("Steel Framed")
+    BRICK = "BRICK", _("Brick")
+    MUNDIC_BLOCK = "MUNDIC_BLOCK", _("Mundic Block")
+    PRC_REPAIR_WITH_CERTIFICATE = "PRC_REPAIR_WITH_CERTIFICATE", _("PRC Repair with Certificate")
+    STONE = "STONE", _("Stone")
+    COB = "COB", _("Cob")
+
+class ConstructionOfRoofChoices(models.TextChoices):
+    TILE_ANY_TYPE = "TILE_ANY_TYPE", _("Tile (Any Type)")
+    CLAY_TILE = "CLAY_TILE", _("Clay Tile")
+    SLATE_TILE = "SLATE_TILE", _("Slate Tile")
+    CONCRETE_TILE = "CONCRETE_TILE", _("Concrete Tile")
+    FLAT = "FLAT", _("Flat")
+    THATCHED = "THATCHED", _("Thatched")
+    METAL = "METAL", _("Metal")
+    WOOD = "WOOD", _("Wood")
+    PLASTIC_EG_EPDM_PVC_CPE = "PLASTIC_EG_EPDM_PVC_CPE", _("Plastic (e.g. EPDM, PVC, CPE)")
+    BITUMEN = "BITUMEN", _("Bitumen")
+    GREEN_ROOF = "GREEN_ROOF", _("Green Roof")
+    SHINGLES = "SHINGLES", _("Shingles")
+    OTHER = "OTHER", _("Other")
+
+class ChargeTypeChoices(models.TextChoices):
+    ONE = "ONE", _("One")
+    TWO = "TWO", _("Two")
+    THREE = "THREE", _("Three")
+    FOUR = "FOUR", _("Four")
+    FIVE = "FIVE", _("Five")
+    SIX = "SIX", _("Six")
+    SEVEN = "SEVEN", _("Seven")
+    EIGHT = "EIGHT", _("Eight")
+    NINE = "NINE", _("Nine")
+    TEN = "TEN", _("Ten")
+
+class EpcRatingChoices(models.TextChoices):
+    SELECT = "SELECT", _("Select")
+    A = "A", _("A")
+    B = "B", _("B")
+    C = "C", _("C")
+    D = "D", _("D")
+    E = "E", _("E")
+    F = "F", _("F")
+    G = "G", _("G")
+
+class TenureChoices(models.TextChoices):
+    SELECT = "SELECT", _("Select")
+    FREEHOLD = "FREEHOLD", _("Freehold")
+    LEASEHOLD = "LEASEHOLD", _("Leasehold")
+    COMMONHOLD = "COMMONHOLD", _("Commonhold")
+    FEUDAL = "FEUDAL", _("Feudal")
+
+class ListedStatusOfTheBuildingChoices(models.TextChoices):
+    SELECT = "SELECT", _("Select")
+    GRADE_I = "GRADE_I", _("Grade I")
+    GRADE_II_STAR = "GRADE_II*", _("Grade II*")
+    GRADE_II = "GRADE_II", _("Grade II")
+    GRADE_A = "GRADE_A", _("Grade A")
+    GRADE_B = "GRADE_B", _("Grade B")
+    GRADE_C = "GRADE_C", _("Grade C")
+
+class NewBuildWarrantyProviderChoices(models.TextChoices):
+    SELECT_WARRANTY_PROVIDER = "SELECT_WARRANTY_PROVIDER", _("Select Warranty Provider")
+    NHBC = "NHBC", _("NHBC")
+    LABC = "LABC", _("LABC")
+    PREMIER_GUARANTEE = "PREMIER_GUARANTEE", _("Premier Guarantee")
+    CHECKMATE = "CHECKMATE", _("Checkmate")
+    BUILDSAFE = "BUILDSAFE", _("Buildsafe")
+    BUILD_ZONE = "BUILD_ZONE", _("Build Zone")
+    ICW = "ICW", _("ICW")
+    PRO_TEK = "PRO_TEK", _("Pro Tek")
+    GLOBAL = "GLOBAL", _("Global")
+    OTHER = "OTHER", _("Other")
+
+class ValuationTypeChoices(models.TextChoices):
+    STANDARD_VAL = "standard_val", _("Standard Val")
+    HOMEBUYERS = "homebuyers", _("Homebuyers")
+    FULL_STANDARD_BUILDING_SURVEY = "full_standard_building_survey", _("Full Standard Building Survey")
+    AVM = "avm", _("AVM")
+    DRIVE_BY = "drive_by", _("Drive By")
+
+class SelectApplicantListChoices(models.TextChoices):
+    SELECT = "SELECT", _("Select")
+    DEMO_X = "demo_x", _("Demo X")
+
+class RelationshipChoices(models.TextChoices):
+    PARTNER = "partner", _("Partner")
+    SPOUSE = "spouse", _("Spouse")
+    SIBLING = "sibling", _("Sibling")
+    PARENT = "parent", _("Parent")
+    CARER = "carer", _("Carer")
+    FAMILY = "family", _("Family")
+    OTHER_FAMILY = "other_family", _("Other Family")
+    OTHER = "other", _("Other")
+    CHILD = "child", _("Child")
+    CIVIL_PARTNER = "civil_partner", _("Civil Partner")
+    SON = "son", _("Son")
+    DAUGHTER = "daughter", _("Daughter")
+    GRANDPARENT = "grandparent", _("Grandparent")
+    BROTHER = "brother", _("Brother")
+    SISTER = "sister", _("Sister")
+    UNCLE_AUNT = "uncle_aunt", _("Uncle/Aunt")
+    FOSTER_ADOPTIVE_PARENTS = "foster_adoptive_parents", _("Foster/Adoptive Parents")
+    LEGAL_GUARDIAN = "legal_guardian", _("Legal Guardian")

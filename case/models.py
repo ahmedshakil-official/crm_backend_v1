@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models.functions import Lead
 from django.db.models.signals import post_save
@@ -75,7 +76,10 @@ from .enums import (
     UnsecuredBorrowingTypeChoices,
     PriorityDebtTypeChoices,
     DebtRepaymentTypeChoices,
-    IncomeTypeChoices,
+    IncomeTypeChoices, RegionChoices, CountryChoices, PropertyTypeChoices, HouseTypeChoice, FlatTypeChoices,
+    ConstructionOfWallsChoices, ConstructionOfRoofChoices, ChargeTypeChoices, EpcRatingChoices, TenureChoices,
+    ListedStatusOfTheBuildingChoices, NewBuildWarrantyProviderChoices, ValuationTypeChoices, SelectApplicantListChoices,
+    RelationshipChoices,
 )
 from .signals import (
     create_loan_details,
@@ -1427,6 +1431,93 @@ class SubTotals(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"SubTotals ({self.subtotal_type}) - Available Income: £{self.available_income}"
+
+# create PropertyDetails model.
+class PropertyDetails(CreatedAtUpdatedAtBaseModel):
+    property_purchase_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    property_estimated_valuation = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    have_you_found_a_property_yet = models.BooleanField(default=False)
+    notes = models.CharField(max_length=500, null=True, blank=True)
+    postcode = models.CharField(max_length=50)
+    house_name_or_number = models.CharField(max_length=100, null=True, blank=True)
+    address_one = models.CharField(max_length=100)
+    address_two = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=50)
+    county = models.CharField(max_length=50, null=True, blank=True)
+    region = models.CharField(max_length=50, choices=RegionChoices.choices, default=RegionChoices.PLEASE_SELECT_A_REGION)
+    country = models.CharField(max_length=50, choices=CountryChoices.choices, default=CountryChoices.UNITED_KINGDOM)
+    property_type = models.CharField(max_length=50, choices=PropertyTypeChoices.choices, default=PropertyTypeChoices.SELECT, blank=False)
+    house_type = models.CharField(max_length=50, choices=HouseTypeChoice.choices, default=HouseTypeChoice.SELECT, blank=False)
+    flat_type = models.CharField(max_length=50, choices=FlatTypeChoices.choices, default=FlatTypeChoices.SELECT)
+    construction_of_walls = models.CharField(max_length=50, choices=ConstructionOfWallsChoices.choices, default=ConstructionOfWallsChoices.PLEASE_SELECT_A_CONSTRUCTION_TYPE)
+    construction_of_roof = models.CharField(max_length=50, choices=ConstructionOfRoofChoices.choices, null=True, blank=True)
+    bedrooms = models.PositiveIntegerField(default=0, null=True, blank=True)
+    bathrooms = models.PositiveIntegerField(default=0, null=True, blank=True)
+    reception_rooms = models.PositiveIntegerField(default=0, null=True, blank=True)
+    kitchens = models.PositiveIntegerField(default=0, null=True, blank=True)
+    garages = models.PositiveIntegerField(default=0, null=True, blank=True)
+    parking_spaces = models.PositiveIntegerField(default=0, null=True, blank=True)
+    charge_type = models.CharField(max_length=50, choices=ChargeTypeChoices.choices, default=ChargeTypeChoices.ONE)
+    epc_rating = models.CharField(max_length=50, choices=EpcRatingChoices.choices, default=EpcRatingChoices.SELECT)
+    floor = models.PositiveIntegerField()
+    flats = models.PositiveIntegerField()
+    number_of_storeys_in_the_building = models.PositiveIntegerField()
+    year_built = models.PositiveIntegerField(
+         validators=[
+            MinValueValidator(1), MaxValueValidator(9999)
+        ]
+    )
+    lift_access = models.BooleanField(default=False)
+    tenure = models.CharField(max_length=50, choices=TenureChoices.choices, default=TenureChoices.SELECT)
+    property_lease_term = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    service_charge_per_month = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
+    ground_rent_per_annum = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
+    residential = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
+    commercial = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
+    is_the_property_a_listed_building = models.BooleanField(default=False)
+    number_of_units = models.PositiveIntegerField(null=True, blank=True)
+    listed_status_of_the_building = models.CharField(max_length=50, choices=ListedStatusOfTheBuildingChoices.choices, default=ListedStatusOfTheBuildingChoices.SELECT)
+    listed_building_notes = models.CharField(max_length=500, null=True, blank=True)
+    do_you_or_will_you_own_part_or_all_of_the_freehold = models.BooleanField(default=False)
+    is_the_property_part_of_a_help_to_buy_shared_ownership_scheme = models.BooleanField(default=False)
+    is_the_property_above_or_near_commercial_premises = models.BooleanField(default=False)
+    is_the_property_a_new_build = models.BooleanField(default=False)
+    new_build_warranty_provider = models.CharField(max_length=50, choices=NewBuildWarrantyProviderChoices.choices, default=NewBuildWarrantyProviderChoices.SELECT_WARRANTY_PROVIDER)
+    other_new_build_warranty_rovider = models.CharField(max_length=50, null=True, blank=True)
+    is_the_property_a_right_to_buy = models.BooleanField(default=False)
+    date_of_purchase = models.DateField(null=True, blank=True)
+    discounted_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
+    is_the_property_ex_local_authority = models.BooleanField(default=False)
+    is_this_property_being_purchased_from_the_council_with_this_application = models.BooleanField(default=False, db_column='purchased_from_council_with_app')
+    is_there_an_annexe_within_the_property = models.BooleanField(default=False)
+    will_the_property_be_owner_occupied = models.BooleanField(default=False)
+    please_provide_further_details = models.CharField(max_length=255, null=True, blank=True)
+    is_the_property_on_the_market = models.BooleanField(default=False)
+    is_the_property_rented_out_to_be_rented_out = models.BooleanField(default=False)
+    is_the_property_standard_construction = models.BooleanField(default=False)
+    comments_details = models.CharField(max_length=255, null=True, blank=True)
+    does_the_property_have_solar_panels = models.BooleanField(default=False)
+    do_you_own_the_solar_panels = models.BooleanField(default=False)
+    is_the_property_used_purely_for_residential_purposes = models.BooleanField(default=False)
+    valuation_type = models.CharField(max_length=50, choices=ValuationTypeChoices.choices, null=True, blank=True)
+    select_applicant_list = models.CharField(max_length=50, choices=SelectApplicantListChoices.choices, default=SelectApplicantListChoices.SELECT)
+    contact_for_access = models.CharField(max_length=50, null=True, blank=True)
+    contacts_name = models.CharField(max_length=50, null=True, blank=True)
+    contacts_daytime_telephone = models.CharField(max_length=20, null=True, blank=True)
+    contacts_mobile_telephone = models.CharField(max_length=20, null=True, blank=True)
+    contacts_email_address = models.CharField(max_length=50, null=True, blank=True)
+    full_name = models.CharField(max_length=50)
+    date_of_birth = models.DateField()
+    relationship = models.CharField(max_length=50, choices=RelationshipChoices.choices, default=RelationshipChoices.PARTNER)
+    estimated_value = models.PositiveIntegerField(default=0 ,null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.full_name} {self.contacts_name} - {self.date_of_birth}"
+
+
 
 
 # Call all signals here.
