@@ -551,9 +551,13 @@ class UserTypeChoices(models.TextChoices):
 
 
 class PolicyTypeChoices(models.TextChoices):
-    LIFT_ASSURANCE_LEVEL = "LIFT_ASSURANCE_LEVEL", _("Lift Assurance Level")
-    LIFT_ASSURANCE_DECREASING = "LIFT_ASSURANCE_DECREASING", _(
-        "Lift Assurance Decreasing"
+    LIFE_ASSURANCE_LEVEL = "LIFE_ASSURANCE_LEVEL", _("Life Assurance Level")
+    LIFE_ASSURANCE_DECREASING = "LIFE_ASSURANCE_DECREASING", _(
+        "Life Assurance Decreasing"
+    )
+    CRITICAL_ILLNESS_COVER_LEVEL = (
+        "CRITICAL_ILLNESS_COVER_LEVEL",
+        _("Critical Illness Cover Level"),
     )
     CRITICAL_ILLNESS_COVER_DECREASING = (
         "CRITICAL_ILLNESS_COVER_DECREASING",
