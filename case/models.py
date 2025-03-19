@@ -91,7 +91,7 @@ from .enums import (
     NewBuildWarrantyProviderChoices,
     ValuationTypeChoices,
     SelectApplicantListChoices,
-    RelationshipChoices,
+    RelationshipChoices, PolicyTypeChoices,
 )
 from .signals import (
     create_loan_details,
@@ -912,7 +912,7 @@ class ExistingProtection(CreatedAtUpdatedAtBaseModel):
     )
     have_any_existing_Protection_policies_in_place = models.BooleanField(default=False)
     policy_type = models.CharField(
-        max_length=255, choices=ProductCategoryChoices.choices, null=True, blank=True
+        max_length=255, choices=PolicyTypeChoices.choices, null=True, blank=True
     )
     policy_provider = models.CharField(max_length=255, null=True, blank=True)
     insurers_reference = models.CharField(max_length=255, null=True, blank=True)
