@@ -892,3 +892,10 @@ class PropertyDetailsListCreateApiView(ListCreateAPIView):
         case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
         serializer.save(case=case, created_by=self.request.user)
+
+class PropertyDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    queryset = PropertyDetails.objects.all()
+    serializer_class = PropertyDetailsSerializer
+    lookup_field = "alias"
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
