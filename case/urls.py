@@ -42,7 +42,7 @@ from .views import (
     NoteListCreateApiView,
     NoteRetrieveUpdateApiView,
     ExistingProtectionListApiView,
-    ExistingProtectionCreateApiView,
+    ExistingProtectionCreateApiView, PropertyDetailsListCreateApiView,
 )
 
 urlpatterns = [
@@ -241,5 +241,10 @@ urlpatterns = [
         "<uuid:case_alias>/notes/<uuid:alias>/",
         NoteRetrieveUpdateApiView.as_view(),
         name="note-retrieve-update",
+    ),
+    path(
+        "<uuid:case_alias>/property/details/",
+        PropertyDetailsListCreateApiView.as_view(),
+        name="property-details-list-create",
     ),
 ]
