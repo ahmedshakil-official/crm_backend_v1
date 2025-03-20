@@ -1448,6 +1448,11 @@ class SubTotals(CreatedAtUpdatedAtBaseModel):
 
 # create PropertyDetails model.
 class PropertyDetails(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="property_details",
+    )
     property_purchase_price = models.DecimalField(
         max_digits=10, decimal_places=2, default=0.00
     )
@@ -1594,13 +1599,7 @@ class PropertyDetails(CreatedAtUpdatedAtBaseModel):
     contacts_daytime_telephone = models.CharField(max_length=20, null=True, blank=True)
     contacts_mobile_telephone = models.CharField(max_length=20, null=True, blank=True)
     contacts_email_address = models.CharField(max_length=50, null=True, blank=True)
-    full_name = models.CharField(max_length=50)
-    date_of_birth = models.DateField()
-    relationship = models.CharField(
-        max_length=50,
-        choices=RelationshipChoices.choices,
-        default=RelationshipChoices.PARTNER,
-    )
+
     estimated_value = models.PositiveIntegerField(default=0, null=True, blank=True)
 
     class Meta:
@@ -1608,6 +1607,22 @@ class PropertyDetails(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.full_name} {self.contacts_name} - {self.date_of_birth}"
+
+
+class OtherOccupants(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="other_occupants",
+    )
+    full_name = models.CharField(max_length=50)
+    date_of_birth = models.DateField()
+    relationship = models.CharField(
+        max_length=50,
+        choices=RelationshipChoices.choices,
+        default=RelationshipChoices.PARTNER,
+    )
+
 
 
 # Call all signals here.
