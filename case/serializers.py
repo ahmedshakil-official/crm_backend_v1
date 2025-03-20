@@ -30,7 +30,7 @@ from .models import (
     CaseSolicitor,
     CaseAccountant,
     ExistingProtection,
-    Notes, PropertyDetails, OtherOccupants,
+    Notes, PropertyDetails, OtherOccupants, Product,
 )
 from authentication.models import User
 from common.serializers import (
@@ -1311,4 +1311,57 @@ class OtherOccupantsSerializer(serializers.ModelSerializer):
             "updated_at",
             "created_by",
             "updated_by",
+        ]
+
+class ProductSerializer(serializers.ModelSerializer):
+    case = CommonCaseSerializer(read_only=True)
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = Product
+        fields = [
+            "alias",
+            "case",
+            "product_description",
+            "initial_rate",
+            "initial_rate_type",
+            "initial_rate_period_type",
+            "reversion_rate",
+            "initial_rate_period",
+            "initial_rate_date_period",
+            "max_ltv",
+            "annual_percentage_rate",
+            "product_class",
+            "early_repayment_charge",
+            "early_repayment_charge_end_date",
+            "initial_monthly_payment",
+            "initial_monthly_payment_including_fees",
+            "monthly_payment_after_initial_Period",
+            "true_cost_over_initial_period",
+            "true_cost_over_term",
+            "true_cost_without_fees",
+            "loan_required_including_fees",
+            "arrangement_fee",
+            "arrangement_fee_added_to_loan",
+            "valuation_fee",
+            "booking_fee",
+            "booking_fee_added_to_loan",
+            "procuration_fee",
+            "processing_consent",
+            "processing_consent_description",
+            "application_review",
+            "application_review_description",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "alias",
+            "case",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
