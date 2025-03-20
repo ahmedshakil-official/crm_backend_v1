@@ -1,3 +1,4 @@
+from django.db import transaction
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework import status
@@ -46,7 +47,7 @@ from .models import (
     CaseAccountant,
     CaseSolicitor,
     ExistingProtection,
-    Notes, PropertyDetails, OtherOccupants, Product,
+    Notes, PropertyDetails, OtherOccupants, Product, BudgetPlanner,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -74,7 +75,7 @@ from .serializers import (
     CaseSolicitorSerializer,
     CaseAccountantSerializer,
     ExistingProtectionSerializer,
-    NotesSerializer, PropertyDetailsSerializer, OtherOccupantsSerializer, ProductSerializer,
+    NotesSerializer, PropertyDetailsSerializer, OtherOccupantsSerializer, ProductSerializer, BudgetPlannerSerializer,
 )
 
 
@@ -949,3 +950,46 @@ class ProductRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
+
+
+class BudgetPlannerListCreateApiView(ListCreateAPIView):
+    serializer_class = BudgetPlannerSerializer
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        return BudgetPlanner.objects.filter(case__alias=case_alias)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        # So the serializer has access to request.user
+        context["request"] = self.request
+        return context
+
+    @transaction.atomic
+    def perform_create(self, serializer):
+        # We fetch the case based on the URL's case_alias
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+
+        # We set the case on BudgetPlanner, ignoring any case in request data
+        serializer.save(case=case)
+
+
+class BudgetPlannerRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    serializer_class = BudgetPlannerSerializer
+    lookup_field = "alias"  # or "pk" or whatever you use
+    queryset = BudgetPlanner.objects.all()  # or override get_queryset similarly
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        return BudgetPlanner.objects.filter(case__alias=case_alias)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)

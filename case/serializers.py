@@ -1,3 +1,4 @@
+from django.db import transaction
 from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 
@@ -30,7 +31,8 @@ from .models import (
     CaseSolicitor,
     CaseAccountant,
     ExistingProtection,
-    Notes, PropertyDetails, OtherOccupants, Product,
+    Notes, PropertyDetails, OtherOccupants, Product, DebtRepayments, PriorityDebt, UnsecuredBorrowing, LivingCosts,
+    Insurances, SubTotals, BudgetPlanner, Income,
 )
 from authentication.models import User
 from common.serializers import (
@@ -1365,3 +1367,424 @@ class ProductSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+
+
+class IncomeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Income
+        fields = [
+            # domain-specific fields:
+            "income_type",
+            "applicant_one_net_monthly_income",
+            "applicant_two_net_monthly_income",
+            "rental_income",
+            "part_time_income",
+            "jobseekers_allowance",
+            "child_benefit",
+            "tax_credits",
+            "working_tax_credits",
+            "maintenance",
+            "pension",
+            "other_benefits",
+            "total_income",
+
+            # base fields:
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+
+class DebtRepaymentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DebtRepayments
+        fields = [
+            "repayment_type",
+            "mortgage_rent",
+            "second_mortgage",
+            "shared_ownership_rental",
+            "total_debt_repayment",
+
+            # base fields:
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+
+class PriorityDebtSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PriorityDebt
+        fields = [
+            "debt_type",
+            "mortgage_arrears",
+            "gas_arrears",
+            "maintenance_arrears",
+            "defaults",
+            "ccjs",
+            "debt_management_plans",
+            "magistrate_court_fines",
+            "council_tax_arrears",
+            "total_priority_debt",
+
+            # base fields:
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+
+class UnsecuredBorrowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UnsecuredBorrowing
+        fields = [
+            "borrowing_type",
+            "credit_cards",
+            "loans",
+            "car_finance",
+            "overdraft",
+            "store_cards",
+            "student_loans",
+            "other_borrowing",
+            "total_unsecured_borrowing",
+
+            # base fields:
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+
+class LivingCostsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LivingCosts
+        fields = [
+            "cost_type",
+            "electricity",
+            "gas",
+            "water",
+            "landline_mobile_phone",
+            "tv_license",
+            "council_tax",
+            "ground_rent_service_charges",
+            "buildings_contents",
+            "mortgage_payment_protection",
+            "endowment",
+            "pension_contribution",
+            "childcare",
+            "maintenance",
+            "food",
+            "car_maintenance",
+            "fuel",
+            "public_transport",
+            "tv_broadband",
+            "recreation_holidays",
+            "clothing",
+            "medical_expenses",
+            "education",
+            "other_living_costs",
+            "total_living_expenses",
+
+            # base fields:
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+
+class InsurancesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Insurances
+        fields = [
+            "insurance_type",
+            "motor_insurance",
+            "health_insurance",
+            "payment_protection",
+            "life_insurance",
+            "dental_insurance",
+            "other_insurance",
+            "total_insurance_expenses",
+
+            # base fields:
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+
+class SubTotalsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubTotals
+        fields = [
+            "subtotal_type",
+            "total_income",
+            "total_debt_repayment",
+            "total_living_expenses",
+            "available_income",
+
+            # base fields:
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+
+
+class BudgetPlannerSerializer(serializers.ModelSerializer):
+    # Nested sub-model serializers
+    current_income = IncomeSerializer(required=False)
+    post_income = IncomeSerializer(required=False)
+    current_debt_repayments = DebtRepaymentsSerializer(required=False)
+    post_debt_repayments = DebtRepaymentsSerializer(required=False)
+    current_priority_debt = PriorityDebtSerializer(required=False)
+    post_priority_debt = PriorityDebtSerializer(required=False)
+    current_unsecured_borrowing = UnsecuredBorrowingSerializer(required=False)
+    post_unsecured_borrowing = UnsecuredBorrowingSerializer(required=False)
+    current_living_cost = LivingCostsSerializer(required=False)
+    post_living_cost = LivingCostsSerializer(required=False)
+    current_insurance = InsurancesSerializer(required=False)
+    post_insurance = InsurancesSerializer(required=False)
+    current_sub_total = SubTotalsSerializer(required=False)
+    post_sub_total = SubTotalsSerializer(required=False)
+
+    class Meta:
+        model = BudgetPlanner
+        fields = [
+            "alias",
+            "case",
+            "current_income",
+            "post_income",
+            "current_debt_repayments",
+            "post_debt_repayments",
+            "current_priority_debt",
+            "post_priority_debt",
+            "current_unsecured_borrowing",
+            "post_unsecured_borrowing",
+            "current_living_cost",
+            "post_living_cost",
+            "current_insurance",
+            "post_insurance",
+            "current_sub_total",
+            "post_sub_total",
+            "disclaimer",
+            "disclaimer_details",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "case",  # we’ll assign the case automatically
+        ]
+
+    def create(self, validated_data):
+        """
+        Create the BudgetPlanner along with its related models, in a single transaction,
+        setting created_by and updated_by to request.user.
+        """
+        request_user = self.context["request"].user
+
+        # Pop nested data for sub-model creation
+        current_income_data = validated_data.pop("current_income", None)
+        post_income_data = validated_data.pop("post_income", None)
+        current_debt_repayment_data = validated_data.pop("current_debt_repayments", None)
+        post_debt_repayment_data = validated_data.pop("post_debt_repayments", None)
+        current_priority_debt_data = validated_data.pop("current_priority_debt", None)
+        post_priority_debt_data = validated_data.pop("post_priority_debt", None)
+        current_unsecured_borrowing_data = validated_data.pop("current_unsecured_borrowing", None)
+        post_unsecured_borrowing_data = validated_data.pop("post_unsecured_borrowing", None)
+        current_living_cost_data = validated_data.pop("current_living_cost", None)
+        post_living_cost_data = validated_data.pop("post_living_cost", None)
+        current_insurance_data = validated_data.pop("current_insurance", None)
+        post_insurance_data = validated_data.pop("post_insurance", None)
+        current_sub_total_data = validated_data.pop("current_sub_total", None)
+        post_sub_total_data = validated_data.pop("post_sub_total", None)
+
+        with transaction.atomic():
+            # Create sub-objects if data is present
+            current_income = Income.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **current_income_data
+            ) if current_income_data else None
+
+            post_income = Income.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **post_income_data
+            ) if post_income_data else None
+
+            current_debt_repayments = DebtRepayments.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **current_debt_repayment_data
+            ) if current_debt_repayment_data else None
+
+            post_debt_repayments = DebtRepayments.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **post_debt_repayment_data
+            ) if post_debt_repayment_data else None
+
+            current_priority_debt = PriorityDebt.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **current_priority_debt_data
+            ) if current_priority_debt_data else None
+
+            post_priority_debt = PriorityDebt.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **post_priority_debt_data
+            ) if post_priority_debt_data else None
+
+            current_unsecured_borrowing = UnsecuredBorrowing.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **current_unsecured_borrowing_data
+            ) if current_unsecured_borrowing_data else None
+
+            post_unsecured_borrowing = UnsecuredBorrowing.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **post_unsecured_borrowing_data
+            ) if post_unsecured_borrowing_data else None
+
+            current_living_cost = LivingCosts.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **current_living_cost_data
+            ) if current_living_cost_data else None
+
+            post_living_cost = LivingCosts.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **post_living_cost_data
+            ) if post_living_cost_data else None
+
+            current_insurance = Insurances.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **current_insurance_data
+            ) if current_insurance_data else None
+
+            post_insurance = Insurances.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **post_insurance_data
+            ) if post_insurance_data else None
+
+            current_sub_total = SubTotals.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **current_sub_total_data
+            ) if current_sub_total_data else None
+
+            post_sub_total = SubTotals.objects.create(
+                created_by=request_user,
+                updated_by=request_user,
+                **post_sub_total_data
+            ) if post_sub_total_data else None
+
+            # Now create the BudgetPlanner
+            budget_planner = BudgetPlanner.objects.create(
+                **validated_data,
+                current_income=current_income,
+                post_income=post_income,
+                current_debt_repayments=current_debt_repayments,
+                post_debt_repayments=post_debt_repayments,
+                current_priority_debt=current_priority_debt,
+                post_priority_debt=post_priority_debt,
+                current_unsecured_borrowing=current_unsecured_borrowing,
+                post_unsecured_borrowing=post_unsecured_borrowing,
+                current_living_cost=current_living_cost,
+                post_living_cost=post_living_cost,
+                current_insurance=current_insurance,
+                post_insurance=post_insurance,
+                current_sub_total=current_sub_total,
+                post_sub_total=post_sub_total,
+                created_by=request_user,
+                updated_by=request_user,
+            )
+
+        return budget_planner
+
+    def update(self, instance, validated_data):
+
+        request_user = self.context["request"].user
+        instance.updated_by = request_user
+        # Update top-level fields (disclaimer, etc.)
+        instance.disclaimer = validated_data.get("disclaimer", instance.disclaimer)
+        instance.disclaimer_details = validated_data.get("disclaimer_details", instance.disclaimer_details)
+        # ... handle sub-models here if needed ...
+        instance.save()
+        return instance
