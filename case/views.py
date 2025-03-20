@@ -913,6 +913,7 @@ class PropertyDetailsListCreateApiView(ListCreateAPIView):
 class PropertyDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
     queryset = PropertyDetails.objects.all()
     serializer_class = PropertyDetailsSerializer
+    permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
     def perform_update(self, serializer):
@@ -962,6 +963,7 @@ class ProductListCreateApiView(ListCreateAPIView):
 
 class ProductRetrieveUpdateApiView(RetrieveUpdateAPIView):
     serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
     def get_queryset(self):
