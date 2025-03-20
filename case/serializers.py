@@ -3,7 +3,9 @@ from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 
 from common.enums import UserTypeChoices, RoleChoices
-from case.enums import UserTypeChoices as SolicitorTypeChoices
+from case.enums import UserTypeChoices as SolicitorTypeChoices, IncomeTypeChoices, DebtRepaymentTypeChoices, \
+    PriorityDebtTypeChoices, UnsecuredBorrowingTypeChoices, LivingCostsTypeChoices, InsuranceTypeChoices, \
+    SubTotalsTypeChoices
 from organization.models import Organization, OrganizationUser
 from .common import (
     RegisterLoan,
@@ -1680,6 +1682,7 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
             post_income = Income.objects.create(
                 created_by=request_user,
                 updated_by=request_user,
+                income_type=IncomeTypeChoices.POST_COMPLETION_INCOME,
                 **post_income_data
             ) if post_income_data else None
 
@@ -1692,6 +1695,7 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
             post_debt_repayments = DebtRepayments.objects.create(
                 created_by=request_user,
                 updated_by=request_user,
+                repayment_type=DebtRepaymentTypeChoices.POST_COMPLETION_DEBT_REPAYMENTS,
                 **post_debt_repayment_data
             ) if post_debt_repayment_data else None
 
@@ -1704,6 +1708,7 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
             post_priority_debt = PriorityDebt.objects.create(
                 created_by=request_user,
                 updated_by=request_user,
+                debt_type=PriorityDebtTypeChoices.POST_COMPLETION_PRIORITY_DEBT,
                 **post_priority_debt_data
             ) if post_priority_debt_data else None
 
@@ -1716,6 +1721,7 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
             post_unsecured_borrowing = UnsecuredBorrowing.objects.create(
                 created_by=request_user,
                 updated_by=request_user,
+                borrowing_type=UnsecuredBorrowingTypeChoices.POST_COMPLETION_UNSECURED_BORROWING,
                 **post_unsecured_borrowing_data
             ) if post_unsecured_borrowing_data else None
 
@@ -1728,6 +1734,7 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
             post_living_cost = LivingCosts.objects.create(
                 created_by=request_user,
                 updated_by=request_user,
+                cost_type=LivingCostsTypeChoices.POST_COMPLETION_LIVING_COSTS,
                 **post_living_cost_data
             ) if post_living_cost_data else None
 
@@ -1740,6 +1747,7 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
             post_insurance = Insurances.objects.create(
                 created_by=request_user,
                 updated_by=request_user,
+                insurance_type=InsuranceTypeChoices.POST_COMPLETION_INSURANCES,
                 **post_insurance_data
             ) if post_insurance_data else None
 
@@ -1752,6 +1760,7 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
             post_sub_total = SubTotals.objects.create(
                 created_by=request_user,
                 updated_by=request_user,
+                subtotal_type=SubTotalsTypeChoices.POST_COMPLETION_SUB_TOTALS,
                 **post_sub_total_data
             ) if post_sub_total_data else None
 
