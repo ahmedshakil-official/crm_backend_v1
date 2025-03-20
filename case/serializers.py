@@ -1412,7 +1412,7 @@ class IncomeSerializer(serializers.ModelSerializer):
             "total_income",
             # base fields:
             "alias",
-            "income_type",
+
             "created_at",
             "updated_at",
             "created_by",
@@ -1420,6 +1420,7 @@ class IncomeSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "alias",
+            "income_type",
             "created_at",
             "updated_at",
             "created_by",
@@ -1438,7 +1439,7 @@ class DebtRepaymentsSerializer(serializers.ModelSerializer):
             "total_debt_repayment",
             # base fields:
             "alias",
-            "repayment_type",
+
             "created_at",
             "updated_at",
             "created_by",
@@ -1446,6 +1447,7 @@ class DebtRepaymentsSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "alias",
+            "repayment_type",
             "created_at",
             "updated_at",
             "created_by",
@@ -1469,7 +1471,7 @@ class PriorityDebtSerializer(serializers.ModelSerializer):
             "total_priority_debt",
             # base fields:
             "alias",
-            "debt_type",
+
             "created_at",
             "updated_at",
             "created_by",
@@ -1477,6 +1479,7 @@ class PriorityDebtSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "alias",
+            "debt_type",
             "created_at",
             "updated_at",
             "created_by",
