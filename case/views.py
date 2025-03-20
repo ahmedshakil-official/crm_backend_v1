@@ -46,7 +46,7 @@ from .models import (
     CaseAccountant,
     CaseSolicitor,
     ExistingProtection,
-    Notes,
+    Notes, PropertyDetails, OtherOccupants,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -74,7 +74,7 @@ from .serializers import (
     CaseSolicitorSerializer,
     CaseAccountantSerializer,
     ExistingProtectionSerializer,
-    NotesSerializer,
+    NotesSerializer, PropertyDetailsSerializer, OtherOccupantsSerializer,
 )
 
 
@@ -875,6 +875,51 @@ class NoteRetrieveUpdateApiView(RetrieveUpdateAPIView):
     queryset = Notes.objects.all()
     serializer_class = NotesSerializer
     lookup_field = "alias"
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+
+class PropertyDetailsListCreateApiView(ListCreateAPIView):
+    serializer_class = PropertyDetailsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        return PropertyDetails.objects.filter(case=case)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        serializer.save(case=case, created_by=self.request.user)
+
+class PropertyDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    queryset = PropertyDetails.objects.all()
+    serializer_class = PropertyDetailsSerializer
+    lookup_field = "alias"
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+
+class OtherOccupantsListCreateApiView(ListCreateAPIView):
+    serializer_class = OtherOccupantsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        return OtherOccupants.objects.filter(case=case)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        serializer.save(case=case, created_by=self.request.user)
+
+class OtherOccupantsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    serializer_class = OtherOccupantsSerializer
+    lookup_field = "alias"
+
+    def get_queryset(self):
+        return OtherOccupants.objects.select_related("case").all()
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
