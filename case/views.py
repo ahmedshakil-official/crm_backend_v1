@@ -47,7 +47,11 @@ from .models import (
     CaseAccountant,
     CaseSolicitor,
     ExistingProtection,
-    Notes, PropertyDetails, OtherOccupants, Product, BudgetPlanner,
+    Notes,
+    PropertyDetails,
+    OtherOccupants,
+    Product,
+    BudgetPlanner,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -75,7 +79,11 @@ from .serializers import (
     CaseSolicitorSerializer,
     CaseAccountantSerializer,
     ExistingProtectionSerializer,
-    NotesSerializer, PropertyDetailsSerializer, OtherOccupantsSerializer, ProductSerializer, BudgetPlannerSerializer,
+    NotesSerializer,
+    PropertyDetailsSerializer,
+    OtherOccupantsSerializer,
+    ProductSerializer,
+    BudgetPlannerSerializer,
 )
 
 
@@ -861,7 +869,11 @@ class NoteListCreateApiView(ListCreateAPIView):
     serializer_class = NotesSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields = ["name","category", "task_priority", ]
+    search_fields = [
+        "name",
+        "category",
+        "task_priority",
+    ]
 
     def get_queryset(self):
         case_alias = self.kwargs["case_alias"]
@@ -882,6 +894,7 @@ class NoteRetrieveUpdateApiView(RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
+
 class PropertyDetailsListCreateApiView(ListCreateAPIView):
     serializer_class = PropertyDetailsSerializer
     permission_classes = [IsAuthenticated]
@@ -896,12 +909,15 @@ class PropertyDetailsListCreateApiView(ListCreateAPIView):
         case = get_object_or_404(Case, alias=case_alias)
         serializer.save(case=case, created_by=self.request.user)
 
+
 class PropertyDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
     queryset = PropertyDetails.objects.all()
     serializer_class = PropertyDetailsSerializer
     lookup_field = "alias"
+
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
 
 class OtherOccupantsListCreateApiView(ListCreateAPIView):
     serializer_class = OtherOccupantsSerializer
@@ -917,6 +933,7 @@ class OtherOccupantsListCreateApiView(ListCreateAPIView):
         case = get_object_or_404(Case, alias=case_alias)
         serializer.save(case=case, created_by=self.request.user)
 
+
 class OtherOccupantsRetrieveUpdateApiView(RetrieveUpdateAPIView):
     serializer_class = OtherOccupantsSerializer
     lookup_field = "alias"
@@ -926,6 +943,7 @@ class OtherOccupantsRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
 
 class ProductListCreateApiView(ListCreateAPIView):
     serializer_class = ProductSerializer
@@ -941,6 +959,7 @@ class ProductListCreateApiView(ListCreateAPIView):
         case = get_object_or_404(Case, alias=case_alias)
         serializer.save(case=case, created_by=self.request.user)
 
+
 class ProductRetrieveUpdateApiView(RetrieveUpdateAPIView):
     serializer_class = ProductSerializer
     lookup_field = "alias"
@@ -952,9 +971,9 @@ class ProductRetrieveUpdateApiView(RetrieveUpdateAPIView):
         serializer.save(updated_by=self.request.user)
 
 
-
 class BudgetPlannerListCreateApiView(ListCreateAPIView):
     serializer_class = BudgetPlannerSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         case_alias = self.kwargs["case_alias"]

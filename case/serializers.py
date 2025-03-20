@@ -3,9 +3,16 @@ from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 
 from common.enums import UserTypeChoices, RoleChoices
-from case.enums import UserTypeChoices as SolicitorTypeChoices, IncomeTypeChoices, DebtRepaymentTypeChoices, \
-    PriorityDebtTypeChoices, UnsecuredBorrowingTypeChoices, LivingCostsTypeChoices, InsuranceTypeChoices, \
-    SubTotalsTypeChoices
+from case.enums import (
+    UserTypeChoices as SolicitorTypeChoices,
+    IncomeTypeChoices,
+    DebtRepaymentTypeChoices,
+    PriorityDebtTypeChoices,
+    UnsecuredBorrowingTypeChoices,
+    LivingCostsTypeChoices,
+    InsuranceTypeChoices,
+    SubTotalsTypeChoices,
+)
 from organization.models import Organization, OrganizationUser
 from .common import (
     RegisterLoan,
@@ -33,8 +40,18 @@ from .models import (
     CaseSolicitor,
     CaseAccountant,
     ExistingProtection,
-    Notes, PropertyDetails, OtherOccupants, Product, DebtRepayments, PriorityDebt, UnsecuredBorrowing, LivingCosts,
-    Insurances, SubTotals, BudgetPlanner, Income,
+    Notes,
+    PropertyDetails,
+    OtherOccupants,
+    Product,
+    DebtRepayments,
+    PriorityDebt,
+    UnsecuredBorrowing,
+    LivingCosts,
+    Insurances,
+    SubTotals,
+    BudgetPlanner,
+    Income,
 )
 from authentication.models import User
 from common.serializers import (
@@ -1198,6 +1215,7 @@ class NotesSerializer(serializers.ModelSerializer):
             "updated_by",
         ]
 
+
 class PropertyDetailsSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
     created_by = CommonUserWithIdSerializer(read_only=True)
@@ -1291,10 +1309,12 @@ class PropertyDetailsSerializer(serializers.ModelSerializer):
             "updated_by",
         ]
 
+
 class OtherOccupantsSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = OtherOccupants
         fields = [
@@ -1316,6 +1336,7 @@ class OtherOccupantsSerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
         ]
+
 
 class ProductSerializer(serializers.ModelSerializer):
     case = CommonCaseSerializer(read_only=True)
@@ -1371,7 +1392,6 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
 
-
 class IncomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Income
@@ -1390,7 +1410,6 @@ class IncomeSerializer(serializers.ModelSerializer):
             "pension",
             "other_benefits",
             "total_income",
-
             # base fields:
             "alias",
             "income_type",
@@ -1417,7 +1436,6 @@ class DebtRepaymentsSerializer(serializers.ModelSerializer):
             "second_mortgage",
             "shared_ownership_rental",
             "total_debt_repayment",
-
             # base fields:
             "alias",
             "repayment_type",
@@ -1449,7 +1467,6 @@ class PriorityDebtSerializer(serializers.ModelSerializer):
             "magistrate_court_fines",
             "council_tax_arrears",
             "total_priority_debt",
-
             # base fields:
             "alias",
             "debt_type",
@@ -1480,7 +1497,6 @@ class UnsecuredBorrowingSerializer(serializers.ModelSerializer):
             "student_loans",
             "other_borrowing",
             "total_unsecured_borrowing",
-
             # base fields:
             "alias",
             "created_at",
@@ -1527,7 +1543,6 @@ class LivingCostsSerializer(serializers.ModelSerializer):
             "education",
             "other_living_costs",
             "total_living_expenses",
-
             # base fields:
             "alias",
             "created_at",
@@ -1557,7 +1572,6 @@ class InsurancesSerializer(serializers.ModelSerializer):
             "dental_insurance",
             "other_insurance",
             "total_insurance_expenses",
-
             # base fields:
             "alias",
             "created_at",
@@ -1584,7 +1598,6 @@ class SubTotalsSerializer(serializers.ModelSerializer):
             "total_debt_repayment",
             "total_living_expenses",
             "available_income",
-
             # base fields:
             "alias",
             "created_at",
@@ -1600,7 +1613,6 @@ class SubTotalsSerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
         ]
-
 
 
 class BudgetPlannerSerializer(serializers.ModelSerializer):
@@ -1665,12 +1677,18 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
         # Pop nested data for sub-model creation
         current_income_data = validated_data.pop("current_income", None)
         post_income_data = validated_data.pop("post_income", None)
-        current_debt_repayment_data = validated_data.pop("current_debt_repayments", None)
+        current_debt_repayment_data = validated_data.pop(
+            "current_debt_repayments", None
+        )
         post_debt_repayment_data = validated_data.pop("post_debt_repayments", None)
         current_priority_debt_data = validated_data.pop("current_priority_debt", None)
         post_priority_debt_data = validated_data.pop("post_priority_debt", None)
-        current_unsecured_borrowing_data = validated_data.pop("current_unsecured_borrowing", None)
-        post_unsecured_borrowing_data = validated_data.pop("post_unsecured_borrowing", None)
+        current_unsecured_borrowing_data = validated_data.pop(
+            "current_unsecured_borrowing", None
+        )
+        post_unsecured_borrowing_data = validated_data.pop(
+            "post_unsecured_borrowing", None
+        )
         current_living_cost_data = validated_data.pop("current_living_cost", None)
         post_living_cost_data = validated_data.pop("post_living_cost", None)
         current_insurance_data = validated_data.pop("current_insurance", None)
@@ -1680,96 +1698,152 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
 
         with transaction.atomic():
             # Create sub-objects if data is present
-            current_income = Income.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                **current_income_data
-            ) if current_income_data else None
+            current_income = (
+                Income.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    **current_income_data,
+                )
+                if current_income_data
+                else None
+            )
 
-            post_income = Income.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                income_type=IncomeTypeChoices.POST_COMPLETION_INCOME,
-                **post_income_data
-            ) if post_income_data else None
+            post_income = (
+                Income.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    income_type=IncomeTypeChoices.POST_COMPLETION_INCOME,
+                    **post_income_data,
+                )
+                if post_income_data
+                else None
+            )
 
-            current_debt_repayments = DebtRepayments.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                **current_debt_repayment_data
-            ) if current_debt_repayment_data else None
+            current_debt_repayments = (
+                DebtRepayments.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    **current_debt_repayment_data,
+                )
+                if current_debt_repayment_data
+                else None
+            )
 
-            post_debt_repayments = DebtRepayments.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                repayment_type=DebtRepaymentTypeChoices.POST_COMPLETION_DEBT_REPAYMENTS,
-                **post_debt_repayment_data
-            ) if post_debt_repayment_data else None
+            post_debt_repayments = (
+                DebtRepayments.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    repayment_type=DebtRepaymentTypeChoices.POST_COMPLETION_DEBT_REPAYMENTS,
+                    **post_debt_repayment_data,
+                )
+                if post_debt_repayment_data
+                else None
+            )
 
-            current_priority_debt = PriorityDebt.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                **current_priority_debt_data
-            ) if current_priority_debt_data else None
+            current_priority_debt = (
+                PriorityDebt.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    **current_priority_debt_data,
+                )
+                if current_priority_debt_data
+                else None
+            )
 
-            post_priority_debt = PriorityDebt.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                debt_type=PriorityDebtTypeChoices.POST_COMPLETION_PRIORITY_DEBT,
-                **post_priority_debt_data
-            ) if post_priority_debt_data else None
+            post_priority_debt = (
+                PriorityDebt.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    debt_type=PriorityDebtTypeChoices.POST_COMPLETION_PRIORITY_DEBT,
+                    **post_priority_debt_data,
+                )
+                if post_priority_debt_data
+                else None
+            )
 
-            current_unsecured_borrowing = UnsecuredBorrowing.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                **current_unsecured_borrowing_data
-            ) if current_unsecured_borrowing_data else None
+            current_unsecured_borrowing = (
+                UnsecuredBorrowing.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    **current_unsecured_borrowing_data,
+                )
+                if current_unsecured_borrowing_data
+                else None
+            )
 
-            post_unsecured_borrowing = UnsecuredBorrowing.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                borrowing_type=UnsecuredBorrowingTypeChoices.POST_COMPLETION_UNSECURED_BORROWING,
-                **post_unsecured_borrowing_data
-            ) if post_unsecured_borrowing_data else None
+            post_unsecured_borrowing = (
+                UnsecuredBorrowing.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    borrowing_type=UnsecuredBorrowingTypeChoices.POST_COMPLETION_UNSECURED_BORROWING,
+                    **post_unsecured_borrowing_data,
+                )
+                if post_unsecured_borrowing_data
+                else None
+            )
 
-            current_living_cost = LivingCosts.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                **current_living_cost_data
-            ) if current_living_cost_data else None
+            current_living_cost = (
+                LivingCosts.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    **current_living_cost_data,
+                )
+                if current_living_cost_data
+                else None
+            )
 
-            post_living_cost = LivingCosts.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                cost_type=LivingCostsTypeChoices.POST_COMPLETION_LIVING_COSTS,
-                **post_living_cost_data
-            ) if post_living_cost_data else None
+            post_living_cost = (
+                LivingCosts.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    cost_type=LivingCostsTypeChoices.POST_COMPLETION_LIVING_COSTS,
+                    **post_living_cost_data,
+                )
+                if post_living_cost_data
+                else None
+            )
 
-            current_insurance = Insurances.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                **current_insurance_data
-            ) if current_insurance_data else None
+            current_insurance = (
+                Insurances.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    **current_insurance_data,
+                )
+                if current_insurance_data
+                else None
+            )
 
-            post_insurance = Insurances.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                insurance_type=InsuranceTypeChoices.POST_COMPLETION_INSURANCES,
-                **post_insurance_data
-            ) if post_insurance_data else None
+            post_insurance = (
+                Insurances.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    insurance_type=InsuranceTypeChoices.POST_COMPLETION_INSURANCES,
+                    **post_insurance_data,
+                )
+                if post_insurance_data
+                else None
+            )
 
-            current_sub_total = SubTotals.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                **current_sub_total_data
-            ) if current_sub_total_data else None
+            current_sub_total = (
+                SubTotals.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    **current_sub_total_data,
+                )
+                if current_sub_total_data
+                else None
+            )
 
-            post_sub_total = SubTotals.objects.create(
-                created_by=request_user,
-                updated_by=request_user,
-                subtotal_type=SubTotalsTypeChoices.POST_COMPLETION_SUB_TOTALS,
-                **post_sub_total_data
-            ) if post_sub_total_data else None
+            post_sub_total = (
+                SubTotals.objects.create(
+                    created_by=request_user,
+                    updated_by=request_user,
+                    subtotal_type=SubTotalsTypeChoices.POST_COMPLETION_SUB_TOTALS,
+                    **post_sub_total_data,
+                )
+                if post_sub_total_data
+                else None
+            )
 
             # Now create the BudgetPlanner
             budget_planner = BudgetPlanner.objects.create(
@@ -1800,7 +1874,9 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
         instance.updated_by = request_user
         # Update top-level fields (disclaimer, etc.)
         instance.disclaimer = validated_data.get("disclaimer", instance.disclaimer)
-        instance.disclaimer_details = validated_data.get("disclaimer_details", instance.disclaimer_details)
+        instance.disclaimer_details = validated_data.get(
+            "disclaimer_details", instance.disclaimer_details
+        )
         # ... handle sub-models here if needed ...
         instance.save()
         return instance

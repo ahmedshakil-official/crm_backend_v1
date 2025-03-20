@@ -42,9 +42,15 @@ from .views import (
     NoteListCreateApiView,
     NoteRetrieveUpdateApiView,
     ExistingProtectionListApiView,
-    ExistingProtectionCreateApiView, PropertyDetailsListCreateApiView, PropertyDetailsRetrieveUpdateApiView,
-    OtherOccupantsListCreateApiView, OtherOccupantsRetrieveUpdateApiView, ProductListCreateApiView,
-    ProductRetrieveUpdateApiView, BudgetPlannerListCreateApiView, BudgetPlannerRetrieveUpdateApiView,
+    ExistingProtectionCreateApiView,
+    PropertyDetailsListCreateApiView,
+    PropertyDetailsRetrieveUpdateApiView,
+    OtherOccupantsListCreateApiView,
+    OtherOccupantsRetrieveUpdateApiView,
+    ProductListCreateApiView,
+    ProductRetrieveUpdateApiView,
+    BudgetPlannerListCreateApiView,
+    BudgetPlannerRetrieveUpdateApiView,
 )
 
 urlpatterns = [
@@ -274,17 +280,14 @@ urlpatterns = [
         ProductRetrieveUpdateApiView.as_view(),
         name="product-retrieve-update",
     ),
-
     path(
         "<uuid:case_alias>/budget/",
         BudgetPlannerListCreateApiView.as_view(),
         name="budget-list-create",
     ),
-
     path(
         "<uuid:case_alias>/budget/<uuid:alias>/",
         BudgetPlannerRetrieveUpdateApiView.as_view(),
         name="budget-retrieve-update",
     ),
 ]
-

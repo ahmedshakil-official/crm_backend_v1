@@ -91,7 +91,8 @@ from .enums import (
     NewBuildWarrantyProviderChoices,
     ValuationTypeChoices,
     SelectApplicantListChoices,
-    RelationshipChoices, PolicyTypeChoices,
+    RelationshipChoices,
+    PolicyTypeChoices,
 )
 from .signals import (
     create_loan_details,
@@ -1622,6 +1623,7 @@ class OtherOccupants(CreatedAtUpdatedAtBaseModel):
         choices=RelationshipChoices.choices,
         default=RelationshipChoices.PARTNER,
     )
+
     class Meta:
         ordering = ("-created_at", "-updated_at")
 
@@ -1630,28 +1632,108 @@ class OtherOccupants(CreatedAtUpdatedAtBaseModel):
 
 
 class BudgetPlanner(CreatedAtUpdatedAtBaseModel):
-    case = models.OneToOneField(Case, on_delete=models.CASCADE, related_name="budget_planner")
-    current_income = models.OneToOneField(Income, on_delete=models.CASCADE,null=True, blank=True, related_name="current_income")
-    post_income = models.OneToOneField(Income, on_delete=models.CASCADE, null=True, blank=True, related_name="post_income")
-    current_debt_repayments = models.OneToOneField(DebtRepayments, on_delete=models.CASCADE, null=True, blank=True, related_name="current_debt_repayments")
-    post_debt_repayments = models.OneToOneField(DebtRepayments, on_delete=models.CASCADE, related_name="post_debt_repayments")
-    current_priority_debt = models.OneToOneField(PriorityDebt, on_delete=models.CASCADE, null=True, blank=True, related_name="current_priority_debt")
-    post_priority_debt = models.OneToOneField(PriorityDebt, on_delete=models.CASCADE, null=True, blank=True, related_name="post_priority_debt")
-    current_unsecured_borrowing = models.OneToOneField(UnsecuredBorrowing, on_delete=models.CASCADE, null=True, blank=True, related_name="current_unsecured_borrowing")
-    post_unsecured_borrowing = models.OneToOneField(UnsecuredBorrowing, on_delete=models.CASCADE, null=True, blank=True, related_name="post_unsecured_borrowing")
-    current_living_cost = models.OneToOneField(LivingCosts, on_delete=models.CASCADE, null=True, blank=True, related_name="current_living_cost")
-    post_living_cost = models.OneToOneField(LivingCosts, on_delete=models.CASCADE, null=True, blank=True, related_name="post_living_cost")
-    current_insurance = models.OneToOneField(Insurances, on_delete=models.CASCADE, null=True, blank=True, related_name="current_insurance")
-    post_insurance = models.OneToOneField(Insurances, on_delete=models.CASCADE, null=True, blank=True, related_name="post_insurance")
-    current_sub_total = models.OneToOneField(SubTotals, on_delete=models.CASCADE, null=True, blank=True, related_name="current_sub_total")
-    post_sub_total = models.OneToOneField(SubTotals, on_delete=models.CASCADE, null=True, blank=True, related_name="post_sub_total")
+    case = models.OneToOneField(
+        Case, on_delete=models.CASCADE, related_name="budget_planner"
+    )
+    current_income = models.OneToOneField(
+        Income,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="current_income",
+    )
+    post_income = models.OneToOneField(
+        Income,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="post_income",
+    )
+    current_debt_repayments = models.OneToOneField(
+        DebtRepayments,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="current_debt_repayments",
+    )
+    post_debt_repayments = models.OneToOneField(
+        DebtRepayments, on_delete=models.CASCADE, related_name="post_debt_repayments"
+    )
+    current_priority_debt = models.OneToOneField(
+        PriorityDebt,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="current_priority_debt",
+    )
+    post_priority_debt = models.OneToOneField(
+        PriorityDebt,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="post_priority_debt",
+    )
+    current_unsecured_borrowing = models.OneToOneField(
+        UnsecuredBorrowing,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="current_unsecured_borrowing",
+    )
+    post_unsecured_borrowing = models.OneToOneField(
+        UnsecuredBorrowing,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="post_unsecured_borrowing",
+    )
+    current_living_cost = models.OneToOneField(
+        LivingCosts,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="current_living_cost",
+    )
+    post_living_cost = models.OneToOneField(
+        LivingCosts,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="post_living_cost",
+    )
+    current_insurance = models.OneToOneField(
+        Insurances,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="current_insurance",
+    )
+    post_insurance = models.OneToOneField(
+        Insurances,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="post_insurance",
+    )
+    current_sub_total = models.OneToOneField(
+        SubTotals,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="current_sub_total",
+    )
+    post_sub_total = models.OneToOneField(
+        SubTotals,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="post_sub_total",
+    )
     disclaimer = models.BooleanField(default=False)
     disclaimer_details = models.CharField(null=True, blank=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
-
-
 
 
 # Call all signals here.
