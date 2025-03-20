@@ -859,6 +859,8 @@ class ExistingProtectionRetrieveUpdateApiView(RetrieveUpdateAPIView):
 class NoteListCreateApiView(ListCreateAPIView):
     serializer_class = NotesSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ["name","category", "task_priority", ]
 
     def get_queryset(self):
         case_alias = self.kwargs["case_alias"]
