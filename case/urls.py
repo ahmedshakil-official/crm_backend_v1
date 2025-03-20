@@ -44,6 +44,7 @@ from .views import (
     ExistingProtectionListApiView,
     ExistingProtectionCreateApiView, PropertyDetailsListCreateApiView, PropertyDetailsRetrieveUpdateApiView,
     OtherOccupantsListCreateApiView, OtherOccupantsRetrieveUpdateApiView, ProductListCreateApiView,
+    ProductRetrieveUpdateApiView,
 )
 
 urlpatterns = [
@@ -267,6 +268,11 @@ urlpatterns = [
         "<uuid:case_alias>/product/",
         ProductListCreateApiView.as_view(),
         name="product-list-create",
+    ),
+    path(
+        "<uuid:case_alias>/product/<uuid:alias>/",
+        ProductRetrieveUpdateApiView.as_view(),
+        name="product-retrieve-update",
     ),
 ]
 
