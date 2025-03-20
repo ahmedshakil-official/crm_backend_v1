@@ -43,7 +43,7 @@ from .views import (
     NoteRetrieveUpdateApiView,
     ExistingProtectionListApiView,
     ExistingProtectionCreateApiView, PropertyDetailsListCreateApiView, PropertyDetailsRetrieveUpdateApiView,
-    OtherOccupantsListCreateApiView,
+    OtherOccupantsListCreateApiView, OtherOccupantsRetrieveUpdateApiView,
 )
 
 urlpatterns = [
@@ -257,5 +257,10 @@ urlpatterns = [
         "<uuid:case_alias>/other/occupants/",
         OtherOccupantsListCreateApiView.as_view(),
         name="other-occupants-list-create",
+    ),
+    path(
+        "<uuid:case_alias>/other/occupants/<uuid:alias>/",
+        OtherOccupantsRetrieveUpdateApiView.as_view(),
+        name="other-occupants-retrieve-update",
     ),
 ]

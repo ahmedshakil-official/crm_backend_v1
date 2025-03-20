@@ -913,3 +913,13 @@ class OtherOccupantsListCreateApiView(ListCreateAPIView):
         case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
         serializer.save(case=case, created_by=self.request.user)
+
+class OtherOccupantsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    serializer_class = OtherOccupantsSerializer
+    lookup_field = "alias"
+
+    def get_queryset(self):
+        return OtherOccupants.objects.select_related("case").all()
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
