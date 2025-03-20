@@ -999,6 +999,7 @@ class BudgetPlannerListCreateApiView(ListCreateAPIView):
 
 class BudgetPlannerRetrieveUpdateApiView(RetrieveUpdateAPIView):
     serializer_class = BudgetPlannerSerializer
+    permission_classes = [IsAuthenticated]
     lookup_field = "alias"  # or "pk" or whatever you use
     queryset = BudgetPlanner.objects.all()  # or override get_queryset similarly
 
