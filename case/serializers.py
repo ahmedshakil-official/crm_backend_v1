@@ -30,7 +30,7 @@ from .models import (
     CaseSolicitor,
     CaseAccountant,
     ExistingProtection,
-    Notes, PropertyDetails,
+    Notes, PropertyDetails, OtherOccupants,
 )
 from authentication.models import User
 from common.serializers import (
@@ -1273,6 +1273,32 @@ class PropertyDetailsSerializer(serializers.ModelSerializer):
             "contacts_mobile_telephone",
             "contacts_email_address",
             "estimated_value",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "case",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+class OtherOccupantsSerializer(serializers.ModelSerializer):
+    case = CommonCaseSerializer(read_only=True)
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    class Meta:
+        model = OtherOccupants
+        fields = [
+            "alias",
+            "case",
+            "full_name",
+            "date_of_birth",
+            "relationship",
             "created_at",
             "updated_at",
             "created_by",
