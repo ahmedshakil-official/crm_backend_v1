@@ -46,7 +46,7 @@ from .models import (
     CaseAccountant,
     CaseSolicitor,
     ExistingProtection,
-    Notes, PropertyDetails, OtherOccupants,
+    Notes, PropertyDetails, OtherOccupants, Product,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -74,7 +74,7 @@ from .serializers import (
     CaseSolicitorSerializer,
     CaseAccountantSerializer,
     ExistingProtectionSerializer,
-    NotesSerializer, PropertyDetailsSerializer, OtherOccupantsSerializer,
+    NotesSerializer, PropertyDetailsSerializer, OtherOccupantsSerializer, ProductSerializer,
 )
 
 
@@ -925,3 +925,17 @@ class OtherOccupantsRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
+class ProductListCreateApiView(ListCreateAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        return Product.objects.filter(case=case)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        serializer.save(case=case, created_by=self.request.user)
