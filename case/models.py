@@ -1606,7 +1606,7 @@ class PropertyDetails(CreatedAtUpdatedAtBaseModel):
         ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
-        return f"{self.full_name} {self.contacts_name} - {self.date_of_birth}"
+        return f"{self.house_name_or_number}"
 
 
 class OtherOccupants(CreatedAtUpdatedAtBaseModel):
@@ -1622,9 +1622,15 @@ class OtherOccupants(CreatedAtUpdatedAtBaseModel):
         choices=RelationshipChoices.choices,
         default=RelationshipChoices.PARTNER,
     )
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.full_name} - {self.date_of_birth}"
 
 
 class BudgetPlanner(CreatedAtUpdatedAtBaseModel):
+    case = models.OneToOneField(Case, on_delete=models.CASCADE, related_name="budget_planner")
     current_income = models.OneToOneField(Income, on_delete=models.CASCADE,null=True, blank=True, related_name="current_income")
     post_income = models.OneToOneField(Income, on_delete=models.CASCADE, null=True, blank=True, related_name="post_income")
     current_debt_repayments = models.OneToOneField(DebtRepayments, on_delete=models.CASCADE, null=True, blank=True, related_name="current_debt_repayments")
@@ -1642,6 +1648,8 @@ class BudgetPlanner(CreatedAtUpdatedAtBaseModel):
     disclaimer = models.BooleanField(default=False)
     disclaimer_details = models.CharField(null=True, blank=True)
 
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
 
 
 
