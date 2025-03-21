@@ -1645,6 +1645,9 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
     post_insurance = InsurancesSerializer(required=False)
     current_sub_total = SubTotalsSerializer(required=False)
     post_sub_total = SubTotalsSerializer(required=False)
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    case = CommonCaseSerializer(read_only=True)
 
     class Meta:
         model = BudgetPlanner
