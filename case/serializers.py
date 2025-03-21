@@ -51,7 +51,7 @@ from .models import (
     Insurances,
     SubTotals,
     BudgetPlanner,
-    Income,
+    Income, Fees,
 )
 from authentication.models import User
 from common.serializers import (
@@ -1897,3 +1897,35 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
         # ... handle sub-models here if needed ...
         instance.save()
         return instance
+
+class FeesSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    case = CommonCaseSerializer(read_only=True)
+    class Meta:
+        model = Fees
+        fields = [
+            "alias",
+            "case",
+            "fees_type",
+            "amount",
+            "fee_in_type",
+            "fee_out_type",
+            "method",
+            "notes",
+            "date_received",
+            "date_paid_out",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "case",
+            "fees_type",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]

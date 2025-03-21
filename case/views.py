@@ -29,7 +29,7 @@ from .common import (
     PayDayLoan,
     CCJ,
 )
-from .enums import UserTypeChoices
+from .enums import UserTypeChoices, FeesChoices
 from .filter import CaseFilter, FileFilter
 from .models import (
     Case,
@@ -51,7 +51,7 @@ from .models import (
     PropertyDetails,
     OtherOccupants,
     Product,
-    BudgetPlanner,
+    BudgetPlanner, Fees,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -83,7 +83,7 @@ from .serializers import (
     PropertyDetailsSerializer,
     OtherOccupantsSerializer,
     ProductSerializer,
-    BudgetPlannerSerializer,
+    BudgetPlannerSerializer, FeesSerializer,
 )
 
 
@@ -1015,3 +1015,32 @@ class BudgetPlannerRetrieveUpdateApiView(RetrieveUpdateAPIView):
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
+
+class FeesInListCreateApiView(ListCreateAPIView):
+    serializer_class = FeesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        return Fees.objects.filter(case=case, fees_type=FeesChoices.FEES_IN)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        serializer.save(case=case, fees_type=FeesChoices.FEES_IN, created_by=self.request.user)
+
+
+class FeesOutListCreateApiView(ListCreateAPIView):
+    serializer_class = FeesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        return Fees.objects.filter(case=case, fees_type=FeesChoices.FEES_OUT)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        serializer.save(case=case, fees_type=FeesChoices.FEES_OUT, created_by=self.request.user)

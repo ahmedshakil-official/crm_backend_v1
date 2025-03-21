@@ -1120,7 +1120,7 @@ class Fees(CreatedAtUpdatedAtBaseModel):
         on_delete=models.CASCADE,
         related_name="fees",
     )
-    fees = models.CharField(
+    fees_type = models.CharField(
         max_length=255, choices=FeesChoices.choices, null=True, blank=True
     )
     amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
