@@ -92,7 +92,7 @@ from .enums import (
     ValuationTypeChoices,
     SelectApplicantListChoices,
     RelationshipChoices,
-    PolicyTypeChoices,
+    PolicyTypeChoices, CreditCommitmentsChoices, TypeChoices, CourtOrderedChoices, PaidOnCompletionChoices,
 )
 from .signals import (
     create_loan_details,
@@ -1735,6 +1735,32 @@ class BudgetPlanner(CreatedAtUpdatedAtBaseModel):
     class Meta:
         ordering = ("-created_at", "-updated_at")
 
+
+class CreditCommitments(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="credit_commitments")
+    applicant = models.ForeignKey(User, on_delete=models.CASCADE, related_name="applicant_credit_commitments")
+    joint = models.CharField(max_length=20, choices=CreditCommitmentsChoices.choices, null=True, blank=True)
+    type = models.CharField(max_length=20, choices=TypeChoices.choices, null=True, blank=True)
+    company = models.CharField(max_length=50, null=True, blank=True)
+    account_no = models.PositiveIntegerField(null=True, blank=True)
+    os_balance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    settlement_balance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    monthly_repayment = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    interest_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    card_limit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    term_remaining = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    balloon_payment = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    court_ordered = models.CharField(max_length=50,choices=CourtOrderedChoices.choices, null=True, blank=True)
+    cost_of_credit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    paid_on_completion = models.CharField(max_length=50, choices=PaidOnCompletionChoices.choices, null=True, blank=True)
+    source = models.CharField(max_length=100, null=True, blank=True)
+    has_the_unsecured_credit_mounted_up = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.company} {self.source} - {self.account_no}"
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)

@@ -928,3 +928,38 @@ class RelationshipChoices(models.TextChoices):
     UNCLE_AUNT = "uncle_aunt", _("Uncle/Aunt")
     FOSTER_ADOPTIVE_PARENTS = "foster_adoptive_parents", _("Foster/Adoptive Parents")
     LEGAL_GUARDIAN = "legal_guardian", _("Legal Guardian")
+
+class CreditCommitmentsChoices(models.TextChoices):
+    YES = "YES", _("Yes")
+    NO = "NO", _("No")
+
+class TypeChoices(models.TextChoices):
+    CREDIT_CARD = "CREDIT_CARD", _("Credit Card")
+    STORE_CARD = "store_card", _("Store Card")
+    LOAN = "loan", _("Loan")
+    HP = "hp", _("HP")
+    OVERDRAFT = "overdraft", _("Overdraft")
+    STUDENT_LOAN = "student_loan", _("Student Loan")
+    MAINTENANCE = "maintenance", _("Maintenance")
+    LEASE = "lease", _("Lease")
+    UNSECURED = "unsecured", _("Unsecured")
+    MORTGAGE_RENT = "mortgage_rent", _("Mortgage / Rent")
+    PUBLIC_UTILITY = "public_utility", _("Public Utility")
+    COMMUNICATIONS = "communications", _("Communications")
+    INSURANCE = "insurance", _("Insurance")
+    SECURED = "secured", _("Secured")
+    PCP = "pcp", _("PCP")
+    MAIL_ORDER = "mail_order", _("Mail Order")
+    CHILDCARE = "childcare", _("Childcare")
+    CAR_FINANCE = "car_finance", _("Car Finance")
+    BNPL = "bnpl", _("Buy Now Pay Later (BNPL)")
+    CREDIT_COMMITMENT = "credit_commitment", _("Credit Commitment")
+    DMP = "dmp", _("DMP")
+
+class CourtOrderedChoices(models.TextChoices):
+    YES = "YES", _("Yes")
+    NO = "NO", _("No")
+
+class PaidOnCompletionChoices(models.TextChoices):
+    YES = "YES", _("Yes")
+    NO = "NO", _("No")
