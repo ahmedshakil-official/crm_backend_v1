@@ -1762,6 +1762,68 @@ class CreditCommitments(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.company} {self.source} - {self.account_no}"
 
+class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="mortgage_needs")
+    repayment_method = models.CharField(max_length=700, null=True, blank=True)
+    monthly_mortgage_payments = models.CharField(max_length=700, null=True, blank=True)
+    specific_mortgage_deal = models.CharField(max_length=700, null=True, blank=True)
+    referred_monthly_budget = models.CharField(max_length=700, null=True, blank=True)
+    retirement_age = models.CharField(max_length=700, null=True, blank=True)
+    what_suitable_mortgage_features_are_important = models.CharField(max_length=700, null=True, blank=True)
+    front_costs = models.BooleanField(default=False)
+    is_ability_to_make_overpayments = models.BooleanField(default=False)
+    is_early_repayment_charges = models.BooleanField(default=False)
+    is_minimise_any_lender_arrangement_costs = models.BooleanField(default=False)
+    is_ability_to_add_fees_to_the_mortgage = models.BooleanField(default=False)
+    is_ability_to_add_fees_mortgage = models.BooleanField(default=False)
+    cashback = models.BooleanField(default=False)
+    portability = models.BooleanField(default=False)
+    guarantor_jbsp = models.BooleanField(default=False)
+    offset_mortgage = models.BooleanField(default=False)
+    scheme_specific = models.BooleanField(default=False)
+    speed_of_completion = models.BooleanField(default=False)
+    sharia_compliant_mortgages = models.BooleanField(default=False)
+    ltd_company_btl = models.BooleanField(default=False)
+    any_incentives = models.BooleanField(default=False)
+    considering_debt_consolidation = models.CharField(max_length=700, null=True, blank=True)
+    anticipate_any_changes_notes = models.CharField(max_length=700, null=True, blank=True)
+    anticipate_any_changes = models.BooleanField(default=False)
+    buildings = models.BooleanField(default=False)
+    contents = models.BooleanField(default=False)
+    accidental_damage = models.BooleanField(default=False)
+    landlords_cover = models.BooleanField(default=False)
+    home_emergency_cover = models.BooleanField(default=False)
+    personal_possessions_cover = models.BooleanField(default=False)
+    personal_possessions_confirm = models.BooleanField(default=False)
+    have_you_a_will_in_place = models.BooleanField(default=False)
+    have_you_a_will_in_place_note = models.CharField(max_length=700, null=True, blank=True)
+    mortgage_requirements_note = models.CharField(max_length=700, null=True, blank=True)
+    mortgage_requirements = models.BooleanField(default=False)
+    notes = models.CharField(max_length=700, null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.notes} {self.repayment_method}"
+
+class MortgageFeatures(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="mortgage_features")
+    life_cover = models.BooleanField(default=False)
+    critical_illness = models.BooleanField(default=False)
+    income_protection = models.BooleanField(default=False)
+    asu = models.BooleanField(default=False)
+    pmi = models.BooleanField(default=False)
+    family_income_benefit = models.BooleanField(default=False)
+    buildings_and_contents = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.life_cover} {self.critical_illness} {self.income_protection}"
+
+
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
 post_save.connect(create_applicant_details, sender=Case)
