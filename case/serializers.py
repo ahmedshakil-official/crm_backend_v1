@@ -1393,9 +1393,12 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class IncomeSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
     class Meta:
         model = Income
         fields = [
+            "alias",
             # domain-specific fields:
             "income_type",
             "applicant_one_net_monthly_income",
@@ -1411,8 +1414,6 @@ class IncomeSerializer(serializers.ModelSerializer):
             "other_benefits",
             "total_income",
             # base fields:
-            "alias",
-
             "created_at",
             "updated_at",
             "created_by",
@@ -1429,17 +1430,18 @@ class IncomeSerializer(serializers.ModelSerializer):
 
 
 class DebtRepaymentsSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
     class Meta:
         model = DebtRepayments
         fields = [
+            "alias",
             "repayment_type",
             "mortgage_rent",
             "second_mortgage",
             "shared_ownership_rental",
             "total_debt_repayment",
             # base fields:
-            "alias",
-
             "created_at",
             "updated_at",
             "created_by",
@@ -1456,9 +1458,12 @@ class DebtRepaymentsSerializer(serializers.ModelSerializer):
 
 
 class PriorityDebtSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
     class Meta:
         model = PriorityDebt
         fields = [
+            "alias",
             "debt_type",
             "mortgage_arrears",
             "gas_arrears",
@@ -1470,8 +1475,6 @@ class PriorityDebtSerializer(serializers.ModelSerializer):
             "council_tax_arrears",
             "total_priority_debt",
             # base fields:
-            "alias",
-
             "created_at",
             "updated_at",
             "created_by",
@@ -1488,9 +1491,12 @@ class PriorityDebtSerializer(serializers.ModelSerializer):
 
 
 class UnsecuredBorrowingSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
     class Meta:
         model = UnsecuredBorrowing
         fields = [
+            "alias",
             "borrowing_type",
             "credit_cards",
             "loans",
@@ -1501,7 +1507,6 @@ class UnsecuredBorrowingSerializer(serializers.ModelSerializer):
             "other_borrowing",
             "total_unsecured_borrowing",
             # base fields:
-            "alias",
             "created_at",
             "updated_at",
             "created_by",
@@ -1518,9 +1523,12 @@ class UnsecuredBorrowingSerializer(serializers.ModelSerializer):
 
 
 class LivingCostsSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
     class Meta:
         model = LivingCosts
         fields = [
+            "alias",
             "cost_type",
             "electricity",
             "gas",
@@ -1547,7 +1555,6 @@ class LivingCostsSerializer(serializers.ModelSerializer):
             "other_living_costs",
             "total_living_expenses",
             # base fields:
-            "alias",
             "created_at",
             "updated_at",
             "created_by",
@@ -1564,9 +1571,12 @@ class LivingCostsSerializer(serializers.ModelSerializer):
 
 
 class InsurancesSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
     class Meta:
         model = Insurances
         fields = [
+            "alias",
             "insurance_type",
             "motor_insurance",
             "health_insurance",
@@ -1576,7 +1586,6 @@ class InsurancesSerializer(serializers.ModelSerializer):
             "other_insurance",
             "total_insurance_expenses",
             # base fields:
-            "alias",
             "created_at",
             "updated_at",
             "created_by",
@@ -1593,6 +1602,8 @@ class InsurancesSerializer(serializers.ModelSerializer):
 
 
 class SubTotalsSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
     class Meta:
         model = SubTotals
         fields = [
