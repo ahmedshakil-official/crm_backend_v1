@@ -1739,7 +1739,7 @@ class BudgetPlanner(CreatedAtUpdatedAtBaseModel):
 class CreditCommitments(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="credit_commitments")
     applicant = models.ForeignKey(User, on_delete=models.CASCADE, related_name="applicant_credit_commitments")
-    Joint = models.CharField(max_length=20, choices=CreditCommitmentsChoices.choices, null=True, blank=True)
+    joint = models.CharField(max_length=20, choices=CreditCommitmentsChoices.choices, null=True, blank=True)
     type = models.CharField(max_length=20, choices=TypeChoices.choices, null=True, blank=True)
     company = models.CharField(max_length=50, null=True, blank=True)
     account_no = models.PositiveIntegerField(null=True, blank=True)
