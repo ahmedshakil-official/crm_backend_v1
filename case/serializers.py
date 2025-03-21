@@ -1907,7 +1907,7 @@ class FeesSerializer(serializers.ModelSerializer):
         fields = [
             "alias",
             "case",
-            "fees",
+            "fees_type",
             "amount",
             "fee_in_type",
             "fee_out_type",
@@ -1923,6 +1923,7 @@ class FeesSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "alias",
             "case",
+            "fees_type",
             "created_at",
             "updated_at",
             "created_by",

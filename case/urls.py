@@ -50,7 +50,7 @@ from .views import (
     ProductListCreateApiView,
     ProductRetrieveUpdateApiView,
     BudgetPlannerListCreateApiView,
-    BudgetPlannerRetrieveUpdateApiView, FeesInListCreateApiView,
+    BudgetPlannerRetrieveUpdateApiView, FeesInListCreateApiView, FeesOutListCreateApiView,
 )
 
 urlpatterns = [
@@ -293,6 +293,11 @@ urlpatterns = [
     path(
         "<uuid:case_alias>/fees/in/",
         FeesInListCreateApiView.as_view(),
-        name="fees-list-create",
+        name="fees-in-list-create",
+    ),
+    path(
+        "<uuid:case_alias>/fees/out/",
+        FeesOutListCreateApiView.as_view(),
+        name="fees-out-list-create",
     ),
 ]
