@@ -1808,7 +1808,7 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
         return f"{self.notes} {self.repayment_method}"
 
 class MortgageFeatures(CreatedAtUpdatedAtBaseModel):
-    MortgageNeeds = models.ForeignKey(MortgageNeeds, on_delete=models.CASCADE, related_name="mortgage_features")
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="mortgage_features")
     life_cover = models.BooleanField(default=False)
     critical_illness = models.BooleanField(default=False)
     income_protection = models.BooleanField(default=False)
