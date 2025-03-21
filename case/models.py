@@ -1788,13 +1788,6 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     considering_debt_consolidation = models.CharField(max_length=700, null=True, blank=True)
     anticipate_any_changes_notes = models.CharField(max_length=700, null=True, blank=True)
     anticipate_any_changes = models.BooleanField(default=False)
-    life_cover = models.BooleanField(default=False)
-    critical_illness = models.BooleanField(default=False)
-    income_protection = models.BooleanField(default=False)
-    asu = models.BooleanField(default=False)
-    pmi = models.BooleanField(default=False)
-    family_income_benefit = models.BooleanField(default=False)
-    buildings_and_contents = models.BooleanField(default=False)
     buildings = models.BooleanField(default=False)
     contents = models.BooleanField(default=False)
     accidental_damage = models.BooleanField(default=False)
@@ -1813,6 +1806,23 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.notes} {self.repayment_method}"
+
+class MortgageFeatures(CreatedAtUpdatedAtBaseModel):
+    MortgageNeeds = models.ForeignKey(MortgageNeeds, on_delete=models.CASCADE, related_name="mortgage_features")
+    life_cover = models.BooleanField(default=False)
+    critical_illness = models.BooleanField(default=False)
+    income_protection = models.BooleanField(default=False)
+    asu = models.BooleanField(default=False)
+    pmi = models.BooleanField(default=False)
+    family_income_benefit = models.BooleanField(default=False)
+    buildings_and_contents = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.life_cover} {self.critical_illness} {self.income_protection}"
+
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
