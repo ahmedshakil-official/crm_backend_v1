@@ -1893,7 +1893,6 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
             )
 
         return budget_planner
-
     def update(self, instance, validated_data):
         request_user = self.context["request"].user
         instance.updated_by = request_user
