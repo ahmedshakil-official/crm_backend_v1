@@ -51,7 +51,7 @@ from .models import (
     PropertyDetails,
     OtherOccupants,
     Product,
-    BudgetPlanner, Fees,
+    BudgetPlanner, Fees, DipHistory,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -83,7 +83,7 @@ from .serializers import (
     PropertyDetailsSerializer,
     OtherOccupantsSerializer,
     ProductSerializer,
-    BudgetPlannerSerializer, FeesSerializer,
+    BudgetPlannerSerializer, FeesSerializer, DipHistorySerializer,
 )
 
 
@@ -1044,3 +1044,17 @@ class FeesOutListCreateApiView(ListCreateAPIView):
         case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
         serializer.save(case=case, fees_type=FeesChoices.FEES_OUT, created_by=self.request.user)
+
+class DipHistoryListCreateApiView(ListCreateAPIView):
+    serializer_class = DipHistorySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        return DipHistory.objects.filter(case=case)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs["case_alias"]
+        case = get_object_or_404(Case, alias=case_alias)
+        serializer.save(case=case, created_by=self.request.user)

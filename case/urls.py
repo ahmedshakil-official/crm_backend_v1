@@ -50,7 +50,7 @@ from .views import (
     ProductListCreateApiView,
     ProductRetrieveUpdateApiView,
     BudgetPlannerListCreateApiView,
-    BudgetPlannerRetrieveUpdateApiView, FeesInListCreateApiView, FeesOutListCreateApiView,
+    BudgetPlannerRetrieveUpdateApiView, FeesInListCreateApiView, FeesOutListCreateApiView, DipHistoryListCreateApiView,
 )
 
 urlpatterns = [
@@ -299,5 +299,10 @@ urlpatterns = [
         "<uuid:case_alias>/fees/out/",
         FeesOutListCreateApiView.as_view(),
         name="fees-out-list-create",
+    ),
+    path(
+        "<uuid:case_alias>/dip/history/",
+        DipHistoryListCreateApiView.as_view(),
+        name="dip-history-list-create"
     ),
 ]
