@@ -1005,8 +1005,8 @@ class Product(CreatedAtUpdatedAtBaseModel):
         on_delete=models.CASCADE,
         related_name="products",
     )
-    product_description = models.TextField()
-    initial_rate = models.DecimalField(max_digits=12, decimal_places=2)
+    product_description = models.CharField(max_length=255, null=True, blank=True)
+    initial_rate = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     initial_rate_type = models.CharField(
         max_length=255,
         choices=InitialRateTypeChoices.choices,
