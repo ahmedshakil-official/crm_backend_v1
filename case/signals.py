@@ -135,3 +135,10 @@ def create_budget_planner(sender, instance, created, **kwargs):
     if created:
         BudgetPlanner = apps.get_model("case", "BudgetPlanner")
         BudgetPlanner.objects.create(case=instance)
+
+
+@receiver(post_save, sender="case.Case")
+def create_product(sender, instance, created, **kwargs):
+    if created:
+        Product = apps.get_model("case", "Product")
+        Product.objects.create(case=instance)
