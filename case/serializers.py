@@ -51,7 +51,9 @@ from .models import (
     Insurances,
     SubTotals,
     BudgetPlanner,
-    Income, Fees, DipHistory,
+    Income,
+    Fees,
+    DipHistory,
 )
 from authentication.models import User
 from common.serializers import (
@@ -1395,6 +1397,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class IncomeSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = Income
         fields = [
@@ -1432,6 +1435,7 @@ class IncomeSerializer(serializers.ModelSerializer):
 class DebtRepaymentsSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = DebtRepayments
         fields = [
@@ -1460,6 +1464,7 @@ class DebtRepaymentsSerializer(serializers.ModelSerializer):
 class PriorityDebtSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = PriorityDebt
         fields = [
@@ -1493,6 +1498,7 @@ class PriorityDebtSerializer(serializers.ModelSerializer):
 class UnsecuredBorrowingSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = UnsecuredBorrowing
         fields = [
@@ -1525,6 +1531,7 @@ class UnsecuredBorrowingSerializer(serializers.ModelSerializer):
 class LivingCostsSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = LivingCosts
         fields = [
@@ -1573,6 +1580,7 @@ class LivingCostsSerializer(serializers.ModelSerializer):
 class InsurancesSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = Insurances
         fields = [
@@ -1604,6 +1612,7 @@ class InsurancesSerializer(serializers.ModelSerializer):
 class SubTotalsSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+
     class Meta:
         model = SubTotals
         fields = [
@@ -1898,10 +1907,12 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class FeesSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
     case = CommonCaseSerializer(read_only=True)
+
     class Meta:
         model = Fees
         fields = [

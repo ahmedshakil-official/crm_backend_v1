@@ -51,7 +51,9 @@ from .models import (
     PropertyDetails,
     OtherOccupants,
     Product,
-    BudgetPlanner, Fees, DipHistory,
+    BudgetPlanner,
+    Fees,
+    DipHistory,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -83,7 +85,9 @@ from .serializers import (
     PropertyDetailsSerializer,
     OtherOccupantsSerializer,
     ProductSerializer,
-    BudgetPlannerSerializer, FeesSerializer, DipHistorySerializer,
+    BudgetPlannerSerializer,
+    FeesSerializer,
+    DipHistorySerializer,
 )
 
 
@@ -1016,6 +1020,7 @@ class BudgetPlannerRetrieveUpdateApiView(RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
 
+
 class FeesInListCreateApiView(ListCreateAPIView):
     serializer_class = FeesSerializer
     permission_classes = [IsAuthenticated]
@@ -1028,7 +1033,9 @@ class FeesInListCreateApiView(ListCreateAPIView):
     def perform_create(self, serializer):
         case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
-        serializer.save(case=case, fees_type=FeesChoices.FEES_IN, created_by=self.request.user)
+        serializer.save(
+            case=case, fees_type=FeesChoices.FEES_IN, created_by=self.request.user
+        )
 
 
 class FeesOutListCreateApiView(ListCreateAPIView):
@@ -1043,7 +1050,10 @@ class FeesOutListCreateApiView(ListCreateAPIView):
     def perform_create(self, serializer):
         case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
-        serializer.save(case=case, fees_type=FeesChoices.FEES_OUT, created_by=self.request.user)
+        serializer.save(
+            case=case, fees_type=FeesChoices.FEES_OUT, created_by=self.request.user
+        )
+
 
 class DipHistoryListCreateApiView(ListCreateAPIView):
     serializer_class = DipHistorySerializer
@@ -1058,6 +1068,7 @@ class DipHistoryListCreateApiView(ListCreateAPIView):
         case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
         serializer.save(case=case, created_by=self.request.user)
+
 
 class DipHistoryRetrieveUpdateApiView(RetrieveUpdateAPIView):
     serializer_class = DipHistorySerializer

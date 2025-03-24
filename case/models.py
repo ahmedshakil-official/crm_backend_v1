@@ -1663,7 +1663,11 @@ class BudgetPlanner(CreatedAtUpdatedAtBaseModel):
         related_name="current_debt_repayments",
     )
     post_debt_repayments = models.OneToOneField(
-        DebtRepayments, on_delete=models.CASCADE, related_name="post_debt_repayments"
+        DebtRepayments,
+        on_delete=models.CASCADE,
+        related_name="post_debt_repayments",
+        null=True,
+        blank=True,
     )
     current_priority_debt = models.OneToOneField(
         PriorityDebt,
