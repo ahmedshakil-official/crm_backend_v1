@@ -51,6 +51,7 @@ from .views import (
     ProductRetrieveUpdateApiView,
     BudgetPlannerListCreateApiView,
     BudgetPlannerRetrieveUpdateApiView, FeesInListCreateApiView, FeesOutListCreateApiView, DipHistoryListCreateApiView,
+    DipHistoryRetrieveUpdateApiView,
 )
 
 urlpatterns = [
@@ -305,4 +306,9 @@ urlpatterns = [
         DipHistoryListCreateApiView.as_view(),
         name="dip-history-list-create"
     ),
+    path(
+        "<uuid:case_alias>/dip/history/<uuid:alias>/",
+        DipHistoryRetrieveUpdateApiView.as_view(),
+        name="dip-history-retrieve-update",
+    )
 ]
