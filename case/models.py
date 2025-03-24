@@ -107,7 +107,7 @@ from .signals import (
     create_adverse_for_lead,
     create_adverse_for_joint_user,
     create_property_details,
-    create_budget_planner,
+    create_budget_planner, create_mortgage_needs, create_mortgage_features_for_joint_user,
 )
 from .utils import upload_to_case_files
 
@@ -1888,3 +1888,5 @@ post_save.connect(create_adverse_for_lead, sender=Case)
 post_save.connect(create_adverse_for_joint_user, sender=JointUser)
 post_save.connect(create_property_details, sender=Case)
 post_save.connect(create_budget_planner, sender=Case)
+post_save.connect(create_mortgage_needs, sender=Case)
+post_save.connect(create_mortgage_features_for_joint_user, sender=JointUser)
