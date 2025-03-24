@@ -51,7 +51,7 @@ from .models import (
     Insurances,
     SubTotals,
     BudgetPlanner,
-    Income, Fees,
+    Income, Fees, DipHistory,
 )
 from authentication.models import User
 from common.serializers import (
@@ -1924,6 +1924,37 @@ class FeesSerializer(serializers.ModelSerializer):
             "alias",
             "case",
             "fees_type",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+
+class DipHistorySerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    case = CommonCaseSerializer(read_only=True)
+
+    class Meta:
+        model = DipHistory
+        fields = [
+            "alias",
+            "case",
+            "is_this_application_had_a_decision_in_principle",
+            "notes",
+            "lender",
+            "dip_date",
+            "dip_decision",
+            "dip_reference_number",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "case",
             "created_at",
             "updated_at",
             "created_by",
