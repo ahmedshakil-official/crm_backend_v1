@@ -101,7 +101,7 @@ from .signals import (
     create_employment_details_for_lead,
     create_employment_details_for_joint_user,
     create_adverse_for_lead,
-    create_adverse_for_joint_user,
+    create_adverse_for_joint_user, create_property_details,
 )
 from .utils import upload_to_case_files
 
