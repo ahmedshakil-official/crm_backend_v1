@@ -1893,17 +1893,48 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
             )
 
         return budget_planner
-
     def update(self, instance, validated_data):
-
         request_user = self.context["request"].user
         instance.updated_by = request_user
-        # Update top-level fields (disclaimer, etc.)
+
         instance.disclaimer = validated_data.get("disclaimer", instance.disclaimer)
-        instance.disclaimer_details = validated_data.get(
-            "disclaimer_details", instance.disclaimer_details
-        )
-        # ... handle sub-models here if needed ...
+        instance.disclaimer_details = validated_data.get("disclaimer_details", instance.disclaimer_details)
+        nested_fields = [
+            "current_income",
+            "post_income",
+            "current_debt_repayments",
+            "post_debt_repayments",
+            "current_priority_debt",
+            "post_priority_debt",
+            "current_unsecured_borrowing",
+            "post_unsecured_borrowing",
+            "current_living_cost",
+            "post_living_cost",
+            "current_insurance",
+            "post_insurance",
+            "current_sub_total",
+            "post_sub_total",
+        ]
+
+        for field in nested_fields:
+            nested_data = validated_data.get(field, None)
+            related_instance = getattr(instance, field, None)
+
+            if nested_data:
+                if related_instance:
+                    for attr, value in nested_data.items():
+                        setattr(related_instance, attr, value)
+                    related_instance.updated_by = request_user
+                    related_instance.save()
+                else:
+                    model_class = self.fields[field].Meta.model
+                    new_instance = model_class.objects.create(
+                        **nested_data,
+                        created_by=request_user,
+                        updated_by=request_user,
+                    )
+                    setattr(instance, field, new_instance)
+
         instance.save()
         return instance
 
