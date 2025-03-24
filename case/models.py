@@ -1468,11 +1468,11 @@ class PropertyDetails(CreatedAtUpdatedAtBaseModel):
     )
     have_you_found_a_property_yet = models.BooleanField(default=False)
     notes = models.CharField(max_length=500, null=True, blank=True)
-    postcode = models.CharField(max_length=50)
+    postcode = models.CharField(max_length=50, null=True, blank=True)
     house_name_or_number = models.CharField(max_length=100, null=True, blank=True)
-    address_one = models.CharField(max_length=100)
+    address_one = models.CharField(max_length=100, null=True, blank=True)
     address_two = models.CharField(max_length=100, null=True, blank=True)
-    city = models.CharField(max_length=50)
+    city = models.CharField(max_length=50, null=True, blank=True)
     county = models.CharField(max_length=50, null=True, blank=True)
     region = models.CharField(
         max_length=50,
@@ -1519,9 +1519,9 @@ class PropertyDetails(CreatedAtUpdatedAtBaseModel):
     epc_rating = models.CharField(
         max_length=50, choices=EpcRatingChoices.choices, default=EpcRatingChoices.SELECT
     )
-    floor = models.PositiveIntegerField()
-    flats = models.PositiveIntegerField()
-    number_of_storeys_in_the_building = models.PositiveIntegerField()
+    floor = models.PositiveIntegerField(default=0)
+    flats = models.PositiveIntegerField(default=0)
+    number_of_storeys_in_the_building = models.PositiveIntegerField(default=0)
     year_built = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(9999)]
     )
