@@ -929,9 +929,11 @@ class RelationshipChoices(models.TextChoices):
     FOSTER_ADOPTIVE_PARENTS = "foster_adoptive_parents", _("Foster/Adoptive Parents")
     LEGAL_GUARDIAN = "legal_guardian", _("Legal Guardian")
 
+
 class CreditCommitmentsChoices(models.TextChoices):
     YES = "YES", _("Yes")
     NO = "NO", _("No")
+
 
 class TypeChoices(models.TextChoices):
     CREDIT_CARD = "CREDIT_CARD", _("Credit Card")
@@ -956,9 +958,11 @@ class TypeChoices(models.TextChoices):
     CREDIT_COMMITMENT = "credit_commitment", _("Credit Commitment")
     DMP = "dmp", _("DMP")
 
+
 class CourtOrderedChoices(models.TextChoices):
     YES = "YES", _("Yes")
     NO = "NO", _("No")
+
 
 class PaidOnCompletionChoices(models.TextChoices):
     YES = "YES", _("Yes")

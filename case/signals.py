@@ -120,3 +120,18 @@ def create_existing_protection_for_joint_user(sender, instance, created, **kwarg
             case=instance.case,
             user=instance.joint_user,
         )
+
+
+@receiver(post_save, sender="case.Case")
+def create_property_details(sender, instance, created, **kwargs):
+
+    if created:
+        PropertyDetails = apps.get_model("case", "PropertyDetails")
+        PropertyDetails.objects.create(case=instance)
+
+
+@receiver(post_save, sender="case.Case")
+def create_budget_planner(sender, instance, created, **kwargs):
+    if created:
+        BudgetPlanner = apps.get_model("case", "BudgetPlanner")
+        BudgetPlanner.objects.create(case=instance)

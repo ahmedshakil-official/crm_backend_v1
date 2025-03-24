@@ -92,7 +92,11 @@ from .enums import (
     ValuationTypeChoices,
     SelectApplicantListChoices,
     RelationshipChoices,
-    PolicyTypeChoices, CreditCommitmentsChoices, TypeChoices, CourtOrderedChoices, PaidOnCompletionChoices,
+    PolicyTypeChoices,
+    CreditCommitmentsChoices,
+    TypeChoices,
+    CourtOrderedChoices,
+    PaidOnCompletionChoices,
 )
 from .signals import (
     create_loan_details,
@@ -102,6 +106,8 @@ from .signals import (
     create_employment_details_for_joint_user,
     create_adverse_for_lead,
     create_adverse_for_joint_user,
+    create_property_details,
+    create_budget_planner,
 )
 from .utils import upload_to_case_files
 
@@ -1737,24 +1743,54 @@ class BudgetPlanner(CreatedAtUpdatedAtBaseModel):
 
 
 class CreditCommitments(CreatedAtUpdatedAtBaseModel):
-    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="credit_commitments")
-    applicant = models.ForeignKey(User, on_delete=models.CASCADE, related_name="applicant_credit_commitments")
-    joint = models.CharField(max_length=20, choices=CreditCommitmentsChoices.choices, null=True, blank=True)
-    type = models.CharField(max_length=20, choices=TypeChoices.choices, null=True, blank=True)
+    case = models.ForeignKey(
+        Case, on_delete=models.CASCADE, related_name="credit_commitments"
+    )
+    applicant = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="applicant_credit_commitments"
+    )
+    joint = models.CharField(
+        max_length=20, choices=CreditCommitmentsChoices.choices, null=True, blank=True
+    )
+    type = models.CharField(
+        max_length=20, choices=TypeChoices.choices, null=True, blank=True
+    )
     company = models.CharField(max_length=50, null=True, blank=True)
     account_no = models.PositiveIntegerField(null=True, blank=True)
-    os_balance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    settlement_balance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    monthly_repayment = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    interest_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    card_limit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    term_remaining = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    balloon_payment = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    court_ordered = models.CharField(max_length=50,choices=CourtOrderedChoices.choices, null=True, blank=True)
-    cost_of_credit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    paid_on_completion = models.CharField(max_length=50, choices=PaidOnCompletionChoices.choices, null=True, blank=True)
+    os_balance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    settlement_balance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    monthly_repayment = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    interest_rate = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    card_limit = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    term_remaining = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    balloon_payment = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    court_ordered = models.CharField(
+        max_length=50, choices=CourtOrderedChoices.choices, null=True, blank=True
+    )
+    cost_of_credit = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    paid_on_completion = models.CharField(
+        max_length=50, choices=PaidOnCompletionChoices.choices, null=True, blank=True
+    )
     source = models.CharField(max_length=100, null=True, blank=True)
-    has_the_unsecured_credit_mounted_up = models.CharField(max_length=255, null=True, blank=True)
+    has_the_unsecured_credit_mounted_up = models.CharField(
+        max_length=255, null=True, blank=True
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1762,14 +1798,19 @@ class CreditCommitments(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.company} {self.source} - {self.account_no}"
 
+
 class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
-    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="mortgage_needs")
+    case = models.ForeignKey(
+        Case, on_delete=models.CASCADE, related_name="mortgage_needs"
+    )
     repayment_method = models.CharField(max_length=700, null=True, blank=True)
     monthly_mortgage_payments = models.CharField(max_length=700, null=True, blank=True)
     specific_mortgage_deal = models.CharField(max_length=700, null=True, blank=True)
     referred_monthly_budget = models.CharField(max_length=700, null=True, blank=True)
     retirement_age = models.CharField(max_length=700, null=True, blank=True)
-    what_suitable_mortgage_features_are_important = models.CharField(max_length=700, null=True, blank=True)
+    what_suitable_mortgage_features_are_important = models.CharField(
+        max_length=700, null=True, blank=True
+    )
     front_costs = models.BooleanField(default=False)
     is_ability_to_make_overpayments = models.BooleanField(default=False)
     is_early_repayment_charges = models.BooleanField(default=False)
@@ -1785,8 +1826,12 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     sharia_compliant_mortgages = models.BooleanField(default=False)
     ltd_company_btl = models.BooleanField(default=False)
     any_incentives = models.BooleanField(default=False)
-    considering_debt_consolidation = models.CharField(max_length=700, null=True, blank=True)
-    anticipate_any_changes_notes = models.CharField(max_length=700, null=True, blank=True)
+    considering_debt_consolidation = models.CharField(
+        max_length=700, null=True, blank=True
+    )
+    anticipate_any_changes_notes = models.CharField(
+        max_length=700, null=True, blank=True
+    )
     anticipate_any_changes = models.BooleanField(default=False)
     buildings = models.BooleanField(default=False)
     contents = models.BooleanField(default=False)
@@ -1796,7 +1841,9 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     personal_possessions_cover = models.BooleanField(default=False)
     personal_possessions_confirm = models.BooleanField(default=False)
     have_you_a_will_in_place = models.BooleanField(default=False)
-    have_you_a_will_in_place_note = models.CharField(max_length=700, null=True, blank=True)
+    have_you_a_will_in_place_note = models.CharField(
+        max_length=700, null=True, blank=True
+    )
     mortgage_requirements_note = models.CharField(max_length=700, null=True, blank=True)
     mortgage_requirements = models.BooleanField(default=False)
     notes = models.CharField(max_length=700, null=True, blank=True)
@@ -1807,8 +1854,11 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.notes} {self.repayment_method}"
 
+
 class MortgageFeatures(CreatedAtUpdatedAtBaseModel):
-    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="mortgage_features")
+    case = models.ForeignKey(
+        Case, on_delete=models.CASCADE, related_name="mortgage_features"
+    )
     life_cover = models.BooleanField(default=False)
     critical_illness = models.BooleanField(default=False)
     income_protection = models.BooleanField(default=False)
@@ -1832,3 +1882,5 @@ post_save.connect(create_employment_details_for_lead, sender=Case)
 post_save.connect(create_employment_details_for_joint_user, sender=JointUser)
 post_save.connect(create_adverse_for_lead, sender=Case)
 post_save.connect(create_adverse_for_joint_user, sender=JointUser)
+post_save.connect(create_property_details, sender=Case)
+post_save.connect(create_budget_planner, sender=Case)
