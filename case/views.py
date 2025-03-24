@@ -1004,8 +1004,8 @@ class BudgetPlannerListCreateApiView(ListCreateAPIView):
 class BudgetPlannerRetrieveUpdateApiView(RetrieveUpdateAPIView):
     serializer_class = BudgetPlannerSerializer
     permission_classes = [IsAuthenticated]
-    lookup_field = "alias"  # or "pk" or whatever you use
-    queryset = BudgetPlanner.objects.all()  # or override get_queryset similarly
+    lookup_field = "alias"
+    queryset = BudgetPlanner.objects.all()
 
     def get_queryset(self):
         case_alias = self.kwargs["case_alias"]
@@ -1080,3 +1080,4 @@ class DipHistoryRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
