@@ -1523,7 +1523,7 @@ class PropertyDetails(CreatedAtUpdatedAtBaseModel):
     flats = models.PositiveIntegerField(default=0)
     number_of_storeys_in_the_building = models.PositiveIntegerField(default=0)
     year_built = models.PositiveIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(9999)]
+        validators=[MinValueValidator(1), MaxValueValidator(9999)], default=1
     )
     lift_access = models.BooleanField(default=False)
     tenure = models.CharField(
