@@ -1863,6 +1863,10 @@ class MortgageFeatures(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
         Case, on_delete=models.CASCADE, related_name="mortgage_features"
     )
+    applicant = models.ManyToManyField(
+        User,
+        related_name="mortgage_features_applicant",
+    )
     life_cover = models.BooleanField(default=False)
     critical_illness = models.BooleanField(default=False)
     income_protection = models.BooleanField(default=False)
