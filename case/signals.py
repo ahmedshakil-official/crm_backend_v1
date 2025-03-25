@@ -142,3 +142,27 @@ def create_product(sender, instance, created, **kwargs):
     if created:
         Product = apps.get_model("case", "Product")
         Product.objects.create(case=instance)
+
+
+
+@receiver(post_save, sender="case.Case")
+def create_mortgage_needs(sender, instance, created, **kwargs):
+    if created:
+        MortgageNeeds = apps.get_model("case", "MortgageNeeds")
+        MortgageNeeds.objects.create(case=instance)
+
+
+@receiver(post_save, sender="case.Case")
+def create_mortgage_features(sender, instance, created, **kwargs):
+    if created:
+        MortgageNeeds = apps.get_model("case", "MortgageFeatures")
+        MortgageNeeds.objects.create(case=instance, applicant=instance.lead)
+
+
+
+@receiver(post_save, sender="case.JointUser")
+def create_mortgage_features_for_joint_user(sender, instance, created, **kwargs):
+    if created:
+        MortgageNeeds = apps.get_model("case", "MortgageFeatures")
+        MortgageNeeds.objects.create(case=instance.case, applicant=instance.joint_user)
+
