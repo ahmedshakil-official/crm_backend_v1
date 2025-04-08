@@ -54,6 +54,7 @@ from .models import (
     Income,
     Fees,
     DipHistory,
+    CreditCommitments,
 )
 from authentication.models import User
 from common.serializers import (
@@ -2002,3 +2003,44 @@ class DipHistorySerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
         ]
+
+
+class CreditCommitmentsSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = CreditCommitments
+        fields = [
+            "alias",
+            "case",
+            "applicant",
+            "type",
+            "company",
+            "account_no",
+            "os_balance",
+            "settlement_balance",
+            "monthly_repayment",
+            "interest_rate",
+            "card_limit",
+            "term_remaining",
+            "balloon_payment",
+            "court_ordered",
+            "cost_of_credit",
+            "paid_on_completion",
+            "source",
+            "has_the_unsecured_credit_mounted_up",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "case",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+

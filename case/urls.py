@@ -54,7 +54,7 @@ from .views import (
     FeesInListCreateApiView,
     FeesOutListCreateApiView,
     DipHistoryListCreateApiView,
-    DipHistoryRetrieveUpdateApiView,
+    DipHistoryRetrieveUpdateApiView, CreditCommitmentsListCreateApiView,
 )
 
 urlpatterns = [
@@ -313,5 +313,10 @@ urlpatterns = [
         "<uuid:case_alias>/dip/history/<uuid:alias>/",
         DipHistoryRetrieveUpdateApiView.as_view(),
         name="dip-history-retrieve-update",
+    ),
+path(
+        "<uuid:case_alias>/credit/commitments/",
+        CreditCommitmentsListCreateApiView.as_view(),
+        name="credit-commitments-list-create",
     ),
 ]
