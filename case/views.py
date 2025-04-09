@@ -2,7 +2,7 @@ from django.db import transaction
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework import status
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
@@ -53,7 +53,7 @@ from .models import (
     Product,
     BudgetPlanner,
     Fees,
-    DipHistory,
+    DipHistory, CreditCommitments,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -87,7 +87,7 @@ from .serializers import (
     ProductSerializer,
     BudgetPlannerSerializer,
     FeesSerializer,
-    DipHistorySerializer,
+    DipHistorySerializer, CreditCommitmentsSerializer,
 )
 
 
@@ -1081,3 +1081,35 @@ class DipHistoryRetrieveUpdateApiView(RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
+class CreditCommitmentsListCreateApiView(ListCreateAPIView):
+    serializer_class = CreditCommitmentsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case_alias = self.kwargs['case_alias']
+        case = get_object_or_404(Case, alias=case_alias)
+        return CreditCommitments.objects.filter(case=case)
+
+    def perform_create(self, serializer):
+        case_alias = self.kwargs['case_alias']
+        case = get_object_or_404(Case, alias=case_alias)
+        applicant = serializer.validated_data['applicant']
+
+        # Check if the applicant is the case lead
+        if applicant == case.lead:
+            return self._save_credit_commitment(serializer, case)
+
+        # Check if the applicant is a joint user for this case
+        if JointUser.objects.filter(case=case, joint_user=applicant).exists():
+            return self._save_credit_commitment(serializer, case)
+
+        # If applicant is neither lead nor joint user, raise validation error
+        raise ValidationError("Applicant is not a valid user for this case.")
+
+    def _save_credit_commitment(self, serializer, case):
+        serializer.save(
+            case=case,
+            applicant=serializer.validated_data['applicant'],
+            created_by=self.request.user,
+            updated_by=self.request.user
+        )
