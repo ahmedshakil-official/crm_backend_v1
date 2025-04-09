@@ -2046,9 +2046,5 @@ class CreditCommitmentsSerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
         ]
-
-        write_only_fields = [
-            "applicant"
-        ]
-
+        write_only_fields = ["applicant"]
 

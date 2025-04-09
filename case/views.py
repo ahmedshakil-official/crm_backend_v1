@@ -1113,3 +1113,24 @@ class CreditCommitmentsListCreateApiView(ListCreateAPIView):
             created_by=self.request.user,
             updated_by=self.request.user
         )
+
+class CreditCommitmentsRetrieveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
+    serializer_class = CreditCommitmentsSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "alias"
+
+    def get_queryset(self):
+        case_alias = self.kwargs['case_alias']
+        case = get_object_or_404(Case, alias=case_alias)
+        return CreditCommitments.objects.filter(case=case)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["case_alias"] = self.kwargs["case_alias"]
+        return context
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+
+    def perform_destroy(self, instance):
+        instance.delete()
