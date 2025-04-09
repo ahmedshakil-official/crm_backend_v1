@@ -2043,4 +2043,3 @@ class CreditCommitmentsSerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
         ]
-
