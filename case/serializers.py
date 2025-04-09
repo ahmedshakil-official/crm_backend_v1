@@ -2008,6 +2008,7 @@ class DipHistorySerializer(serializers.ModelSerializer):
 class CreditCommitmentsSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
+    applicant_details = CommonUserWithIdSerializer(source="applicant", read_only=True)
 
     class Meta:
         model = CreditCommitments
@@ -2015,6 +2016,8 @@ class CreditCommitmentsSerializer(serializers.ModelSerializer):
             "alias",
             "case",
             "applicant",
+            "applicant_details",
+            "joint",
             "type",
             "company",
             "account_no",
@@ -2038,9 +2041,18 @@ class CreditCommitmentsSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "alias",
             "case",
+            "applicant_details",
             "created_at",
             "updated_at",
             "created_by",
             "updated_by",
         ]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        for field_name in getattr(self.Meta, "write_only_fields", []):
+            if field_name in fields:
+                fields[field_name].write_only = True
+        return fields
+
 
