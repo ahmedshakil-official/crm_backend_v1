@@ -41,3 +41,57 @@ class IsNetworkAdmin(BasePermission):
             user.network is not None and
             user.role == RoleChoices.ADMIN
         )
+
+class IsOrgAdvisor(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        return (
+            hasattr(user, "organization") and
+            user.organization is not None and
+            user.role == RoleChoices.ADVISOR
+        )
+
+class IsOrgIntroducer(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        return (
+            hasattr(user, "organization") and
+            user.organization is not None and
+            user.role == RoleChoices.INTRODUCER
+        )
+
+class IsOrgClient(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        return (
+            hasattr(user, "organization") and
+            user.organization is not None and
+            user.role == RoleChoices.CLIENT
+        )
+
+class IsNetworkAdvisor(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        return (
+            hasattr(user, "network") and
+            user.network is not None and
+            user.role == RoleChoices.ADVISOR
+        )
+
+class IsNetworkIntroducer(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        return (
+            hasattr(user, "network") and
+            user.network is not None and
+            user.role == RoleChoices.INTRODUCER
+        )
+
+class IsNetworkClient(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        return (
+            hasattr(user, "network") and
+            user.network is not None and
+            user.role == RoleChoices.CLIENT
+        )
