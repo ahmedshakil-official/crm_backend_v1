@@ -1763,7 +1763,7 @@ class CreditCommitments(CreatedAtUpdatedAtBaseModel):
         max_length=20, choices=TypeChoices.choices, null=True, blank=True
     )
     company = models.CharField(max_length=50, null=True, blank=True)
-    account_no = models.PositiveIntegerField(null=True, blank=True)
+    account_no = models.CharField(null=True, blank=True)
     os_balance = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True
     )
