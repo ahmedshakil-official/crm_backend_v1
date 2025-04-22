@@ -1883,6 +1883,440 @@ class MortgageFeatures(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.life_cover} {self.critical_illness} {self.income_protection}"
 
+class ExtraQuestion(CreatedAtUpdatedAtBaseModel):
+    answer = models.CharField(max_length=1000, null=True, blank=True)
+
+    def __str__(self):
+        return f"Extra Question: {self.answer[:50]}" if self.answer else "No answer provided"
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+class CircumstancesObjectives(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_three = models.CharField(max_length=700, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="circumstances_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two} {self.question_three}"
+
+class BudgetAffordability(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="budget_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two}"
+
+class NewMortgageDetails(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="mortgage_details_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two}"
+
+class RecommendingRepaymentMethod(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_three = models.CharField(max_length=700, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_four = models.CharField(max_length=700, null=True, blank=True)
+    question_four_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_five = models.CharField(max_length=700, null=True, blank=True)
+    question_five_answer = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="repayment_method_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two} {self.question_three}"
+
+class RecommendingMortgageType(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_three = models.CharField(max_length=700, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_four = models.CharField(max_length=700, null=True, blank=True)
+    question_four_answer = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="mortgage_type_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two} {self.question_three}"
+
+class RecommendingTerm(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="term_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one}"
+
+class RecommendingMortgageLender(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_three = models.CharField(max_length=700, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="lender_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two}"
+
+class RecommendingMortgageAmount(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_three = models.CharField(max_length=700, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(ExtraQuestion, on_delete=models.CASCADE, null=True, blank=True,
+                                       related_name="mortgage_amount_extra_questions")
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two} {self.question_three}"
+
+class CostsFees(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_three = models.CharField(max_length=700, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="costs_fees_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two} {self.question_three}"
+
+class DisadvantageRisks(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_three = models.CharField(max_length=700, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_four = models.CharField(max_length=700, null=True, blank=True)
+    question_four_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_five = models.CharField(max_length=700, null=True, blank=True)
+    question_five_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_six = models.CharField(max_length=700, null=True, blank=True)
+    question_six_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_seven = models.CharField(max_length=700, null=True, blank=True)
+    question_seven_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_eight = models.CharField(max_length=700, null=True, blank=True)
+    question_eight_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_nine = models.CharField(max_length=700, null=True, blank=True)
+    question_nine_answer = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="disadvantage_extra_questions"
+    )
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two} {self.question_three}"
+
+class CostAdvice(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="cost_advice_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two}"
+
+class Protection(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_three = models.CharField(max_length=700, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_three_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_four = models.CharField(max_length=700, null=True, blank=True)
+    question_four_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_four_sharia = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="protection_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two}"
+
+class BuildingsInsurance(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_three = models.CharField(max_length=700, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_three_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_four = models.CharField(max_length=700, null=True, blank=True)
+    question_four_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_five_sharia = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="buildings_insurance_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two}"
+
+class Wills(CreatedAtUpdatedAtBaseModel):
+    question_one = models.CharField(max_length=700, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_two = models.CharField(max_length=700, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_three = models.CharField(max_length=700, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="wills_extra_questions"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.question_one} {self.question_two}"
+
+class Suitability(CreatedAtUpdatedAtBaseModel):
+    case = models.OneToOneField(
+        Case, on_delete=models.CASCADE, related_name="suitability"
+    )
+    budget_affordability = models.OneToOneField(
+        BudgetAffordability,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="budget_affordability"
+    )
+    new_mortgage_details = models.OneToOneField(
+        NewMortgageDetails,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="new_mortgage_details"
+    )
+    recommending_repayment_method = models.OneToOneField(
+        RecommendingRepaymentMethod,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="recommending_repayment_method"
+    )
+    recommending_mortgage_type = models.OneToOneField(
+        RecommendingMortgageType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="recommending_mortgage_type"
+    )
+    recommending_term = models.OneToOneField(
+        RecommendingTerm,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="recommending_term"
+    )
+    recommending_mortgage_lender = models.OneToOneField(
+        RecommendingMortgageLender,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="recommending_mortgage_lender"
+    )
+    recommending_mortgage_amount = models.OneToOneField(
+        RecommendingMortgageAmount,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="recommending_mortgage_amount"
+    )
+    costs_fees = models.OneToOneField(
+        CostsFees,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="costs_fees"
+    )
+    disadvantage_risks = models.OneToOneField(
+        DisadvantageRisks,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="disadvantage_risks"
+    )
+    cost_advice = models.OneToOneField(
+        CostAdvice,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="cost_advice"
+    )
+    protection = models.OneToOneField(
+        Protection,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="protection"
+    )
+    buildings_insurance = models.OneToOneField(
+        BuildingsInsurance,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="buildingsInsurance"
+    )
+    wills = models.OneToOneField(
+        Wills,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="wills"
+    )
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
