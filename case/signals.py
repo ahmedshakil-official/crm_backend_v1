@@ -166,3 +166,8 @@ def create_mortgage_features_for_joint_user(sender, instance, created, **kwargs)
         MortgageNeeds = apps.get_model("case", "MortgageFeatures")
         MortgageNeeds.objects.create(case=instance.case, applicant=instance.joint_user)
 
+@receiver(post_save, sender="case.Case")
+def create_suitability(sender, instance, created, **kwargs):
+    if created:
+        Suitability = apps.get_model("case", "Suitability")
+        Suitability.objects.create(case=instance)
