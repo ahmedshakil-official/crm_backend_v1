@@ -55,7 +55,7 @@ from .views import (
     FeesOutListCreateApiView,
     DipHistoryListCreateApiView,
     DipHistoryRetrieveUpdateApiView, CreditCommitmentsListCreateApiView, CreditCommitmentsRetrieveUpdateDestroyApiView,
-    SuitabilityRetrieveUpdateApiView,
+    SuitabilityRetrieveUpdateApiView, OtherQuestionListCreateApiView,
 )
 
 urlpatterns = [
@@ -330,4 +330,9 @@ urlpatterns = [
         SuitabilityRetrieveUpdateApiView.as_view(),
         name="suitability-retrieve-update",
     ),
+    path(
+        "<uuid:case_alias>/other/question/",
+        OtherQuestionListCreateApiView.as_view(),
+        name="other-question-list-create",
+    )
 ]
