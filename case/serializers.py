@@ -54,7 +54,9 @@ from .models import (
     Income,
     Fees,
     DipHistory,
-    CreditCommitments,
+    CreditCommitments, Suitability, ExtraQuestion, CircumstancesObjectives, BudgetAffordability, NewMortgageDetails,
+    RecommendingRepaymentMethod, RecommendingMortgageType, RecommendingTerm, RecommendingMortgageLender,
+    RecommendingMortgageAmount, CostsFees, Protection, CostAdvice, DisadvantageRisks, BuildingsInsurance, Wills,
 )
 from authentication.models import User
 from common.serializers import (
@@ -2047,4 +2049,1099 @@ class CreditCommitmentsSerializer(serializers.ModelSerializer):
             "updated_by",
         ]
         write_only_fields = ["applicant"]
+
+class ExtraQuestionSerializer(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = ExtraQuestion
+        fields = [
+            'alias',
+            'answer',
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user  # Get user from context
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+        return ExtraQuestion.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.updated_by = user
+        instance.save()
+        return instance
+
+
+class CircumstancesObjectivesSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = CircumstancesObjectives
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_one_sharia',
+            'question_two',
+            'question_two_answer',
+            'question_two_sharia',
+            'question_three',
+            'question_three_answer',
+            'extra_question',
+            'created_at',
+            'updated_at',
+            'created_by',
+            'updated_by',
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            extra_question_instance = ExtraQuestion.objects.create(**extra_question_data)
+            validated_data['extra_question'] = extra_question_instance
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = CircumstancesObjectives.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_instance = instance.extra_question
+            for key, value in extra_question_data.items():
+                setattr(extra_question_instance, key, value)
+            extra_question_instance.updated_by = user
+            extra_question_instance.save()
+
+        # Handle updated_by field
+        instance.updated_by = user
+
+        # Update NewMortgageDetails instance
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+class BudgetAffordabilitySerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = BudgetAffordability
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_one_sharia',
+            'question_two',
+            'question_two_answer',
+            'question_two_sharia',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        extra_question_data = validated_data.pop('extra_question', None)
+
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            extra_question_instance = ExtraQuestion.objects.create(**extra_question_data)
+            validated_data['extra_question'] = extra_question_instance
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+        return BudgetAffordability.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+        extra_question_data = validated_data.pop('extra_question', None)
+
+        if extra_question_data:
+            if instance.extra_question:
+                for key, value in extra_question_data.items():
+                    setattr(instance.extra_question, key, value)
+                instance.extra_question.updated_by = user
+                instance.extra_question.save()
+            else:
+                extra_question_data['created_by'] = user
+                extra_question_data['updated_by'] = user
+                instance.extra_question = ExtraQuestion.objects.create(**extra_question_data)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.updated_by = user
+        instance.save()
+        return instance
+
+
+class NewMortgageDetailsSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = NewMortgageDetails
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_one_sharia',
+            'question_two',
+            'question_two_answer',
+            'question_two_sharia',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "alias",
+            "extra_question",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        # Handle nested extra_question
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            extra_question_instance = ExtraQuestion.objects.create(**extra_question_data)
+            validated_data['extra_question'] = extra_question_instance
+
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = NewMortgageDetails.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_instance = instance.extra_question
+            for key, value in extra_question_data.items():
+                setattr(extra_question_instance, key, value)
+            extra_question_instance.updated_by = user
+            extra_question_instance.save()
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+class RecommendingRepaymentMethodSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = RecommendingRepaymentMethod
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_one_sharia',
+            'question_two',
+            'question_two_answer',
+            'question_two_sharia',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            extra_question_instance = ExtraQuestion.objects.create(**extra_question_data)
+            validated_data['extra_question'] = extra_question_instance
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = RecommendingRepaymentMethod.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        # Handle nested extra_question data for update
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_instance = instance.extra_question
+            for key, value in extra_question_data.items():
+                setattr(extra_question_instance, key, value)
+            extra_question_instance.updated_by = user
+            extra_question_instance.save()
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class RecommendingMortgageTypeSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = RecommendingMortgageType
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_one_sharia',
+            'question_two',
+            'question_two_answer',
+            'question_two_sharia',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            extra_question_instance = ExtraQuestion.objects.create(**extra_question_data)
+            validated_data['extra_question'] = extra_question_instance
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+
+        instance = RecommendingMortgageType.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_instance = instance.extra_question
+            for key, value in extra_question_data.items():
+                setattr(extra_question_instance, key, value)
+            extra_question_instance.updated_by = user
+            extra_question_instance.save()
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class RecommendingTermSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = RecommendingTerm
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        # Handle nested extra_question data
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            extra_question_instance = ExtraQuestion.objects.create(**extra_question_data)
+            validated_data['extra_question'] = extra_question_instance
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = RecommendingTerm.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_instance = instance.extra_question
+            for key, value in extra_question_data.items():
+                setattr(extra_question_instance, key, value)
+            extra_question_instance.updated_by = user
+            extra_question_instance.save()
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class RecommendingMortgageLenderSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = RecommendingMortgageLender
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_one_sharia',
+            'question_two',
+            'question_two_answer',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            extra_question_instance = ExtraQuestion.objects.create(**extra_question_data)
+            validated_data['extra_question'] = extra_question_instance
+
+        # Set created_by and updated_by fields
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = RecommendingMortgageLender.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_instance = instance.extra_question
+            for key, value in extra_question_data.items():
+                setattr(extra_question_instance, key, value)
+            extra_question_instance.updated_by = user
+            extra_question_instance.save()
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class RecommendingMortgageAmountSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = RecommendingMortgageAmount
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_one_sharia',
+            'question_two',
+            'question_two_answer',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            extra_question_instance = ExtraQuestion.objects.create(**extra_question_data)
+            validated_data['extra_question'] = extra_question_instance
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = RecommendingMortgageAmount.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_instance = instance.extra_question
+            for key, value in extra_question_data.items():
+                setattr(extra_question_instance, key, value)
+            extra_question_instance.updated_by = user
+            extra_question_instance.save()
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class CostsFeesSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = CostsFees
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_one_sharia',
+            'question_two',
+            'question_two_answer',
+            'question_three',
+            'question_three_answer',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            validated_data['extra_question'] = ExtraQuestion.objects.create(**extra_question_data)
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = CostsFees.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            if instance.extra_question:
+                for key, value in extra_question_data.items():
+                    setattr(instance.extra_question, key, value)
+                instance.extra_question.updated_by = user
+                instance.extra_question.save()
+            else:
+                extra_question_data['created_by'] = user
+                extra_question_data['updated_by'] = user
+                instance.extra_question = ExtraQuestion.objects.create(**extra_question_data)
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class DisadvantageRisksSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = DisadvantageRisks
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_one_sharia',
+            'question_two',
+            'question_two_answer',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            validated_data['extra_question'] = ExtraQuestion.objects.create(**extra_question_data)
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = DisadvantageRisks.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            if instance.extra_question:
+                for key, value in extra_question_data.items():
+                    setattr(instance.extra_question, key, value)
+                instance.extra_question.updated_by = user  # Update the user for extra_question
+                instance.extra_question.save()
+            else:
+                extra_question_data['created_by'] = user
+                extra_question_data['updated_by'] = user
+                instance.extra_question = ExtraQuestion.objects.create(**extra_question_data)
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class CostAdviceSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = CostAdvice
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_one_sharia',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            validated_data['extra_question'] = ExtraQuestion.objects.create(**extra_question_data)
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = CostAdvice.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            if instance.extra_question:
+                for key, value in extra_question_data.items():
+                    setattr(instance.extra_question, key, value)
+                instance.extra_question.updated_by = user
+                instance.extra_question.save()
+            else:
+                extra_question_data['created_by'] = user
+                extra_question_data['updated_by'] = user
+                instance.extra_question = ExtraQuestion.objects.create(**extra_question_data)
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class ProtectionSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = Protection
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_one_sharia',
+            'question_two',
+            'question_two_answer',
+            'question_three',
+            'question_three_answer',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            validated_data['extra_question'] = ExtraQuestion.objects.create(**extra_question_data)
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = Protection.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            if instance.extra_question:
+                for key, value in extra_question_data.items():
+                    setattr(instance.extra_question, key, value)
+                instance.extra_question.updated_by = user
+                instance.extra_question.save()
+            else:
+                extra_question_data['created_by'] = user
+                extra_question_data['updated_by'] = user
+                instance.extra_question = ExtraQuestion.objects.create(**extra_question_data)
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class BuildingsInsuranceSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = BuildingsInsurance
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_two',
+            'question_two_answer',
+            'question_three',
+            'question_three_answer',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            validated_data['extra_question'] = ExtraQuestion.objects.create(**extra_question_data)
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = BuildingsInsurance.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            if instance.extra_question:
+                for key, value in extra_question_data.items():
+                    setattr(instance.extra_question, key, value)
+                instance.extra_question.updated_by = user
+                instance.extra_question.save()
+            else:
+                extra_question_data['created_by'] = user
+                extra_question_data['updated_by'] = user
+                instance.extra_question = ExtraQuestion.objects.create(**extra_question_data)
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class WillsSerializer(serializers.ModelSerializer):
+    extra_question = ExtraQuestionSerializer()
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = Wills
+        fields = [
+            'alias',
+            'question_one',
+            'question_one_answer',
+            'question_two',
+            'question_two_answer',
+            'question_three',
+            'question_three_answer',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            'alias',
+            'extra_question',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+        ]
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            extra_question_data['created_by'] = user
+            extra_question_data['updated_by'] = user
+            validated_data['extra_question'] = ExtraQuestion.objects.create(**extra_question_data)
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        instance = Wills.objects.create(**validated_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        extra_question_data = validated_data.pop('extra_question', None)
+        if extra_question_data:
+            if instance.extra_question:
+                for key, value in extra_question_data.items():
+                    setattr(instance.extra_question, key, value)
+                instance.extra_question.updated_by = user
+                instance.extra_question.save()
+            else:
+                extra_question_data['created_by'] = user
+                extra_question_data['updated_by'] = user
+                instance.extra_question = ExtraQuestion.objects.create(**extra_question_data)
+
+        instance.updated_by = user
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+
+class SuitabilitySerializer(serializers.ModelSerializer):
+    circumstances_objectives = CircumstancesObjectivesSerializer(required=False)
+    budget_affordability = BudgetAffordabilitySerializer(required=False)
+    new_mortgage_details = NewMortgageDetailsSerializer(required=False)
+    recommending_repayment_method = RecommendingRepaymentMethodSerializer(required=False)
+    recommending_mortgage_type = RecommendingMortgageTypeSerializer(required=False)
+    recommending_term = RecommendingTermSerializer(required=False)
+    recommending_mortgage_lender = RecommendingMortgageLenderSerializer(required=False)
+    recommending_mortgage_amount = RecommendingMortgageAmountSerializer(required=False)
+    costs_fees = CostsFeesSerializer(required=False)
+    disadvantage_risks = DisadvantageRisksSerializer(required=False)
+    cost_advice = CostAdviceSerializer(required=False)
+    protection = ProtectionSerializer(required=False)
+    buildings_insurance = BuildingsInsuranceSerializer(required=False)
+    wills = WillsSerializer(required=False)
+
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    case = CommonCaseSerializer(read_only=True)
+
+    class Meta:
+        model = Suitability
+        fields = [
+            'alias',
+            'case',
+            'circumstances_objectives',
+            'budget_affordability',
+            'new_mortgage_details',
+            'recommending_repayment_method',
+            'recommending_mortgage_type',
+            'recommending_term',
+            'recommending_mortgage_lender',
+            'recommending_mortgage_amount',
+            'costs_fees',
+            'disadvantage_risks',
+            'cost_advice',
+            'protection',
+            'buildings_insurance',
+            'wills',
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "alias",
+            "case",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+    def create(self, validated_data):
+        nested_instances = {}
+        nested_serializers = {
+            'circumstances_objectives': CircumstancesObjectivesSerializer,
+            'budget_affordability': BudgetAffordabilitySerializer,
+            'new_mortgage_details': NewMortgageDetailsSerializer,
+            'recommending_repayment_method': RecommendingRepaymentMethodSerializer,
+            'recommending_mortgage_type': RecommendingMortgageTypeSerializer,
+            'recommending_term': RecommendingTermSerializer,
+            'recommending_mortgage_lender': RecommendingMortgageLenderSerializer,
+            'recommending_mortgage_amount': RecommendingMortgageAmountSerializer,
+            'costs_fees': CostsFeesSerializer,
+            'disadvantage_risks': DisadvantageRisksSerializer,
+            'cost_advice': CostAdviceSerializer,
+            'protection': ProtectionSerializer,
+            'buildings_insurance': BuildingsInsuranceSerializer,
+            'wills': WillsSerializer,
+        }
+
+        for field_name, serializer_class in nested_serializers.items():
+            nested_data = validated_data.pop(field_name, None)
+            if nested_data:
+                serializer = serializer_class(data=nested_data, context=self.context)
+                serializer.is_valid(raise_exception=True)
+                nested_instances[field_name] = serializer.save()
+
+        suitability = Suitability.objects.create(**validated_data)
+
+        for field_name, instance in nested_instances.items():
+            setattr(suitability, field_name, instance)
+
+        suitability.save()
+        return suitability
+
+    def update(self, instance, validated_data):
+        nested_serializers = {
+            'circumstances_objectives': CircumstancesObjectivesSerializer,
+            'budget_affordability': BudgetAffordabilitySerializer,
+            'new_mortgage_details': NewMortgageDetailsSerializer,
+            'recommending_repayment_method': RecommendingRepaymentMethodSerializer,
+            'recommending_mortgage_type': RecommendingMortgageTypeSerializer,
+            'recommending_term': RecommendingTermSerializer,
+            'recommending_mortgage_lender': RecommendingMortgageLenderSerializer,
+            'recommending_mortgage_amount': RecommendingMortgageAmountSerializer,
+            'costs_fees': CostsFeesSerializer,
+            'disadvantage_risks': DisadvantageRisksSerializer,
+            'cost_advice': CostAdviceSerializer,
+            'protection': ProtectionSerializer,
+            'buildings_insurance': BuildingsInsuranceSerializer,
+            'wills': WillsSerializer,
+        }
+
+        for field_name, serializer_class in nested_serializers.items():
+            nested_data = validated_data.pop(field_name, None)
+            if nested_data:
+                nested_instance = getattr(instance, field_name, None)
+                if nested_instance:
+                    serializer = serializer_class(
+                        instance=nested_instance,
+                        data=nested_data,
+                        context=self.context,
+                        partial=True
+                    )
+                    serializer.is_valid(raise_exception=True)
+                    serializer.save()
+                else:
+                    serializer = serializer_class(data=nested_data, context=self.context)
+                    serializer.is_valid(raise_exception=True)
+                    nested_instance = serializer.save()
+                    setattr(instance, field_name, nested_instance)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
 
