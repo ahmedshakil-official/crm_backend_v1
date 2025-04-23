@@ -53,7 +53,7 @@ from .models import (
     Product,
     BudgetPlanner,
     Fees,
-    DipHistory, CreditCommitments,
+    DipHistory, CreditCommitments, Suitability,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -87,7 +87,7 @@ from .serializers import (
     ProductSerializer,
     BudgetPlannerSerializer,
     FeesSerializer,
-    DipHistorySerializer, CreditCommitmentsSerializer,
+    DipHistorySerializer, CreditCommitmentsSerializer, SuitabilitySerializer,
 )
 
 
@@ -1134,3 +1134,25 @@ class CreditCommitmentsRetrieveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView
 
     def perform_destroy(self, instance):
         instance.delete()
+
+
+class SuitabilityRetrieveUpdateApiView(RetrieveUpdateDestroyAPIView):
+    serializer_class = SuitabilitySerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Suitability.objects.all()
+
+    def get_object(self):
+        case_alias = self.kwargs["case_alias"]
+        return get_object_or_404(Suitability, case__alias=case_alias)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.updated_by = request.user
+        instance.save()
+        return super().update(request, *args, **kwargs)
