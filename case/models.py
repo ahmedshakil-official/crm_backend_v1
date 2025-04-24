@@ -15,12 +15,10 @@ from common.enums import (
     CaseStatusChoices,
     FileTypeChoices,
     MeetingTypeChoices,
-    MeetingStatusChoices,
-    RemedialActionsRequiredChoices,
-    RemedialActionsCompleteChoices,
-    FeeAgreementChoices,
-    PrivacyNoticeChoices,
-    TermsBusinessChoices
+    MeetingStatusChoices, CircumstancesObjectivesChoices, BudgetAffordabilityChoices, NewMortgageDetailsChoices,
+    RecommendingRepaymentMethodChoices, RecommendingMortgageTypeChoices, RecommendingMortgageLenderChoice,
+    RecommendingMortgageAmountChoice, CostsFeesChoice, DisadvantageRisksChoice, CostAdviceChoice, ProtectionChoice,
+    BuildingsInsuranceChoice, WillsChoice,
 )
 from organization.models import Organization
 from .enums import (
@@ -1913,6 +1911,11 @@ class CircumstancesObjectives(CreatedAtUpdatedAtBaseModel):
         blank=True,
         related_name="circumstances_extra_questions"
     )
+    circumstances_type = models.CharField(
+        max_length=20,
+        choices=CircumstancesObjectivesChoices.choices,
+        default=CircumstancesObjectivesChoices.GENERAL
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1934,6 +1937,11 @@ class BudgetAffordability(CreatedAtUpdatedAtBaseModel):
         blank=True,
         related_name="budget_extra_questions"
     )
+    budget_affordability_type = models.CharField(
+        max_length=20,
+        choices=BudgetAffordabilityChoices.choices,
+        default=BudgetAffordabilityChoices.GENERAL
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1954,6 +1962,11 @@ class NewMortgageDetails(CreatedAtUpdatedAtBaseModel):
         null=True,
         blank=True,
         related_name="mortgage_details_extra_questions"
+    )
+    new_mortgage_details_type = models.CharField(
+        max_length=20,
+        choices=NewMortgageDetailsChoices.choices,
+        default=NewMortgageDetailsChoices.GENERAL
     )
 
     class Meta:
@@ -1982,6 +1995,11 @@ class RecommendingRepaymentMethod(CreatedAtUpdatedAtBaseModel):
         blank=True,
         related_name="repayment_method_extra_questions"
     )
+    recommending_repayment_method_type = models.CharField(
+        max_length=20,
+        choices=RecommendingRepaymentMethodChoices.choices,
+        default=RecommendingRepaymentMethodChoices.GENERAL
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -2007,6 +2025,11 @@ class RecommendingMortgageType(CreatedAtUpdatedAtBaseModel):
         blank=True,
         related_name="mortgage_type_extra_questions"
     )
+    recommending_mortgage_type = models.CharField(
+        max_length=20,
+        choices=RecommendingMortgageTypeChoices.choices,
+        default=RecommendingMortgageTypeChoices.GENERAL
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -2023,6 +2046,11 @@ class RecommendingTerm(CreatedAtUpdatedAtBaseModel):
         null=True,
         blank=True,
         related_name="term_extra_questions"
+    )
+    recommending_term = models.CharField(
+        max_length=20,
+        choices=RecommendingMortgageTypeChoices.choices,
+        default=RecommendingMortgageTypeChoices.GENERAL
     )
 
     class Meta:
@@ -2046,6 +2074,11 @@ class RecommendingMortgageLender(CreatedAtUpdatedAtBaseModel):
         blank=True,
         related_name="lender_extra_questions"
     )
+    recommending_mortgage_lender_type = models.CharField(
+        max_length=20,
+        choices=RecommendingMortgageLenderChoice.choices,
+        default=RecommendingMortgageLenderChoice.GENERAL
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -2061,8 +2094,18 @@ class RecommendingMortgageAmount(CreatedAtUpdatedAtBaseModel):
     question_two_answer = models.CharField(max_length=700, null=True, blank=True)
     question_three = models.CharField(max_length=700, null=True, blank=True)
     question_three_answer = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(ExtraQuestion, on_delete=models.CASCADE, null=True, blank=True,
-                                       related_name="mortgage_amount_extra_questions")
+    extra_question = models.ForeignKey(
+        ExtraQuestion,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="mortgage_amount_extra_questions"
+    )
+    recommending_mortgage_amount = models.CharField(
+        max_length=20,
+        choices=RecommendingMortgageAmountChoice.choices,
+        default=RecommendingMortgageAmountChoice.GENERAL
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -2084,6 +2127,11 @@ class CostsFees(CreatedAtUpdatedAtBaseModel):
         null=True,
         blank=True,
         related_name="costs_fees_extra_questions"
+    )
+    costs_fees = models.CharField(
+        max_length=20,
+        choices=CostsFeesChoice.choices,
+        default=CostsFeesChoice.GENERAL
     )
 
     class Meta:
@@ -2119,6 +2167,12 @@ class DisadvantageRisks(CreatedAtUpdatedAtBaseModel):
         blank=True,
         related_name="disadvantage_extra_questions"
     )
+    disadvantage_risks = models.CharField(
+        max_length=20,
+        choices=DisadvantageRisksChoice.choices,
+        default=DisadvantageRisksChoice.GENERAL
+    )
+
     class Meta:
         ordering = ("-created_at", "-updated_at")
 
@@ -2138,6 +2192,11 @@ class CostAdvice(CreatedAtUpdatedAtBaseModel):
         null=True,
         blank=True,
         related_name="cost_advice_extra_questions"
+    )
+    cost_advice = models.CharField(
+        max_length=20,
+        choices=CostAdviceChoice.choices,
+        default=CostAdviceChoice.GENERAL
     )
 
     class Meta:
@@ -2166,6 +2225,11 @@ class Protection(CreatedAtUpdatedAtBaseModel):
         blank=True,
         related_name="protection_extra_questions"
     )
+    protection = models.CharField(
+        max_length=20,
+        choices=ProtectionChoice.choices,
+        default=ProtectionChoice.GENERAL
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -2193,6 +2257,11 @@ class BuildingsInsurance(CreatedAtUpdatedAtBaseModel):
         blank=True,
         related_name="buildings_insurance_extra_questions"
     )
+    buildings_insurance = models.CharField(
+        max_length=20,
+        choices=BuildingsInsuranceChoice.choices,
+        default=BuildingsInsuranceChoice.GENERAL
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -2215,6 +2284,11 @@ class Wills(CreatedAtUpdatedAtBaseModel):
         blank=True,
         related_name="wills_extra_questions"
     )
+    wills = models.CharField(
+        max_length=20,
+        choices=WillsChoice.choices,
+        default=WillsChoice.GENERAL
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -2226,101 +2300,112 @@ class Suitability(CreatedAtUpdatedAtBaseModel):
     case = models.OneToOneField(
         Case, on_delete=models.CASCADE, related_name="suitability"
     )
+    circumstances_objectives = models.OneToOneField(
+        CircumstancesObjectives,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="suitability_circumstances"
+    )
     budget_affordability = models.OneToOneField(
         BudgetAffordability,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="budget_affordability"
+        related_name="suitability_budget_affordability"
     )
     new_mortgage_details = models.OneToOneField(
         NewMortgageDetails,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="new_mortgage_details"
+        related_name="suitability_new_mortgage_details"
     )
     recommending_repayment_method = models.OneToOneField(
         RecommendingRepaymentMethod,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="recommending_repayment_method"
+        related_name="suitability_recommending_repayment_method"
     )
     recommending_mortgage_type = models.OneToOneField(
         RecommendingMortgageType,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="recommending_mortgage_type"
+        related_name="suitability_recommending_mortgage_type"
     )
     recommending_term = models.OneToOneField(
         RecommendingTerm,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="recommending_term"
+        related_name="suitability_recommending_term"
     )
     recommending_mortgage_lender = models.OneToOneField(
         RecommendingMortgageLender,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="recommending_mortgage_lender"
+        related_name="suitability_recommending_mortgage_lender"
     )
     recommending_mortgage_amount = models.OneToOneField(
         RecommendingMortgageAmount,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="recommending_mortgage_amount"
+        related_name="suitability_recommending_mortgage_amount"
     )
     costs_fees = models.OneToOneField(
         CostsFees,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="costs_fees"
+        related_name="suitability_costs_fees"
     )
     disadvantage_risks = models.OneToOneField(
         DisadvantageRisks,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="disadvantage_risks"
+        related_name="suitability_disadvantage_risks"
     )
     cost_advice = models.OneToOneField(
         CostAdvice,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="cost_advice"
+        related_name="suitability_cost_advice"
     )
     protection = models.OneToOneField(
         Protection,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="protection"
+        related_name="suitability_protection"
     )
     buildings_insurance = models.OneToOneField(
         BuildingsInsurance,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="buildingsInsurance"
+        related_name="suitability_buildingsInsurance"
     )
     wills = models.OneToOneField(
         Wills,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="wills"
+        related_name="suitability_wills"
     )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
 
+
+class OtherQuestion(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="other_questions")
+    answer = models.CharField(max_length=700, null=True, blank=True)
 
 class Compliance(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
@@ -2374,6 +2459,12 @@ class Compliance(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.date_file_checked} {self.date_file_rechecked}"
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.answer}"
 
     class Meta:
         ordering = ("-created_at", "-updated_at")

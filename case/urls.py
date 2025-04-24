@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .common import RegisterLoan
-from .models import LoanDetails, SolicitorAccountant, Product, BudgetPlanner
+from .models import LoanDetails, SolicitorAccountant, Product, BudgetPlanner, OtherQuestion
 from .views import (
     CaseListCreateApiView,
     CaseRetrieveUpdateDeleteApiView,
