@@ -16,6 +16,11 @@ from common.enums import (
     FileTypeChoices,
     MeetingTypeChoices,
     MeetingStatusChoices,
+    RemedialActionsRequiredChoices,
+    RemedialActionsCompleteChoices,
+    FeeAgreementChoices,
+    PrivacyNoticeChoices,
+    TermsBusinessChoices
 )
 from organization.models import Organization
 from .enums import (
@@ -110,7 +115,7 @@ from .signals import (
     create_budget_planner,
     create_mortgage_needs,
     create_mortgage_features,
-    create_mortgage_features_for_joint_user, create_suitability,
+    create_mortgage_features_for_joint_user, create_suitability, create_compliance,
 )
 from .utils import upload_to_case_files
 
@@ -2316,10 +2321,59 @@ class Suitability(CreatedAtUpdatedAtBaseModel):
     class Meta:
         ordering = ("-created_at", "-updated_at")
 
-class OtherQuestion(CreatedAtUpdatedAtBaseModel):
-    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="other_questions")
-    extra_question = models.ForeignKey(ExtraQuestion, on_delete=models.CASCADE, related_name="other_questions")
-    answer = models.CharField(max_length=700, null=True, blank=True)
+
+class Compliance(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="compliance"
+    )
+    date_file_checked = models.DateField(null=True, blank=True)
+    date_file_rechecked = models.DateField(null=True, blank=True)
+    file_checked = models.PositiveIntegerField(null=True, blank=True)
+    remedial_actions_required = models.CharField(
+        max_length=20,
+        choices=RemedialActionsRequiredChoices.choices,
+        null=True,
+        blank=True
+    )
+    remedial_actions_complete = models.CharField(
+        max_length=20,
+        choices=RemedialActionsCompleteChoices.choices,
+        null=True,
+        blank=True
+    )
+    comments = models.TextField(max_length=1000, null=True, blank=True)
+    rating_a = models.BooleanField(default=False)
+    rating_b = models.BooleanField(default=False)
+    rating_c = models.BooleanField(default=False)
+    terms_of_business = models.CharField(
+        max_length=20,
+        choices=TermsBusinessChoices.choices,
+        null=True,
+        blank=True
+    )
+    terms_of_business_text = models.TextField(max_length=255, null=True, blank=True)
+    privacy_notice = models.CharField(
+        max_length=20,
+        choices=PrivacyNoticeChoices.choices,
+        null=True,
+        blank=True
+    )
+    privacy_notice_text = models.TextField(max_length=255, null=True, blank=True)
+    fee_agreement = models.CharField(
+        max_length=20,
+        choices=FeeAgreementChoices.choices,
+        null=True,
+        blank=True
+    )
+    fee_agreement_text = models.TextField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.date_file_checked} {self.date_file_rechecked}"
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -2341,3 +2395,4 @@ post_save.connect(create_mortgage_needs, sender=Case)
 post_save.connect(create_mortgage_features, sender=Case)
 post_save.connect(create_mortgage_features_for_joint_user, sender=JointUser)
 post_save.connect(create_suitability, sender=Case)
+post_save.connect(create_compliance, sender=Case)
