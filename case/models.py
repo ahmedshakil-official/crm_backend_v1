@@ -2318,7 +2318,6 @@ class Suitability(CreatedAtUpdatedAtBaseModel):
 
 class OtherQuestion(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="other_questions")
-    extra_question = models.ForeignKey(ExtraQuestion, on_delete=models.CASCADE, related_name="other_questions")
     answer = models.CharField(max_length=700, null=True, blank=True)
 
     class Meta:

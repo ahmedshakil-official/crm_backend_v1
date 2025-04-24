@@ -3151,12 +3151,10 @@ class OtherQuestionSerializers(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
     case = CommonCaseSerializer(read_only=True)
-    extra_question = PrimaryKeyRelatedField(queryset=ExtraQuestion.objects.all(), required=False, allow_null=True)
     class Meta:
         model = OtherQuestion
         fields = [
             "alias",
-            "extra_question",
             "case",
             "answer",
             "created_at",
