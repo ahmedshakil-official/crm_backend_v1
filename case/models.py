@@ -15,8 +15,12 @@ from common.enums import (
     CaseStatusChoices,
     FileTypeChoices,
     MeetingTypeChoices,
-    MeetingStatusChoices, RemedialActionsRequiredChoices, RemedialActionsCompleteChoices, RatingChoices, TermsBusiness,
-    PrivacyNotice, FeeAgreement, FeeAgreementChoices, PrivacyNoticeChoices, TermsBusinessChoices, GradeChoices,
+    MeetingStatusChoices,
+    RemedialActionsRequiredChoices,
+    RemedialActionsCompleteChoices,
+    FeeAgreementChoices,
+    PrivacyNoticeChoices,
+    TermsBusinessChoices
 )
 from organization.models import Organization
 from .enums import (
@@ -2357,7 +2361,7 @@ class Compliance(CreatedAtUpdatedAtBaseModel):
     )
     privacy_notice_text = models.TextField(max_length=255, null=True, blank=True)
     fee_agreement = models.CharField(
-        max_length=20,  # Added max_length
+        max_length=20,
         choices=FeeAgreementChoices.choices,
         null=True,
         blank=True

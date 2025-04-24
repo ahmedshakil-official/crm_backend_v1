@@ -130,12 +130,6 @@ class RemedialActionsCompleteChoices(models.TextChoices):
     YES = "YES", _("Yes")
     NO = "NO", _("No")
 
-class GradeChoices(models.TextChoices):
-    G = "G", _("(Grade 7) File Demonstrates Suitability Of Advice, KYC and TCF. Thorough Factfind/Record Keeping.")
-    A = "A", _("(Grade 5-6) Weaknesses Identified But Advice Seems Acceptable.")
-    R = "R", _("(Grades 1-4) Serious Weaknesses In Documentation.")
-
-
 class TermsBusinessChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
