@@ -2339,13 +2339,9 @@ class Compliance(CreatedAtUpdatedAtBaseModel):
         blank=True
     )
     comments = models.TextField(max_length=1000, null=True, blank=True)
-    rating = models.BooleanField(default=False)
-    grade = models.CharField(
-        max_length=20,
-        choices=GradeChoices.choices,
-        null=True,
-        blank=True,
-    )
+    rating_a = models.BooleanField(default=False)
+    rating_b = models.BooleanField(default=False)
+    rating_c = models.BooleanField(default=False)
     terms_of_business = models.CharField(
         max_length=20,
         choices=TermsBusinessChoices.choices,
