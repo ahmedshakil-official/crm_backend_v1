@@ -16,6 +16,11 @@ from common.enums import (
     FileTypeChoices,
     MeetingTypeChoices,
     MeetingStatusChoices,
+    RemedialActionsRequiredChoices,
+    RemedialActionsCompleteChoices,
+    FeeAgreementChoices,
+    PrivacyNoticeChoices,
+    TermsBusinessChoices
 )
 from organization.models import Organization
 from .enums import (
@@ -2316,6 +2321,58 @@ class Suitability(CreatedAtUpdatedAtBaseModel):
     class Meta:
         ordering = ("-created_at", "-updated_at")
 
+class Compliance(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(
+        Case,
+        on_delete=models.CASCADE,
+        related_name="compliance"
+    )
+    date_file_checked = models.DateField(null=True, blank=True)
+    date_file_rechecked = models.DateField(null=True, blank=True)
+    file_checked = models.PositiveIntegerField(null=True, blank=True)
+    remedial_actions_required = models.CharField(
+        max_length=20,
+        choices=RemedialActionsRequiredChoices.choices,
+        null=True,
+        blank=True
+    )
+    remedial_actions_complete = models.CharField(
+        max_length=20,
+        choices=RemedialActionsCompleteChoices.choices,
+        null=True,
+        blank=True
+    )
+    comments = models.TextField(max_length=1000, null=True, blank=True)
+    rating_a = models.BooleanField(default=False)
+    rating_b = models.BooleanField(default=False)
+    rating_c = models.BooleanField(default=False)
+    terms_of_business = models.CharField(
+        max_length=20,
+        choices=TermsBusinessChoices.choices,
+        null=True,
+        blank=True
+    )
+    terms_of_business_text = models.TextField(max_length=255, null=True, blank=True)
+    privacy_notice = models.CharField(
+        max_length=20,
+        choices=PrivacyNoticeChoices.choices,
+        null=True,
+        blank=True
+    )
+    privacy_notice_text = models.TextField(max_length=255, null=True, blank=True)
+    fee_agreement = models.CharField(
+        max_length=20,
+        choices=FeeAgreementChoices.choices,
+        null=True,
+        blank=True
+    )
+    fee_agreement_text = models.TextField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.date_file_checked} {self.date_file_rechecked}"
 
 
 # Call all signals here.
