@@ -1,6 +1,7 @@
 from django.db import transaction
 from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
+from rest_framework.relations import PrimaryKeyRelatedField
 
 from common.enums import UserTypeChoices, RoleChoices
 from case.enums import (
@@ -57,6 +58,7 @@ from .models import (
     CreditCommitments, Suitability, ExtraQuestion, CircumstancesObjectives, BudgetAffordability, NewMortgageDetails,
     RecommendingRepaymentMethod, RecommendingMortgageType, RecommendingTerm, RecommendingMortgageLender,
     RecommendingMortgageAmount, CostsFees, Protection, CostAdvice, DisadvantageRisks, BuildingsInsurance, Wills,
+    OtherQuestion,
 )
 from authentication.models import User
 from common.serializers import (
@@ -3144,4 +3146,27 @@ class SuitabilitySerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+
+class OtherQuestionSerializers(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    case = CommonCaseSerializer(read_only=True)
+    class Meta:
+        model = OtherQuestion
+        fields = [
+            "alias",
+            "case",
+            "answer",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by"
+        ]
+        read_only_fields = [
+            "alias",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by"
+        ]
 

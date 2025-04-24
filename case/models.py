@@ -2402,6 +2402,11 @@ class Suitability(CreatedAtUpdatedAtBaseModel):
     class Meta:
         ordering = ("-created_at", "-updated_at")
 
+
+class OtherQuestion(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="other_questions")
+    answer = models.CharField(max_length=700, null=True, blank=True)
+
 class Compliance(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
         Case,
@@ -2455,6 +2460,12 @@ class Compliance(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.date_file_checked} {self.date_file_rechecked}"
 
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.answer}"
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
