@@ -121,3 +121,55 @@ class MeetingStatusChoices(models.TextChoices):
     CANCELLED = "CANCELLED", _("Canceled")
     ON_HOLD = "ON_HOLD", _("On Hold")
     SUCCESS = "SUCCESS", _("Success")
+
+class CircumstancesObjectivesChoices(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class BudgetAffordabilityChoices(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class NewMortgageDetailsChoices(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class RecommendingRepaymentMethodChoices(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class RecommendingMortgageTypeChoices(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class RecommendingMortgageLenderChoice(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class RecommendingMortgageAmountChoice(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class CostsFeesChoice(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class DisadvantageRisksChoice(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class CostAdviceChoice(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class ProtectionChoice(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class BuildingsInsuranceChoice(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
+
+class WillsChoice(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    SHARIA = "SHARIA", _("Sharia")
