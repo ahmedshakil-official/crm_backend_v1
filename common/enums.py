@@ -173,3 +173,26 @@ class BuildingsInsuranceChoice(models.TextChoices):
 class WillsChoice(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
+    
+class RemedialActionsRequiredChoices(models.TextChoices):
+    YES = "YES", _("Yes")
+    NO = "NO", _("No")
+
+class RemedialActionsCompleteChoices(models.TextChoices):
+    YES = "YES", _("Yes")
+    NO = "NO", _("No")
+
+class TermsBusinessChoices(models.TextChoices):
+    YES = "YES", _("YES")
+    NO = "NO", _("NO")
+    NA = "N/A", _("N/A")
+
+class PrivacyNoticeChoices(models.TextChoices):
+    YES = "YES", _("YES")
+    NO = "NO", _("NO")
+    NA = "N/A", _("N/A")
+
+class FeeAgreementChoices(models.TextChoices):
+    YES = "YES", _("YES")
+    NO = "NO", _("NO")
+    NA = "N/A", _("N/A")
