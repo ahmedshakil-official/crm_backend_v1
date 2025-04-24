@@ -121,3 +121,32 @@ class MeetingStatusChoices(models.TextChoices):
     CANCELLED = "CANCELLED", _("Canceled")
     ON_HOLD = "ON_HOLD", _("On Hold")
     SUCCESS = "SUCCESS", _("Success")
+
+class RemedialActionsRequiredChoices(models.TextChoices):
+    YES = "YES", _("Yes")
+    NO = "NO", _("No")
+
+class RemedialActionsCompleteChoices(models.TextChoices):
+    YES = "YES", _("Yes")
+    NO = "NO", _("No")
+
+class GradeChoices(models.TextChoices):
+    G = "G", _("(Grade 7) File Demonstrates Suitability Of Advice, KYC and TCF. Thorough Factfind/Record Keeping.")
+    A = "A", _("(Grade 5-6) Weaknesses Identified But Advice Seems Acceptable.")
+    R = "R", _("(Grades 1-4) Serious Weaknesses In Documentation.")
+
+
+class TermsBusinessChoices(models.TextChoices):
+    YES = "YES", _("YES")
+    NO = "NO", _("NO")
+    NA = "N/A", _("N/A")
+
+class PrivacyNoticeChoices(models.TextChoices):
+    YES = "YES", _("YES")
+    NO = "NO", _("NO")
+    NA = "N/A", _("N/A")
+
+class FeeAgreementChoices(models.TextChoices):
+    YES = "YES", _("YES")
+    NO = "NO", _("NO")
+    NA = "N/A", _("N/A")
