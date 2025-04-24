@@ -121,3 +121,26 @@ class MeetingStatusChoices(models.TextChoices):
     CANCELLED = "CANCELLED", _("Canceled")
     ON_HOLD = "ON_HOLD", _("On Hold")
     SUCCESS = "SUCCESS", _("Success")
+
+class RemedialActionsRequiredChoices(models.TextChoices):
+    YES = "YES", _("Yes")
+    NO = "NO", _("No")
+
+class RemedialActionsCompleteChoices(models.TextChoices):
+    YES = "YES", _("Yes")
+    NO = "NO", _("No")
+
+class TermsBusinessChoices(models.TextChoices):
+    YES = "YES", _("YES")
+    NO = "NO", _("NO")
+    NA = "N/A", _("N/A")
+
+class PrivacyNoticeChoices(models.TextChoices):
+    YES = "YES", _("YES")
+    NO = "NO", _("NO")
+    NA = "N/A", _("N/A")
+
+class FeeAgreementChoices(models.TextChoices):
+    YES = "YES", _("YES")
+    NO = "NO", _("NO")
+    NA = "N/A", _("N/A")
