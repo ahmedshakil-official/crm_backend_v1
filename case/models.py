@@ -115,7 +115,7 @@ from .signals import (
     create_budget_planner,
     create_mortgage_needs,
     create_mortgage_features,
-    create_mortgage_features_for_joint_user, create_suitability,
+    create_mortgage_features_for_joint_user, create_suitability, create_compliance,
 )
 from .utils import upload_to_case_files
 
@@ -2389,3 +2389,4 @@ post_save.connect(create_mortgage_needs, sender=Case)
 post_save.connect(create_mortgage_features, sender=Case)
 post_save.connect(create_mortgage_features_for_joint_user, sender=JointUser)
 post_save.connect(create_suitability, sender=Case)
+post_save.connect(create_compliance, sender=Case)
