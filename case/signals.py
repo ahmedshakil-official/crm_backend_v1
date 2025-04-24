@@ -172,6 +172,8 @@ def create_suitability(sender, instance, created, **kwargs):
         Suitability = apps.get_model("case", "Suitability")
         Suitability.objects.create(case=instance)
 
+
+
 @receiver(post_save, sender="case.Case")
 def create_compliance(sender, instance, created, **kwargs):
     if created:
