@@ -1157,6 +1157,7 @@ class SuitabilityRetrieveUpdateApiView(RetrieveUpdateDestroyAPIView):
         instance.save()
         return super().update(request, *args, **kwargs)
 
+
 class OtherQuestionListCreateApiView(ListCreateAPIView):
     serializer_class = OtherQuestionSerializers
     permission_classes = [IsAuthenticated]

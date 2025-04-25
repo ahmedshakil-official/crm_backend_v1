@@ -3147,10 +3147,12 @@ class SuitabilitySerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class OtherQuestionSerializers(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
     case = CommonCaseSerializer(read_only=True)
+
     class Meta:
         model = OtherQuestion
         fields = [
