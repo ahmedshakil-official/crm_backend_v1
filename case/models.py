@@ -18,7 +18,8 @@ from common.enums import (
     MeetingStatusChoices, CircumstancesObjectivesChoices, BudgetAffordabilityChoices, NewMortgageDetailsChoices,
     RecommendingRepaymentMethodChoices, RecommendingMortgageTypeChoices, RecommendingMortgageLenderChoice,
     RecommendingMortgageAmountChoice, CostsFeesChoice, DisadvantageRisksChoice, CostAdviceChoice, ProtectionChoice,
-    BuildingsInsuranceChoice, WillsChoice,
+    BuildingsInsuranceChoice, WillsChoice, RemedialActionsRequiredChoices, RemedialActionsCompleteChoices,
+    TermsBusinessChoices, PrivacyNoticeChoices, FeeAgreementChoices,
 )
 from organization.models import Organization
 from .enums import (
@@ -2460,12 +2461,6 @@ class Compliance(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.date_file_checked} {self.date_file_rechecked}"
 
-
-    class Meta:
-        ordering = ("-created_at", "-updated_at")
-
-    def __str__(self):
-        return f"{self.answer}"
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
