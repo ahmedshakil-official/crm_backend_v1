@@ -169,8 +169,41 @@ def create_mortgage_features_for_joint_user(sender, instance, created, **kwargs)
 @receiver(post_save, sender="case.Case")
 def create_suitability(sender, instance, created, **kwargs):
     if created:
+        # Load necessary models
         Suitability = apps.get_model("case", "Suitability")
-        Suitability.objects.create(case=instance)
+        ExtraQuestion = apps.get_model("case", "ExtraQuestion")
+
+        # Mapping: field name in Suitability -> Model class name
+        model_mapping = {
+            'circumstances_objectives': 'CircumstancesObjectives',
+            'budget_affordability': 'BudgetAffordability',
+            'new_mortgage_details': 'NewMortgageDetails',
+            'recommending_repayment_method': 'RecommendingRepaymentMethod',
+            'recommending_mortgage_type': 'RecommendingMortgageType',
+            'recommending_term': 'RecommendingTerm',
+            'recommending_mortgage_lender': 'RecommendingMortgageLender',
+            'recommending_mortgage_amount': 'RecommendingMortgageAmount',
+            'costs_fees': 'CostsFees',
+            'disadvantage_risks': 'DisadvantageRisks',
+            'cost_advice': 'CostAdvice',
+            'protection': 'Protection',
+            'buildings_insurance': 'BuildingsInsurance',
+            'wills': 'Wills',
+        }
+
+        # Step 1: Create empty Suitability linked to Case
+        suitability = Suitability.objects.create(case=instance)
+
+        # Step 2: Loop through all sub-models
+        for field_name, model_name in model_mapping.items():
+            model_class = apps.get_model("case", model_name)
+            extra_question = ExtraQuestion.objects.create()
+            sub_instance = model_class.objects.create(extra_question=extra_question)
+
+            setattr(suitability, field_name, sub_instance)
+
+        # Step 3: Save Suitability after assigning all fields
+        suitability.save()
 
 
 
