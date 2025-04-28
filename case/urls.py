@@ -331,7 +331,7 @@ urlpatterns = [
         name="suitability-retrieve-update",
     ),
     path(
-        "<uuid:case_alias>/questions/",
+        "<uuid:case_alias>/other/question/",
         OtherQuestionListCreateApiView.as_view(),
         name="other-question-list-create",
     )
