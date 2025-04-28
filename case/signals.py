@@ -171,7 +171,6 @@ def create_suitability(sender, instance, created, **kwargs):
     if created:
         # Load necessary models
         Suitability = apps.get_model("case", "Suitability")
-        ExtraQuestion = apps.get_model("case", "ExtraQuestion")
 
         # Mapping: field name in Suitability -> Model class name
         model_mapping = {
@@ -197,8 +196,7 @@ def create_suitability(sender, instance, created, **kwargs):
         # Step 2: Loop through all sub-models
         for field_name, model_name in model_mapping.items():
             model_class = apps.get_model("case", model_name)
-            extra_question = ExtraQuestion.objects.create()
-            sub_instance = model_class.objects.create(extra_question=extra_question)
+            sub_instance = model_class.objects.create()
 
             setattr(suitability, field_name, sub_instance)
 
