@@ -1,7 +1,6 @@
 from django.urls import path
-
 from .common import RegisterLoan
-from .models import LoanDetails, SolicitorAccountant, Product, BudgetPlanner, OtherQuestion
+from .models import LoanDetails, SolicitorAccountant, Product, BudgetPlanner, OtherQuestion, Compliance
 from .views import (
     CaseListCreateApiView,
     CaseRetrieveUpdateDeleteApiView,
@@ -55,7 +54,7 @@ from .views import (
     FeesOutListCreateApiView,
     DipHistoryListCreateApiView,
     DipHistoryRetrieveUpdateApiView, CreditCommitmentsListCreateApiView, CreditCommitmentsRetrieveUpdateDestroyApiView,
-    SuitabilityRetrieveUpdateApiView, OtherQuestionListCreateApiView,
+    SuitabilityRetrieveUpdateApiView, OtherQuestionListCreateApiView, ComplianceRetrieveUpdateApiView,
 )
 
 urlpatterns = [
@@ -334,5 +333,10 @@ urlpatterns = [
         "<uuid:case_alias>/other/question/",
         OtherQuestionListCreateApiView.as_view(),
         name="other-question-list-create",
-    )
+    ),
+    path(
+        "<uuid:case_alias>/compliance/",
+        ComplianceRetrieveUpdateApiView.as_view(),
+        name="compliance-retrieve-update",
+    ),
 ]
