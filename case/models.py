@@ -1905,13 +1905,7 @@ class CircumstancesObjectives(CreatedAtUpdatedAtBaseModel):
     question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
     question_three = models.CharField(max_length=700, null=True, blank=True)
     question_three_answer = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="circumstances_extra_questions"
-    )
+
     circumstances_type = models.CharField(
         max_length=20,
         choices=CircumstancesObjectivesChoices.choices,
@@ -1931,13 +1925,7 @@ class BudgetAffordability(CreatedAtUpdatedAtBaseModel):
     question_two = models.CharField(max_length=700, null=True, blank=True)
     question_two_answer = models.CharField(max_length=700, null=True, blank=True)
     question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="budget_extra_questions"
-    )
+
     budget_affordability_type = models.CharField(
         max_length=20,
         choices=BudgetAffordabilityChoices.choices,
@@ -1957,13 +1945,7 @@ class NewMortgageDetails(CreatedAtUpdatedAtBaseModel):
     question_two = models.CharField(max_length=700, null=True, blank=True)
     question_two_answer = models.CharField(max_length=700, null=True, blank=True)
     question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="mortgage_details_extra_questions"
-    )
+
     new_mortgage_details_type = models.CharField(
         max_length=20,
         choices=NewMortgageDetailsChoices.choices,
@@ -1989,13 +1971,7 @@ class RecommendingRepaymentMethod(CreatedAtUpdatedAtBaseModel):
     question_four_answer = models.CharField(max_length=700, null=True, blank=True)
     question_five = models.CharField(max_length=700, null=True, blank=True)
     question_five_answer = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="repayment_method_extra_questions"
-    )
+
     recommending_repayment_method_type = models.CharField(
         max_length=20,
         choices=RecommendingRepaymentMethodChoices.choices,
@@ -2019,13 +1995,7 @@ class RecommendingMortgageType(CreatedAtUpdatedAtBaseModel):
     question_three_answer = models.CharField(max_length=700, null=True, blank=True)
     question_four = models.CharField(max_length=700, null=True, blank=True)
     question_four_answer = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="mortgage_type_extra_questions"
-    )
+
     recommending_mortgage_type = models.CharField(
         max_length=20,
         choices=RecommendingMortgageTypeChoices.choices,
@@ -2041,13 +2011,7 @@ class RecommendingMortgageType(CreatedAtUpdatedAtBaseModel):
 class RecommendingTerm(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=700, null=True, blank=True)
     question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="term_extra_questions"
-    )
+
     recommending_term = models.CharField(
         max_length=20,
         choices=RecommendingMortgageTypeChoices.choices,
@@ -2068,13 +2032,7 @@ class RecommendingMortgageLender(CreatedAtUpdatedAtBaseModel):
     question_two_answer = models.CharField(max_length=700, null=True, blank=True)
     question_three = models.CharField(max_length=700, null=True, blank=True)
     question_three_answer = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="lender_extra_questions"
-    )
+
     recommending_mortgage_lender_type = models.CharField(
         max_length=20,
         choices=RecommendingMortgageLenderChoice.choices,
@@ -2095,13 +2053,7 @@ class RecommendingMortgageAmount(CreatedAtUpdatedAtBaseModel):
     question_two_answer = models.CharField(max_length=700, null=True, blank=True)
     question_three = models.CharField(max_length=700, null=True, blank=True)
     question_three_answer = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="mortgage_amount_extra_questions"
-    )
+
     recommending_mortgage_amount = models.CharField(
         max_length=20,
         choices=RecommendingMortgageAmountChoice.choices,
@@ -2122,13 +2074,7 @@ class CostsFees(CreatedAtUpdatedAtBaseModel):
     question_two_answer = models.CharField(max_length=700, null=True, blank=True)
     question_three = models.CharField(max_length=700, null=True, blank=True)
     question_three_answer = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="costs_fees_extra_questions"
-    )
+
     costs_fees = models.CharField(
         max_length=20,
         choices=CostsFeesChoice.choices,
@@ -2161,13 +2107,7 @@ class DisadvantageRisks(CreatedAtUpdatedAtBaseModel):
     question_eight_answer = models.CharField(max_length=700, null=True, blank=True)
     question_nine = models.CharField(max_length=700, null=True, blank=True)
     question_nine_answer = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="disadvantage_extra_questions"
-    )
+
     disadvantage_risks = models.CharField(
         max_length=20,
         choices=DisadvantageRisksChoice.choices,
@@ -2187,13 +2127,7 @@ class CostAdvice(CreatedAtUpdatedAtBaseModel):
     question_two = models.CharField(max_length=700, null=True, blank=True)
     question_two_answer = models.CharField(max_length=700, null=True, blank=True)
     question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="cost_advice_extra_questions"
-    )
+
     cost_advice = models.CharField(
         max_length=20,
         choices=CostAdviceChoice.choices,
@@ -2219,13 +2153,7 @@ class Protection(CreatedAtUpdatedAtBaseModel):
     question_four = models.CharField(max_length=700, null=True, blank=True)
     question_four_answer = models.CharField(max_length=700, null=True, blank=True)
     question_four_sharia = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="protection_extra_questions"
-    )
+
     protection = models.CharField(
         max_length=20,
         choices=ProtectionChoice.choices,
@@ -2251,13 +2179,7 @@ class BuildingsInsurance(CreatedAtUpdatedAtBaseModel):
     question_four = models.CharField(max_length=700, null=True, blank=True)
     question_four_answer = models.CharField(max_length=700, null=True, blank=True)
     question_five_sharia = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="buildings_insurance_extra_questions"
-    )
+
     buildings_insurance = models.CharField(
         max_length=20,
         choices=BuildingsInsuranceChoice.choices,
@@ -2278,13 +2200,7 @@ class Wills(CreatedAtUpdatedAtBaseModel):
     question_two_answer = models.CharField(max_length=700, null=True, blank=True)
     question_three = models.CharField(max_length=700, null=True, blank=True)
     question_three_answer = models.CharField(max_length=700, null=True, blank=True)
-    extra_question = models.ForeignKey(
-        ExtraQuestion,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="wills_extra_questions"
-    )
+
     wills = models.CharField(
         max_length=20,
         choices=WillsChoice.choices,
