@@ -53,7 +53,7 @@ from .models import (
     Product,
     BudgetPlanner,
     Fees,
-    DipHistory, CreditCommitments, Suitability, OtherQuestion,
+    DipHistory, CreditCommitments, Suitability, OtherQuestion, Compliance,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -88,6 +88,7 @@ from .serializers import (
     BudgetPlannerSerializer,
     FeesSerializer,
     DipHistorySerializer, CreditCommitmentsSerializer, SuitabilitySerializer, OtherQuestionSerializers,
+    ComplianceSerializers,
 )
 
 
@@ -1174,3 +1175,17 @@ class OtherQuestionListCreateApiView(ListCreateAPIView):
             case=case,
             created_by=self.request.user
         )
+
+
+class ComplianceRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    serializer_class = ComplianceSerializers
+    permission_classes = [IsAuthenticated]
+    queryset = Suitability.objects.all()
+
+    def get_object(self):
+        case_alias = self.kwargs['case_alias']
+        compliance = Compliance.objects.get(case__alias=case_alias)
+        return compliance
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)

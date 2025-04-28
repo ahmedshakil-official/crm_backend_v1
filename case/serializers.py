@@ -58,7 +58,7 @@ from .models import (
     CreditCommitments, Suitability, ExtraQuestion, CircumstancesObjectives, BudgetAffordability, NewMortgageDetails,
     RecommendingRepaymentMethod, RecommendingMortgageType, RecommendingTerm, RecommendingMortgageLender,
     RecommendingMortgageAmount, CostsFees, Protection, CostAdvice, DisadvantageRisks, BuildingsInsurance, Wills,
-    OtherQuestion,
+    OtherQuestion, Compliance,
 )
 from authentication.models import User
 from common.serializers import (
@@ -2963,3 +2963,40 @@ class OtherQuestionSerializers(serializers.ModelSerializer):
             "updated_by"
         ]
 
+class ComplianceSerializers(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    case = CommonCaseSerializer(read_only=True)
+
+    class Meta:
+        model = Compliance
+        fields = [
+            "alias",
+            "case",
+            "date_file_checked",
+            "date_file_rechecked",
+            "file_checked",
+            "remedial_actions_required",
+            "remedial_actions_complete",
+            "comments",
+            "rating_a",
+            "rating_b",
+            "rating_c",
+            "terms_of_business",
+            "terms_of_business_text",
+            "privacy_notice",
+            "privacy_notice_text",
+            "fee_agreement",
+            "fee_agreement_text",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
