@@ -58,7 +58,7 @@ from .models import (
     CreditCommitments, Suitability, ExtraQuestion, CircumstancesObjectives, BudgetAffordability, NewMortgageDetails,
     RecommendingRepaymentMethod, RecommendingMortgageType, RecommendingTerm, RecommendingMortgageLender,
     RecommendingMortgageAmount, CostsFees, Protection, CostAdvice, DisadvantageRisks, BuildingsInsurance, Wills,
-    OtherQuestion, Compliance,
+    OtherQuestion, Compliance, MortgageNeeds,
 )
 from authentication.models import User
 from common.serializers import (
@@ -3159,6 +3159,68 @@ class ComplianceSerializers(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+        read_only_fields = [
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+
+class MortgageNeedsSerializers(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    case = CommonCaseSerializer(read_only=True)
+
+    class Meta:
+        model = MortgageNeeds
+
+        fields = [
+            "alias",
+            "case",
+            "repayment_method",
+            "monthly_mortgage_payments",
+            "specific_mortgage_deal",
+            "referred_monthly_budget",
+            "retirement_age",
+            "what_suitable_mortgage_features_are_important",
+            "front_costs",
+            "is_ability_to_make_overpayments",
+            "is_early_repayment_charges",
+            "is_minimise_any_lender_arrangement_costs",
+            "is_ability_to_add_fees_to_the_mortgage",
+            "is_ability_to_add_fees_mortgage",
+            "cashback",
+            "portability",
+            "guarantor_jbsp",
+            "offset_mortgage",
+            "scheme_specific",
+            "speed_of_completion",
+            "sharia_compliant_mortgages",
+            "ltd_company_btl",
+            "any_incentives",
+            "considering_debt_consolidation",
+            "anticipate_any_changes_notes",
+            "anticipate_any_changes",
+            "buildings",
+            "contents",
+            "accidental_damage",
+            "landlords_cover",
+            "home_emergency_cover",
+            "personal_possessions_cover",
+            "personal_possessions_confirm",
+            "have_you_a_will_in_place",
+            "have_you_a_will_in_place_note",
+            "mortgage_requirements_note",
+            "mortgage_requirements",
+            "notes",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
         read_only_fields = [
             "alias",
             "created_by",

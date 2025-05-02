@@ -53,7 +53,7 @@ from .models import (
     Product,
     BudgetPlanner,
     Fees,
-    DipHistory, CreditCommitments, Suitability, OtherQuestion, Compliance,
+    DipHistory, CreditCommitments, Suitability, OtherQuestion, Compliance, MortgageNeeds,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -88,7 +88,7 @@ from .serializers import (
     BudgetPlannerSerializer,
     FeesSerializer,
     DipHistorySerializer, CreditCommitmentsSerializer, SuitabilitySerializer, OtherQuestionSerializers,
-    ComplianceSerializers,
+    ComplianceSerializers, MortgageNeedsSerializers,
 )
 
 
@@ -1186,6 +1186,20 @@ class ComplianceRetrieveUpdateApiView(RetrieveUpdateAPIView):
         case_alias = self.kwargs['case_alias']
         compliance = Compliance.objects.get(case__alias=case_alias)
         return compliance
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+
+
+class MortgageNeedsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+    serializer_class = MortgageNeedsSerializers
+    permission_classes = [IsAuthenticated]
+    queryset = MortgageNeeds.objects.all()
+
+    def get_object(self):
+        case_alias = self.kwargs['case_alias']
+        mortgage_needs = MortgageNeeds.objects.get(case__alias=case_alias)
+        return mortgage_needs
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)

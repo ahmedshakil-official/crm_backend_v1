@@ -54,7 +54,7 @@ from .views import (
     FeesOutListCreateApiView,
     DipHistoryListCreateApiView,
     DipHistoryRetrieveUpdateApiView, CreditCommitmentsListCreateApiView, CreditCommitmentsRetrieveUpdateDestroyApiView,
-    SuitabilityRetrieveUpdateApiView, OtherQuestionListCreateApiView, ComplianceRetrieveUpdateApiView,
+    SuitabilityRetrieveUpdateApiView, OtherQuestionListCreateApiView, ComplianceRetrieveUpdateApiView, MortgageNeedsRetrieveUpdateApiView
 )
 
 urlpatterns = [
@@ -338,5 +338,10 @@ urlpatterns = [
         "<uuid:case_alias>/compliance/",
         ComplianceRetrieveUpdateApiView.as_view(),
         name="compliance-retrieve-update",
+    ),
+    path(
+        "<uuid:case_alias>/mortgage/",
+        MortgageNeedsRetrieveUpdateApiView.as_view(),
+        name="mortgage-retrieve-update",
     ),
 ]
