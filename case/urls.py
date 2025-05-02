@@ -1,6 +1,13 @@
 from django.urls import path
 from .common import RegisterLoan
-from .models import LoanDetails, SolicitorAccountant, Product, BudgetPlanner, OtherQuestion, Compliance
+from .models import (
+    LoanDetails,
+    SolicitorAccountant,
+    Product,
+    BudgetPlanner,
+    OtherQuestion,
+    Compliance,
+)
 from .views import (
     CaseListCreateApiView,
     CaseRetrieveUpdateDeleteApiView,
@@ -53,8 +60,13 @@ from .views import (
     FeesInListCreateApiView,
     FeesOutListCreateApiView,
     DipHistoryListCreateApiView,
-    DipHistoryRetrieveUpdateApiView, CreditCommitmentsListCreateApiView, CreditCommitmentsRetrieveUpdateDestroyApiView,
-    SuitabilityRetrieveUpdateApiView, OtherQuestionListCreateApiView, ComplianceRetrieveUpdateApiView, MortgageNeedsRetrieveUpdateApiView
+    DipHistoryRetrieveUpdateApiView,
+    CreditCommitmentsListCreateApiView,
+    CreditCommitmentsRetrieveUpdateDestroyApiView,
+    SuitabilityRetrieveUpdateApiView,
+    OtherQuestionListCreateApiView,
+    ComplianceRetrieveUpdateApiView,
+    MortgageNeedsRetrieveUpdateApiView,
 )
 
 urlpatterns = [

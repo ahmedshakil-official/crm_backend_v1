@@ -55,10 +55,26 @@ from .models import (
     Income,
     Fees,
     DipHistory,
-    CreditCommitments, Suitability, ExtraQuestion, CircumstancesObjectives, BudgetAffordability, NewMortgageDetails,
-    RecommendingRepaymentMethod, RecommendingMortgageType, RecommendingTerm, RecommendingMortgageLender,
-    RecommendingMortgageAmount, CostsFees, Protection, CostAdvice, DisadvantageRisks, BuildingsInsurance, Wills,
-    OtherQuestion, Compliance, MortgageNeeds,
+    CreditCommitments,
+    Suitability,
+    ExtraQuestion,
+    CircumstancesObjectives,
+    BudgetAffordability,
+    NewMortgageDetails,
+    RecommendingRepaymentMethod,
+    RecommendingMortgageType,
+    RecommendingTerm,
+    RecommendingMortgageLender,
+    RecommendingMortgageAmount,
+    CostsFees,
+    Protection,
+    CostAdvice,
+    DisadvantageRisks,
+    BuildingsInsurance,
+    Wills,
+    OtherQuestion,
+    Compliance,
+    MortgageNeeds,
 )
 from authentication.models import User
 from common.serializers import (
@@ -1898,12 +1914,15 @@ class BudgetPlannerSerializer(serializers.ModelSerializer):
             )
 
         return budget_planner
+
     def update(self, instance, validated_data):
         request_user = self.context["request"].user
         instance.updated_by = request_user
 
         instance.disclaimer = validated_data.get("disclaimer", instance.disclaimer)
-        instance.disclaimer_details = validated_data.get("disclaimer_details", instance.disclaimer_details)
+        instance.disclaimer_details = validated_data.get(
+            "disclaimer_details", instance.disclaimer_details
+        )
         nested_fields = [
             "current_income",
             "post_income",
@@ -2052,6 +2071,7 @@ class CreditCommitmentsSerializer(serializers.ModelSerializer):
         ]
         write_only_fields = ["applicant"]
 
+
 class ExtraQuestionSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
@@ -2059,8 +2079,8 @@ class ExtraQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExtraQuestion
         fields = [
-            'alias',
-            'answer',
+            "alias",
+            "answer",
             "created_at",
             "updated_at",
             "created_by",
@@ -2074,13 +2094,13 @@ class ExtraQuestionSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user  # Get user from context
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        user = self.context["request"].user  # Get user from context
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
         return ExtraQuestion.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.updated_by = user
@@ -2096,44 +2116,40 @@ class CircumstancesObjectivesSerializer(serializers.ModelSerializer):
     class Meta:
         model = CircumstancesObjectives
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_one_sharia',
-            'question_two',
-            'question_two_answer',
-            'question_two_sharia',
-            'question_three',
-            'question_three_answer',
-            'circumstances_type',
-
-            'created_at',
-            'updated_at',
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_one_sharia",
+            "question_two",
+            "question_two_answer",
+            "question_two_sharia",
+            "question_three",
+            "question_three_answer",
+            "circumstances_type",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
         ]
         read_only_fields = [
-            'alias',
-
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
-
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = CircumstancesObjectives.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
-
+        user = self.context["request"].user
 
         # Handle updated_by field
         instance.updated_by = user
@@ -2144,6 +2160,7 @@ class CircumstancesObjectivesSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class BudgetAffordabilitySerializer(serializers.ModelSerializer):
 
     created_by = CommonUserWithIdSerializer(read_only=True)
@@ -2152,39 +2169,36 @@ class BudgetAffordabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = BudgetAffordability
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_one_sharia',
-            'question_two',
-            'question_two_answer',
-            'question_two_sharia',
-            'budget_affordability_type',
-
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_one_sharia",
+            "question_two",
+            "question_two_answer",
+            "question_two_sharia",
+            "budget_affordability_type",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
-
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
         return BudgetAffordability.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -2201,23 +2215,21 @@ class NewMortgageDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewMortgageDetails
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_one_sharia',
-            'question_two',
-            'question_two_answer',
-            'question_two_sharia',
-            'new_mortgage_details_type',
-
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_one_sharia",
+            "question_two",
+            "question_two_answer",
+            "question_two_sharia",
+            "new_mortgage_details_type",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
             "alias",
-
             "created_at",
             "updated_at",
             "created_by",
@@ -2225,19 +2237,16 @@ class NewMortgageDetailsSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
-
-
-
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = NewMortgageDetails.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         instance.updated_by = user
 
@@ -2246,6 +2255,7 @@ class NewMortgageDetailsSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class RecommendingRepaymentMethodSerializer(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
@@ -2253,47 +2263,44 @@ class RecommendingRepaymentMethodSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecommendingRepaymentMethod
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_one_sharia',
-            'question_two',
-            'question_two_answer',
-            'question_two_sharia',
-            'question_three',
-            'question_three_answer',
-            'question_four',
-            'question_four_answer',
-            'question_five',
-            'question_five_answer',
-            'recommending_repayment_method_type',
-
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_one_sharia",
+            "question_two",
+            "question_two_answer",
+            "question_two_sharia",
+            "question_three",
+            "question_three_answer",
+            "question_four",
+            "question_four_answer",
+            "question_five",
+            "question_five_answer",
+            "recommending_repayment_method_type",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
-
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = RecommendingRepaymentMethod.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         instance.updated_by = user
 
@@ -2310,42 +2317,41 @@ class RecommendingMortgageTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecommendingMortgageType
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_one_sharia',
-            'question_two',
-            'question_two_answer',
-            'question_two_sharia',
-            'question_three',
-            'question_three_answer',
-            'question_four',
-            'question_four_answer',
-            'recommending_mortgage_type',
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_one_sharia",
+            "question_two",
+            "question_two_answer",
+            "question_two_sharia",
+            "question_three",
+            "question_three_answer",
+            "question_four",
+            "question_four_answer",
+            "recommending_mortgage_type",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
-
+        user = self.context["request"].user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = RecommendingMortgageType.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
         instance.updated_by = user
 
         for attr, value in validated_data.items():
@@ -2361,34 +2367,34 @@ class RecommendingTermSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecommendingTerm
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'recommending_term',
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "recommending_term",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = RecommendingTerm.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
         instance.updated_by = user
 
         for attr, value in validated_data.items():
@@ -2404,39 +2410,39 @@ class RecommendingMortgageLenderSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecommendingMortgageLender
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_one_sharia',
-            'question_two',
-            'question_two_answer',
-            'question_three',
-            'question_three_answer',
-            'recommending_mortgage_lender_type',
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_one_sharia",
+            "question_two",
+            "question_two_answer",
+            "question_three",
+            "question_three_answer",
+            "recommending_mortgage_lender_type",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
         # Set created_by and updated_by fields
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = RecommendingMortgageLender.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
         instance.updated_by = user
 
         for attr, value in validated_data.items():
@@ -2452,38 +2458,38 @@ class RecommendingMortgageAmountSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecommendingMortgageAmount
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_one_sharia',
-            'question_two',
-            'question_two_answer',
-            'question_three',
-            'question_three_answer',
-            'recommending_mortgage_amount',
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_one_sharia",
+            "question_two",
+            "question_two_answer",
+            "question_three",
+            "question_three_answer",
+            "recommending_mortgage_amount",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        user = self.context["request"].user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = RecommendingMortgageAmount.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         instance.updated_by = user
 
@@ -2500,39 +2506,39 @@ class CostsFeesSerializer(serializers.ModelSerializer):
     class Meta:
         model = CostsFees
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_one_sharia',
-            'question_two',
-            'question_two_answer',
-            'question_three',
-            'question_three_answer',
-            'costs_fees',
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_one_sharia",
+            "question_two",
+            "question_two_answer",
+            "question_three",
+            "question_three_answer",
+            "costs_fees",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = CostsFees.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         instance.updated_by = user
 
@@ -2550,52 +2556,50 @@ class DisadvantageRisksSerializer(serializers.ModelSerializer):
     class Meta:
         model = DisadvantageRisks
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_one_sharia',
-            'question_two',
-            'question_two_answer',
-            'question_three',
-            'question_three_answer',
-            'question_four',
-            'question_four_answer',
-            'question_five',
-            'question_five_answer',
-            'question_six',
-            'question_six_answer',
-            'question_seven',
-            'question_seven_answer',
-            'question_eight',
-            'question_eight_answer',
-            'question_nine',
-            'question_nine_answer',
-            'disadvantage_risks',
-
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_one_sharia",
+            "question_two",
+            "question_two_answer",
+            "question_three",
+            "question_three_answer",
+            "question_four",
+            "question_four_answer",
+            "question_five",
+            "question_five_answer",
+            "question_six",
+            "question_six_answer",
+            "question_seven",
+            "question_seven_answer",
+            "question_eight",
+            "question_eight_answer",
+            "question_nine",
+            "question_nine_answer",
+            "disadvantage_risks",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        user = self.context["request"].user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = DisadvantageRisks.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         instance.updated_by = user
 
@@ -2612,38 +2616,37 @@ class CostAdviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = CostAdvice
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_one_sharia',
-            'question_two',
-            'question_two_answer',
-            'question_two_sharia',
-            'cost_advice',
-
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_one_sharia",
+            "question_two",
+            "question_two_answer",
+            "question_two_sharia",
+            "cost_advice",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        user = self.context["request"].user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = CostAdvice.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         instance.updated_by = user
 
@@ -2660,43 +2663,43 @@ class ProtectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Protection
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_one_sharia',
-            'question_two',
-            'question_two_answer',
-            'question_three',
-            'question_three_answer',
-            'question_three_sharia',
-            'question_four',
-            'question_four_answer',
-            'question_four_sharia',
-            'protection',
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_one_sharia",
+            "question_two",
+            "question_two_answer",
+            "question_three",
+            "question_three_answer",
+            "question_three_sharia",
+            "question_four",
+            "question_four_answer",
+            "question_four_sharia",
+            "protection",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = Protection.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
         instance.updated_by = user
 
         for attr, value in validated_data.items():
@@ -2712,45 +2715,42 @@ class BuildingsInsuranceSerializer(serializers.ModelSerializer):
     class Meta:
         model = BuildingsInsurance
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_two',
-            'question_two_answer',
-            'question_three',
-            'question_three_answer',
-            'question_three_sharia',
-            'question_four',
-            'question_four_answer',
-            'question_five_sharia',
-            'buildings_insurance',
-
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_two",
+            "question_two_answer",
+            "question_three",
+            "question_three_answer",
+            "question_three_sharia",
+            "question_four",
+            "question_four_answer",
+            "question_five_sharia",
+            "buildings_insurance",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
-
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = BuildingsInsurance.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         instance.updated_by = user
 
@@ -2767,39 +2767,37 @@ class WillsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wills
         fields = [
-            'alias',
-            'question_one',
-            'question_one_answer',
-            'question_two',
-            'question_two_answer',
-            'question_three',
-            'question_three_answer',
-            'wills',
-
-            'created_by',
-            'updated_by',
+            "alias",
+            "question_one",
+            "question_one_answer",
+            "question_two",
+            "question_two_answer",
+            "question_three",
+            "question_three_answer",
+            "wills",
+            "created_by",
+            "updated_by",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            'alias',
-
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        user = self.context["request"].user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = Wills.objects.create(**validated_data)
         return instance
 
     def update(self, instance, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
         instance.updated_by = user
 
         for attr, value in validated_data.items():
@@ -2808,12 +2806,13 @@ class WillsSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class SuitabilitySerializer(serializers.ModelSerializer):
     circumstances_objectives = CircumstancesObjectivesSerializer(required=False)
     budget_affordability = BudgetAffordabilitySerializer(required=False)
     new_mortgage_details = NewMortgageDetailsSerializer(required=False)
-    recommending_repayment_method = RecommendingRepaymentMethodSerializer(required=False)
+    recommending_repayment_method = RecommendingRepaymentMethodSerializer(
+        required=False
+    )
     recommending_mortgage_type = RecommendingMortgageTypeSerializer(required=False)
     recommending_term = RecommendingTermSerializer(required=False)
     recommending_mortgage_lender = RecommendingMortgageLenderSerializer(required=False)
@@ -2832,22 +2831,22 @@ class SuitabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Suitability
         fields = [
-            'alias',
-            'case',
-            'circumstances_objectives',
-            'budget_affordability',
-            'new_mortgage_details',
-            'recommending_repayment_method',
-            'recommending_mortgage_type',
-            'recommending_term',
-            'recommending_mortgage_lender',
-            'recommending_mortgage_amount',
-            'costs_fees',
-            'disadvantage_risks',
-            'cost_advice',
-            'protection',
-            'buildings_insurance',
-            'wills',
+            "alias",
+            "case",
+            "circumstances_objectives",
+            "budget_affordability",
+            "new_mortgage_details",
+            "recommending_repayment_method",
+            "recommending_mortgage_type",
+            "recommending_term",
+            "recommending_mortgage_lender",
+            "recommending_mortgage_amount",
+            "costs_fees",
+            "disadvantage_risks",
+            "cost_advice",
+            "protection",
+            "buildings_insurance",
+            "wills",
             "created_at",
             "updated_at",
             "created_by",
@@ -2865,20 +2864,20 @@ class SuitabilitySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         nested_instances = {}
         nested_serializers = {
-            'circumstances_objectives': CircumstancesObjectivesSerializer,
-            'budget_affordability': BudgetAffordabilitySerializer,
-            'new_mortgage_details': NewMortgageDetailsSerializer,
-            'recommending_repayment_method': RecommendingRepaymentMethodSerializer,
-            'recommending_mortgage_type': RecommendingMortgageTypeSerializer,
-            'recommending_term': RecommendingTermSerializer,
-            'recommending_mortgage_lender': RecommendingMortgageLenderSerializer,
-            'recommending_mortgage_amount': RecommendingMortgageAmountSerializer,
-            'costs_fees': CostsFeesSerializer,
-            'disadvantage_risks': DisadvantageRisksSerializer,
-            'cost_advice': CostAdviceSerializer,
-            'protection': ProtectionSerializer,
-            'buildings_insurance': BuildingsInsuranceSerializer,
-            'wills': WillsSerializer,
+            "circumstances_objectives": CircumstancesObjectivesSerializer,
+            "budget_affordability": BudgetAffordabilitySerializer,
+            "new_mortgage_details": NewMortgageDetailsSerializer,
+            "recommending_repayment_method": RecommendingRepaymentMethodSerializer,
+            "recommending_mortgage_type": RecommendingMortgageTypeSerializer,
+            "recommending_term": RecommendingTermSerializer,
+            "recommending_mortgage_lender": RecommendingMortgageLenderSerializer,
+            "recommending_mortgage_amount": RecommendingMortgageAmountSerializer,
+            "costs_fees": CostsFeesSerializer,
+            "disadvantage_risks": DisadvantageRisksSerializer,
+            "cost_advice": CostAdviceSerializer,
+            "protection": ProtectionSerializer,
+            "buildings_insurance": BuildingsInsuranceSerializer,
+            "wills": WillsSerializer,
         }
 
         for field_name, serializer_class in nested_serializers.items():
@@ -2898,20 +2897,20 @@ class SuitabilitySerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         nested_serializers = {
-            'circumstances_objectives': CircumstancesObjectivesSerializer,
-            'budget_affordability': BudgetAffordabilitySerializer,
-            'new_mortgage_details': NewMortgageDetailsSerializer,
-            'recommending_repayment_method': RecommendingRepaymentMethodSerializer,
-            'recommending_mortgage_type': RecommendingMortgageTypeSerializer,
-            'recommending_term': RecommendingTermSerializer,
-            'recommending_mortgage_lender': RecommendingMortgageLenderSerializer,
-            'recommending_mortgage_amount': RecommendingMortgageAmountSerializer,
-            'costs_fees': CostsFeesSerializer,
-            'disadvantage_risks': DisadvantageRisksSerializer,
-            'cost_advice': CostAdviceSerializer,
-            'protection': ProtectionSerializer,
-            'buildings_insurance': BuildingsInsuranceSerializer,
-            'wills': WillsSerializer,
+            "circumstances_objectives": CircumstancesObjectivesSerializer,
+            "budget_affordability": BudgetAffordabilitySerializer,
+            "new_mortgage_details": NewMortgageDetailsSerializer,
+            "recommending_repayment_method": RecommendingRepaymentMethodSerializer,
+            "recommending_mortgage_type": RecommendingMortgageTypeSerializer,
+            "recommending_term": RecommendingTermSerializer,
+            "recommending_mortgage_lender": RecommendingMortgageLenderSerializer,
+            "recommending_mortgage_amount": RecommendingMortgageAmountSerializer,
+            "costs_fees": CostsFeesSerializer,
+            "disadvantage_risks": DisadvantageRisksSerializer,
+            "cost_advice": CostAdviceSerializer,
+            "protection": ProtectionSerializer,
+            "buildings_insurance": BuildingsInsuranceSerializer,
+            "wills": WillsSerializer,
         }
 
         for field_name, serializer_class in nested_serializers.items():
@@ -2923,12 +2922,14 @@ class SuitabilitySerializer(serializers.ModelSerializer):
                         instance=nested_instance,
                         data=nested_data,
                         context=self.context,
-                        partial=True
+                        partial=True,
                     )
                     serializer.is_valid(raise_exception=True)
                     serializer.save()
                 else:
-                    serializer = serializer_class(data=nested_data, context=self.context)
+                    serializer = serializer_class(
+                        data=nested_data, context=self.context
+                    )
                     serializer.is_valid(raise_exception=True)
                     nested_instance = serializer.save()
                     setattr(instance, field_name, nested_instance)
@@ -2953,15 +2954,16 @@ class OtherQuestionSerializers(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "created_by",
-            "updated_by"
+            "updated_by",
         ]
         read_only_fields = [
             "alias",
             "created_at",
             "updated_at",
             "created_by",
-            "updated_by"
+            "updated_by",
         ]
+
 
 class ComplianceSerializers(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)

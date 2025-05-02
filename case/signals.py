@@ -144,7 +144,6 @@ def create_product(sender, instance, created, **kwargs):
         Product.objects.create(case=instance)
 
 
-
 @receiver(post_save, sender="case.Case")
 def create_mortgage_needs(sender, instance, created, **kwargs):
     if created:
@@ -159,12 +158,12 @@ def create_mortgage_features(sender, instance, created, **kwargs):
         MortgageNeeds.objects.create(case=instance, applicant=instance.lead)
 
 
-
 @receiver(post_save, sender="case.JointUser")
 def create_mortgage_features_for_joint_user(sender, instance, created, **kwargs):
     if created:
         MortgageNeeds = apps.get_model("case", "MortgageFeatures")
         MortgageNeeds.objects.create(case=instance.case, applicant=instance.joint_user)
+
 
 @receiver(post_save, sender="case.Case")
 def create_suitability(sender, instance, created, **kwargs):
@@ -174,20 +173,20 @@ def create_suitability(sender, instance, created, **kwargs):
 
         # Mapping: field name in Suitability -> Model class name
         model_mapping = {
-            'circumstances_objectives': 'CircumstancesObjectives',
-            'budget_affordability': 'BudgetAffordability',
-            'new_mortgage_details': 'NewMortgageDetails',
-            'recommending_repayment_method': 'RecommendingRepaymentMethod',
-            'recommending_mortgage_type': 'RecommendingMortgageType',
-            'recommending_term': 'RecommendingTerm',
-            'recommending_mortgage_lender': 'RecommendingMortgageLender',
-            'recommending_mortgage_amount': 'RecommendingMortgageAmount',
-            'costs_fees': 'CostsFees',
-            'disadvantage_risks': 'DisadvantageRisks',
-            'cost_advice': 'CostAdvice',
-            'protection': 'Protection',
-            'buildings_insurance': 'BuildingsInsurance',
-            'wills': 'Wills',
+            "circumstances_objectives": "CircumstancesObjectives",
+            "budget_affordability": "BudgetAffordability",
+            "new_mortgage_details": "NewMortgageDetails",
+            "recommending_repayment_method": "RecommendingRepaymentMethod",
+            "recommending_mortgage_type": "RecommendingMortgageType",
+            "recommending_term": "RecommendingTerm",
+            "recommending_mortgage_lender": "RecommendingMortgageLender",
+            "recommending_mortgage_amount": "RecommendingMortgageAmount",
+            "costs_fees": "CostsFees",
+            "disadvantage_risks": "DisadvantageRisks",
+            "cost_advice": "CostAdvice",
+            "protection": "Protection",
+            "buildings_insurance": "BuildingsInsurance",
+            "wills": "Wills",
         }
 
         # Step 1: Create empty Suitability linked to Case
@@ -204,11 +203,8 @@ def create_suitability(sender, instance, created, **kwargs):
         suitability.save()
 
 
-
 @receiver(post_save, sender="case.Case")
 def create_compliance(sender, instance, created, **kwargs):
     if created:
         Compliance = apps.get_model("case", "Compliance")
         Compliance.objects.create(case=instance)
-
-

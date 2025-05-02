@@ -15,43 +15,106 @@ from common.enums import (
     CaseStatusChoices,
     FileTypeChoices,
     MeetingTypeChoices,
-    MeetingStatusChoices, CircumstancesObjectivesChoices, BudgetAffordabilityChoices, NewMortgageDetailsChoices,
-    RecommendingRepaymentMethodChoices, RecommendingMortgageTypeChoices, RecommendingMortgageLenderChoice,
-    RecommendingMortgageAmountChoice, CostsFeesChoice, DisadvantageRisksChoice, CostAdviceChoice, ProtectionChoice,
-    BuildingsInsuranceChoice, WillsChoice, RemedialActionsRequiredChoices, RemedialActionsCompleteChoices,
-    TermsBusinessChoices, PrivacyNoticeChoices, FeeAgreementChoices, FactfindFilledChoices, NivoIDVcheckChoices,
-    FinancialSanctionsCheckedChoices, ProofOfIDChoices, ProofOfAddressChoices, ProofOfIncomeChoices,
-    ProofOfDepositChoices, BankStatementsChoices, AffordabilityCalculatorChoices, EvidenceOfResearchChoices,
-    AgreementPrincipleChoices, SignedApplicationChoices, SuitabilityLetterChoices, MortgageOfferChoices,
-    DebtConsolidationCalculatorChoices, SharedEquityDocumentationChoices, ProofOfLendingChoices,
+    MeetingStatusChoices,
+    CircumstancesObjectivesChoices,
+    BudgetAffordabilityChoices,
+    NewMortgageDetailsChoices,
+    RecommendingRepaymentMethodChoices,
+    RecommendingMortgageTypeChoices,
+    RecommendingMortgageLenderChoice,
+    RecommendingMortgageAmountChoice,
+    CostsFeesChoice,
+    DisadvantageRisksChoice,
+    CostAdviceChoice,
+    ProtectionChoice,
+    BuildingsInsuranceChoice,
+    WillsChoice,
+    RemedialActionsRequiredChoices,
+    RemedialActionsCompleteChoices,
+    TermsBusinessChoices,
+    PrivacyNoticeChoices,
+    FeeAgreementChoices,
+    FactfindFilledChoices,
+    NivoIDVcheckChoices,
+    FinancialSanctionsCheckedChoices,
+    ProofOfIDChoices,
+    ProofOfAddressChoices,
+    ProofOfIncomeChoices,
+    ProofOfDepositChoices,
+    BankStatementsChoices,
+    AffordabilityCalculatorChoices,
+    EvidenceOfResearchChoices,
+    AgreementPrincipleChoices,
+    SignedApplicationChoices,
+    SuitabilityLetterChoices,
+    MortgageOfferChoices,
+    DebtConsolidationCalculatorChoices,
+    SharedEquityDocumentationChoices,
+    ProofOfLendingChoices,
     ProofOfRepaymentChoices,
-    RealisticProximityToTheAdvisorChoices, HasSourceOfLeadBeenRecordedChoices, LoanDetailsFullyCompletedChoices,
-    PersonalDetailsChoices, RetirementAgeChoices, DoesTheOccupationComparedChoices, EmploymentDetailsChoices,
-    HasDueDiligenceBeenCompletedChoices, DoesTheStatedIncomeChoices, DoesTheStatedNetIncomeChoices,
+    RealisticProximityToTheAdvisorChoices,
+    HasSourceOfLeadBeenRecordedChoices,
+    LoanDetailsFullyCompletedChoices,
+    PersonalDetailsChoices,
+    RetirementAgeChoices,
+    DoesTheOccupationComparedChoices,
+    EmploymentDetailsChoices,
+    HasDueDiligenceBeenCompletedChoices,
+    DoesTheStatedIncomeChoices,
+    DoesTheStatedNetIncomeChoices,
     IsTheClientInAnOccupationChoices,
-    HasPropertyPortfolioFullyCompletedChoices, HasPropertyDetailsFullyCompletedChoices,
-    HasYourNeedsFullyCompletedChoices, HasRepaymentVehicleRecordedChoices, HaveFiguresBeenInputChoices,
-    IsDepositComeFromSaleOfPropertyChoices, HasAdviserCompletedCalculatorChoices,
-    HasAccountantSolicitorDetailsBeenConfirmedChoices, HasCreditCommitmentsFullyCompletedChoices,
-    IsAnyCreditCommitmentsChoices, HasClientAdverseCreditChoices,
-    HasBudgetPlannerBeenCompletedChoices, HasAllDirectDebitsBeenRecordedChoices,
-    HasAdviserSourcedMortgageRequirementsChoices, FiguresStatedInMortgageRequirementsChoices,
-    AreResultsStoredInOrderOfClientPreferenceChoices, IsRecommendedProductShowingEvidenceResearchChoices,
-    IsTheAddressOnTheKFICorrectChoices, DoesFiguresFeaturesMortgageRequirementsChoices,
-    DoesMonthlyPaymentFitWithinDisposableIncomeChoices, AreFeesDisclosedCorrectlyChoices, LenderFeesAddedChoices,
-    HasIllustrationBeenProducedChoices, InterestOnlyChoices, HasProductBeenFullyCompletedChoices,
-    PersonalDetailsMatchTheFactfindChoices, DoesEmploymentIncomeDetailsMatchChoices,
-    DoesPropertyLoanDetailsMatchChoices, DoesMortgageApplicationConfirmChoices,
-    HasSuitabilityLetterBeenGeneratedChoices, PostApplicationChangesChoices, IsApplicantsLiveAtSeparateAddressesChoices,
-    IsReplacementSuitabilityLetterChoices, HasReasonsForMortgageBeenPersonalisedChoices,
-    HasMeetingDiscussionBeenPersonalisedChoices, HasCircumstancesObjectivesPersonalisedChoices,
-    HasBudgetAffordabilityBeenPersonalisedChoices, HasNewMortgageDetailsBeenCompletedChoices,
-    HasMortgageSectionOnePersonalisedChoices, HasMortgageSectionTwoPersonalisedChoices,
-    AreWeRecommendingRepaymentMethodChoices, AreWeRecommendingRepaymentTypeChoices,
-    AreWeRecommendingRepaymentTermChoices, AreWeRecommendingRepaymentLenderChoices,
-    AreWeRecommendingRepaymentAmountChoices, AreCostAndFeesBeenCompletedChoices,
-    AreDisadvantagesRisksBeenSelectedChoices, HasAdviserPersonalisedChoices, HasAdviserIncludedChoices,
-    HasProtectionSectionPersonalisedChoices, HasBASectionPersonalisedChoices, HasWillsSectionPersonalisedChoices,
+    HasPropertyPortfolioFullyCompletedChoices,
+    HasPropertyDetailsFullyCompletedChoices,
+    HasYourNeedsFullyCompletedChoices,
+    HasRepaymentVehicleRecordedChoices,
+    HaveFiguresBeenInputChoices,
+    IsDepositComeFromSaleOfPropertyChoices,
+    HasAdviserCompletedCalculatorChoices,
+    HasAccountantSolicitorDetailsBeenConfirmedChoices,
+    HasCreditCommitmentsFullyCompletedChoices,
+    IsAnyCreditCommitmentsChoices,
+    HasClientAdverseCreditChoices,
+    HasBudgetPlannerBeenCompletedChoices,
+    HasAllDirectDebitsBeenRecordedChoices,
+    HasAdviserSourcedMortgageRequirementsChoices,
+    FiguresStatedInMortgageRequirementsChoices,
+    AreResultsStoredInOrderOfClientPreferenceChoices,
+    IsRecommendedProductShowingEvidenceResearchChoices,
+    IsTheAddressOnTheKFICorrectChoices,
+    DoesFiguresFeaturesMortgageRequirementsChoices,
+    DoesMonthlyPaymentFitWithinDisposableIncomeChoices,
+    AreFeesDisclosedCorrectlyChoices,
+    LenderFeesAddedChoices,
+    HasIllustrationBeenProducedChoices,
+    InterestOnlyChoices,
+    HasProductBeenFullyCompletedChoices,
+    PersonalDetailsMatchTheFactfindChoices,
+    DoesEmploymentIncomeDetailsMatchChoices,
+    DoesPropertyLoanDetailsMatchChoices,
+    DoesMortgageApplicationConfirmChoices,
+    HasSuitabilityLetterBeenGeneratedChoices,
+    PostApplicationChangesChoices,
+    IsApplicantsLiveAtSeparateAddressesChoices,
+    IsReplacementSuitabilityLetterChoices,
+    HasReasonsForMortgageBeenPersonalisedChoices,
+    HasMeetingDiscussionBeenPersonalisedChoices,
+    HasCircumstancesObjectivesPersonalisedChoices,
+    HasBudgetAffordabilityBeenPersonalisedChoices,
+    HasNewMortgageDetailsBeenCompletedChoices,
+    HasMortgageSectionOnePersonalisedChoices,
+    HasMortgageSectionTwoPersonalisedChoices,
+    AreWeRecommendingRepaymentMethodChoices,
+    AreWeRecommendingRepaymentTypeChoices,
+    AreWeRecommendingRepaymentTermChoices,
+    AreWeRecommendingRepaymentLenderChoices,
+    AreWeRecommendingRepaymentAmountChoices,
+    AreCostAndFeesBeenCompletedChoices,
+    AreDisadvantagesRisksBeenSelectedChoices,
+    HasAdviserPersonalisedChoices,
+    HasAdviserIncludedChoices,
+    HasProtectionSectionPersonalisedChoices,
+    HasBASectionPersonalisedChoices,
+    HasWillsSectionPersonalisedChoices,
     DoesRecommendedProductMatchYourNeedsSectionChoices,
 )
 from organization.models import Organization
@@ -147,7 +210,9 @@ from .signals import (
     create_budget_planner,
     create_mortgage_needs,
     create_mortgage_features,
-    create_mortgage_features_for_joint_user, create_suitability, create_compliance,
+    create_mortgage_features_for_joint_user,
+    create_suitability,
+    create_compliance,
 )
 from .utils import upload_to_case_files
 
@@ -1848,7 +1913,9 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
         Case, on_delete=models.CASCADE, related_name="mortgage_needs"
     )
     repayment_method = models.CharField(max_length=10000, null=True, blank=True)
-    monthly_mortgage_payments = models.CharField(max_length=10000, null=True, blank=True)
+    monthly_mortgage_payments = models.CharField(
+        max_length=10000, null=True, blank=True
+    )
     specific_mortgage_deal = models.CharField(max_length=10000, null=True, blank=True)
     referred_monthly_budget = models.CharField(max_length=10000, null=True, blank=True)
     retirement_age = models.CharField(max_length=10000, null=True, blank=True)
@@ -1888,7 +1955,9 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     have_you_a_will_in_place_note = models.CharField(
         max_length=10000, null=True, blank=True
     )
-    mortgage_requirements_note = models.CharField(max_length=10000, null=True, blank=True)
+    mortgage_requirements_note = models.CharField(
+        max_length=10000, null=True, blank=True
+    )
     mortgage_requirements = models.BooleanField(default=False)
     notes = models.CharField(max_length=10000, null=True, blank=True)
 
@@ -1904,7 +1973,11 @@ class MortgageFeatures(CreatedAtUpdatedAtBaseModel):
         Case, on_delete=models.CASCADE, related_name="mortgage_features"
     )
     applicant = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="mortgage_features_applicant", null=True, blank=True
+        User,
+        on_delete=models.CASCADE,
+        related_name="mortgage_features_applicant",
+        null=True,
+        blank=True,
     )
     life_cover = models.BooleanField(default=False)
     critical_illness = models.BooleanField(default=False)
@@ -1920,14 +1993,20 @@ class MortgageFeatures(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.life_cover} {self.critical_illness} {self.income_protection}"
 
+
 class ExtraQuestion(CreatedAtUpdatedAtBaseModel):
     answer = models.CharField(max_length=1000, null=True, blank=True)
 
     def __str__(self):
-        return f"Extra Question: {self.answer[:50]}" if self.answer else "No answer provided"
+        return (
+            f"Extra Question: {self.answer[:50]}"
+            if self.answer
+            else "No answer provided"
+        )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
+
 
 class CircumstancesObjectives(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=710000, null=True, blank=True)
@@ -1942,7 +2021,7 @@ class CircumstancesObjectives(CreatedAtUpdatedAtBaseModel):
     circumstances_type = models.CharField(
         max_length=20,
         choices=CircumstancesObjectivesChoices.choices,
-        default=CircumstancesObjectivesChoices.GENERAL
+        default=CircumstancesObjectivesChoices.GENERAL,
     )
 
     class Meta:
@@ -1950,6 +2029,7 @@ class CircumstancesObjectives(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two} {self.question_three}"
+
 
 class BudgetAffordability(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -1962,7 +2042,7 @@ class BudgetAffordability(CreatedAtUpdatedAtBaseModel):
     budget_affordability_type = models.CharField(
         max_length=20,
         choices=BudgetAffordabilityChoices.choices,
-        default=BudgetAffordabilityChoices.GENERAL
+        default=BudgetAffordabilityChoices.GENERAL,
     )
 
     class Meta:
@@ -1970,6 +2050,7 @@ class BudgetAffordability(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two}"
+
 
 class NewMortgageDetails(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -1982,7 +2063,7 @@ class NewMortgageDetails(CreatedAtUpdatedAtBaseModel):
     new_mortgage_details_type = models.CharField(
         max_length=20,
         choices=NewMortgageDetailsChoices.choices,
-        default=NewMortgageDetailsChoices.GENERAL
+        default=NewMortgageDetailsChoices.GENERAL,
     )
 
     class Meta:
@@ -1990,6 +2071,7 @@ class NewMortgageDetails(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two}"
+
 
 class RecommendingRepaymentMethod(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -2008,7 +2090,7 @@ class RecommendingRepaymentMethod(CreatedAtUpdatedAtBaseModel):
     recommending_repayment_method_type = models.CharField(
         max_length=20,
         choices=RecommendingRepaymentMethodChoices.choices,
-        default=RecommendingRepaymentMethodChoices.GENERAL
+        default=RecommendingRepaymentMethodChoices.GENERAL,
     )
 
     class Meta:
@@ -2016,6 +2098,7 @@ class RecommendingRepaymentMethod(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two} {self.question_three}"
+
 
 class RecommendingMortgageType(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -2032,7 +2115,7 @@ class RecommendingMortgageType(CreatedAtUpdatedAtBaseModel):
     recommending_mortgage_type = models.CharField(
         max_length=20,
         choices=RecommendingMortgageTypeChoices.choices,
-        default=RecommendingMortgageTypeChoices.GENERAL
+        default=RecommendingMortgageTypeChoices.GENERAL,
     )
 
     class Meta:
@@ -2041,6 +2124,7 @@ class RecommendingMortgageType(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.question_one} {self.question_two} {self.question_three}"
 
+
 class RecommendingTerm(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
     question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
@@ -2048,7 +2132,7 @@ class RecommendingTerm(CreatedAtUpdatedAtBaseModel):
     recommending_term = models.CharField(
         max_length=20,
         choices=RecommendingMortgageTypeChoices.choices,
-        default=RecommendingMortgageTypeChoices.GENERAL
+        default=RecommendingMortgageTypeChoices.GENERAL,
     )
 
     class Meta:
@@ -2056,6 +2140,7 @@ class RecommendingTerm(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one}"
+
 
 class RecommendingMortgageLender(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -2069,7 +2154,7 @@ class RecommendingMortgageLender(CreatedAtUpdatedAtBaseModel):
     recommending_mortgage_lender_type = models.CharField(
         max_length=20,
         choices=RecommendingMortgageLenderChoice.choices,
-        default=RecommendingMortgageLenderChoice.GENERAL
+        default=RecommendingMortgageLenderChoice.GENERAL,
     )
 
     class Meta:
@@ -2077,6 +2162,7 @@ class RecommendingMortgageLender(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two}"
+
 
 class RecommendingMortgageAmount(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -2090,7 +2176,7 @@ class RecommendingMortgageAmount(CreatedAtUpdatedAtBaseModel):
     recommending_mortgage_amount = models.CharField(
         max_length=20,
         choices=RecommendingMortgageAmountChoice.choices,
-        default=RecommendingMortgageAmountChoice.GENERAL
+        default=RecommendingMortgageAmountChoice.GENERAL,
     )
 
     class Meta:
@@ -2098,6 +2184,7 @@ class RecommendingMortgageAmount(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two} {self.question_three}"
+
 
 class CostsFees(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -2109,9 +2196,7 @@ class CostsFees(CreatedAtUpdatedAtBaseModel):
     question_three_answer = models.CharField(max_length=10000, null=True, blank=True)
 
     costs_fees = models.CharField(
-        max_length=20,
-        choices=CostsFeesChoice.choices,
-        default=CostsFeesChoice.GENERAL
+        max_length=20, choices=CostsFeesChoice.choices, default=CostsFeesChoice.GENERAL
     )
 
     class Meta:
@@ -2119,6 +2204,7 @@ class CostsFees(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two} {self.question_three}"
+
 
 class DisadvantageRisks(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -2144,7 +2230,7 @@ class DisadvantageRisks(CreatedAtUpdatedAtBaseModel):
     disadvantage_risks = models.CharField(
         max_length=20,
         choices=DisadvantageRisksChoice.choices,
-        default=DisadvantageRisksChoice.GENERAL
+        default=DisadvantageRisksChoice.GENERAL,
     )
 
     class Meta:
@@ -2152,6 +2238,7 @@ class DisadvantageRisks(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two} {self.question_three}"
+
 
 class CostAdvice(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -2164,7 +2251,7 @@ class CostAdvice(CreatedAtUpdatedAtBaseModel):
     cost_advice = models.CharField(
         max_length=20,
         choices=CostAdviceChoice.choices,
-        default=CostAdviceChoice.GENERAL
+        default=CostAdviceChoice.GENERAL,
     )
 
     class Meta:
@@ -2172,6 +2259,7 @@ class CostAdvice(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two}"
+
 
 class Protection(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -2190,7 +2278,7 @@ class Protection(CreatedAtUpdatedAtBaseModel):
     protection = models.CharField(
         max_length=20,
         choices=ProtectionChoice.choices,
-        default=ProtectionChoice.GENERAL
+        default=ProtectionChoice.GENERAL,
     )
 
     class Meta:
@@ -2198,6 +2286,7 @@ class Protection(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two}"
+
 
 class BuildingsInsurance(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -2216,7 +2305,7 @@ class BuildingsInsurance(CreatedAtUpdatedAtBaseModel):
     buildings_insurance = models.CharField(
         max_length=20,
         choices=BuildingsInsuranceChoice.choices,
-        default=BuildingsInsuranceChoice.GENERAL
+        default=BuildingsInsuranceChoice.GENERAL,
     )
 
     class Meta:
@@ -2224,6 +2313,7 @@ class BuildingsInsurance(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two}"
+
 
 class Wills(CreatedAtUpdatedAtBaseModel):
     question_one = models.CharField(max_length=10000, null=True, blank=True)
@@ -2235,9 +2325,7 @@ class Wills(CreatedAtUpdatedAtBaseModel):
     question_three_answer = models.CharField(max_length=10000, null=True, blank=True)
 
     wills = models.CharField(
-        max_length=20,
-        choices=WillsChoice.choices,
-        default=WillsChoice.GENERAL
+        max_length=20, choices=WillsChoice.choices, default=WillsChoice.GENERAL
     )
 
     class Meta:
@@ -2245,6 +2333,7 @@ class Wills(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.question_one} {self.question_two}"
+
 
 class Suitability(CreatedAtUpdatedAtBaseModel):
     case = models.OneToOneField(
@@ -2255,98 +2344,98 @@ class Suitability(CreatedAtUpdatedAtBaseModel):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_circumstances"
+        related_name="suitability_circumstances",
     )
     budget_affordability = models.OneToOneField(
         BudgetAffordability,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_budget_affordability"
+        related_name="suitability_budget_affordability",
     )
     new_mortgage_details = models.OneToOneField(
         NewMortgageDetails,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_new_mortgage_details"
+        related_name="suitability_new_mortgage_details",
     )
     recommending_repayment_method = models.OneToOneField(
         RecommendingRepaymentMethod,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_recommending_repayment_method"
+        related_name="suitability_recommending_repayment_method",
     )
     recommending_mortgage_type = models.OneToOneField(
         RecommendingMortgageType,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_recommending_mortgage_type"
+        related_name="suitability_recommending_mortgage_type",
     )
     recommending_term = models.OneToOneField(
         RecommendingTerm,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_recommending_term"
+        related_name="suitability_recommending_term",
     )
     recommending_mortgage_lender = models.OneToOneField(
         RecommendingMortgageLender,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_recommending_mortgage_lender"
+        related_name="suitability_recommending_mortgage_lender",
     )
     recommending_mortgage_amount = models.OneToOneField(
         RecommendingMortgageAmount,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_recommending_mortgage_amount"
+        related_name="suitability_recommending_mortgage_amount",
     )
     costs_fees = models.OneToOneField(
         CostsFees,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_costs_fees"
+        related_name="suitability_costs_fees",
     )
     disadvantage_risks = models.OneToOneField(
         DisadvantageRisks,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_disadvantage_risks"
+        related_name="suitability_disadvantage_risks",
     )
     cost_advice = models.OneToOneField(
         CostAdvice,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_cost_advice"
+        related_name="suitability_cost_advice",
     )
     protection = models.OneToOneField(
         Protection,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_protection"
+        related_name="suitability_protection",
     )
     buildings_insurance = models.OneToOneField(
         BuildingsInsurance,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_buildingsInsurance"
+        related_name="suitability_buildingsInsurance",
     )
     wills = models.OneToOneField(
         Wills,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="suitability_wills"
+        related_name="suitability_wills",
     )
 
     class Meta:
@@ -2354,7 +2443,9 @@ class Suitability(CreatedAtUpdatedAtBaseModel):
 
 
 class OtherQuestion(CreatedAtUpdatedAtBaseModel):
-    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="other_questions")
+    case = models.ForeignKey(
+        Case, on_delete=models.CASCADE, related_name="other_questions"
+    )
     answer = models.CharField(max_length=10000, null=True, blank=True)
 
     class Meta:
@@ -2365,11 +2456,7 @@ class OtherQuestion(CreatedAtUpdatedAtBaseModel):
 
 
 class Compliance(CreatedAtUpdatedAtBaseModel):
-    case = models.ForeignKey(
-        Case,
-        on_delete=models.CASCADE,
-        related_name="compliance"
-    )
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="compliance")
     date_file_checked = models.DateField(null=True, blank=True)
     date_file_rechecked = models.DateField(null=True, blank=True)
     file_checked = models.PositiveIntegerField(null=True, blank=True)
@@ -2377,619 +2464,671 @@ class Compliance(CreatedAtUpdatedAtBaseModel):
         max_length=20,
         choices=RemedialActionsRequiredChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
     remedial_actions_complete = models.CharField(
         max_length=20,
         choices=RemedialActionsCompleteChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
     comments = models.TextField(max_length=1000, null=True, blank=True)
     rating_a = models.BooleanField(default=False)
     rating_b = models.BooleanField(default=False)
     rating_c = models.BooleanField(default=False)
     terms_of_business = models.CharField(
-        max_length=20,
-        choices=TermsBusinessChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=TermsBusinessChoices.choices, null=True, blank=True
     )
     terms_of_business_text = models.TextField(max_length=255, null=True, blank=True)
     privacy_notice = models.CharField(
-        max_length=20,
-        choices=PrivacyNoticeChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=PrivacyNoticeChoices.choices, null=True, blank=True
     )
     privacy_notice_text = models.TextField(max_length=255, null=True, blank=True)
     fee_agreement = models.CharField(
-        max_length=20,
-        choices=FeeAgreementChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=FeeAgreementChoices.choices, null=True, blank=True
     )
     fee_agreement_text = models.TextField(max_length=255, null=True, blank=True)
     factfind_filled = models.CharField(
-        max_length=20,
-        choices=FactfindFilledChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=FactfindFilledChoices.choices, null=True, blank=True
     )
     factfind_filled_text = models.TextField(max_length=255, null=True, blank=True)
     nivo_idv_check = models.CharField(
-        max_length=20,
-        choices=NivoIDVcheckChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=NivoIDVcheckChoices.choices, null=True, blank=True
     )
     nivo_idv_check_text = models.TextField(max_length=255, null=True, blank=True)
     financial_sanctions_checked = models.CharField(
         max_length=20,
         choices=FinancialSanctionsCheckedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    financial_sanctions_checked_text = models.TextField(max_length=255, null=True, blank=True)
+    financial_sanctions_checked_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     proof_of_id = models.CharField(
-        max_length=20,
-        choices=ProofOfIDChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=ProofOfIDChoices.choices, null=True, blank=True
     )
     proof_of_id_text = models.TextField(max_length=255, null=True, blank=True)
     proof_of_address = models.CharField(
-        max_length=20,
-        choices=ProofOfAddressChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=ProofOfAddressChoices.choices, null=True, blank=True
     )
     proof_of_address_text = models.TextField(max_length=255, null=True, blank=True)
     proof_of_income = models.CharField(
-        max_length=20,
-        choices=ProofOfIncomeChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=ProofOfIncomeChoices.choices, null=True, blank=True
     )
     proof_of_income_text = models.TextField(max_length=255, null=True, blank=True)
     proof_of_deposit = models.CharField(
-        max_length=20,
-        choices=ProofOfDepositChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=ProofOfDepositChoices.choices, null=True, blank=True
     )
     proof_of_deposit_text = models.TextField(max_length=255, null=True, blank=True)
     bank_statements = models.CharField(
-        max_length=20,
-        choices=BankStatementsChoices.choices,
-        null= True,
-        blank=True
+        max_length=20, choices=BankStatementsChoices.choices, null=True, blank=True
     )
     bank_statements_text = models.TextField(max_length=255, null=True, blank=True)
     credit_reports = models.CharField(
-        max_length=20,
-        choices=BankStatementsChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=BankStatementsChoices.choices, null=True, blank=True
     )
     credit_reports_text = models.TextField(max_length=255, null=True, blank=True)
     affordability_calculator = models.CharField(
         max_length=20,
         choices=AffordabilityCalculatorChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    affordability_calculator_text = models.TextField(max_length=255, null=True, blank=True)
+    affordability_calculator_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     evidence_of_research = models.CharField(
-        max_length=20,
-        choices=EvidenceOfResearchChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=EvidenceOfResearchChoices.choices, null=True, blank=True
     )
     evidence_of_research_text = models.TextField(max_length=255, null=True, blank=True)
     agreement_in_principle = models.CharField(
-        max_length=20,
-        choices=AgreementPrincipleChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=AgreementPrincipleChoices.choices, null=True, blank=True
     )
-    agreement_in_principle_text = models.TextField(max_length=255, null=True, blank=True)
+    agreement_in_principle_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     signed_application = models.CharField(
-        max_length=20,
-        choices=SignedApplicationChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=SignedApplicationChoices.choices, null=True, blank=True
     )
     signed_application_text = models.TextField(max_length=255, null=True, blank=True)
     suitability_letter = models.CharField(
-        max_length=20,
-        choices=SuitabilityLetterChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=SuitabilityLetterChoices.choices, null=True, blank=True
     )
     suitability_letter_text = models.TextField(max_length=255, null=True, blank=True)
     mortgage_offer = models.CharField(
-        max_length=20,
-        choices=MortgageOfferChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=MortgageOfferChoices.choices, null=True, blank=True
     )
     mortgage_offer_text = models.TextField(max_length=255, null=True, blank=True)
     debt_consolidation_calculator = models.CharField(
         max_length=20,
         choices=DebtConsolidationCalculatorChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    debt_consolidation_calculator_text = models.TextField(max_length=255, null=True, blank=True)
+    debt_consolidation_calculator_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     shared_equity_documentation = models.CharField(
         max_length=20,
         choices=SharedEquityDocumentationChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    shared_equity_documentation_text = models.TextField(max_length=255, null=True, blank=True)
+    shared_equity_documentation_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     proof_of_lending = models.CharField(
-        max_length=20,
-        choices=ProofOfLendingChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=ProofOfLendingChoices.choices, null=True, blank=True
     )
     proof_of_lending_text = models.TextField(max_length=255, null=True, blank=True)
     proof_of_repayment = models.CharField(
-        max_length=20,
-        choices=ProofOfRepaymentChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=ProofOfRepaymentChoices.choices, null=True, blank=True
     )
     proof_of_repayment_text = models.TextField(max_length=255, null=True, blank=True)
     loan_details_fully_completed = models.CharField(
         max_length=20,
         choices=LoanDetailsFullyCompletedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    loan_details_fully_completed_text = models.TextField(max_length=255, null=True, blank=True)
-    has_source_of_lead_been_recorded =models.CharField(
+    loan_details_fully_completed_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
+    has_source_of_lead_been_recorded = models.CharField(
         max_length=20,
         choices=HasSourceOfLeadBeenRecordedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_source_of_lead_been_recorded_text = models.TextField(max_length=255, null=True, blank=True)
+    has_source_of_lead_been_recorded_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     realistic_proximity_to_the_advisor = models.CharField(
         max_length=20,
         choices=RealisticProximityToTheAdvisorChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    realistic_proximity_to_the_advisor_text = models.TextField(max_length=255, null=True, blank=True)
+    realistic_proximity_to_the_advisor_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     personal_details = models.CharField(
-        max_length=20,
-        choices=PersonalDetailsChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=PersonalDetailsChoices.choices, null=True, blank=True
     )
     personal_details_text = models.TextField(max_length=255, null=True, blank=True)
     retirement_age = models.CharField(
-        choices=RetirementAgeChoices.choices,
-        null=True,
-        blank=True
+        choices=RetirementAgeChoices.choices, null=True, blank=True
     )
     retirement_age_text = models.TextField(max_length=255, null=True, blank=True)
     does_the_occupation_compared = models.CharField(
         max_length=20,
         choices=DoesTheOccupationComparedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    does_the_occupation_compared_text = models.TextField(max_length=255, null=True, blank=True)
+    does_the_occupation_compared_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     employment_details = models.CharField(
-        max_length=20,
-        choices=EmploymentDetailsChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=EmploymentDetailsChoices.choices, null=True, blank=True
     )
     employment_details_text = models.TextField(max_length=255, null=True, blank=True)
     has_due_diligence_been_completed = models.CharField(
         max_length=20,
         choices=HasDueDiligenceBeenCompletedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_due_diligence_been_completed_text = models.TextField(max_length=255, null=True, blank=True)
+    has_due_diligence_been_completed_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     does_the_stated_income = models.CharField(
-        max_length=20,
-        choices=DoesTheStatedIncomeChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=DoesTheStatedIncomeChoices.choices, null=True, blank=True
     )
-    does_the_stated_income_text = models.TextField(max_length=255, null=True, blank=True)
+    does_the_stated_income_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     does_the_stated_net_income = models.CharField(
         max_length=20,
         choices=DoesTheStatedNetIncomeChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    does_the_stated_net_income_text = models.TextField(max_length=255, null=True, blank=True)
+    does_the_stated_net_income_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     is_the_client_in_an_occupation = models.CharField(
         max_length=20,
         choices=IsTheClientInAnOccupationChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    is_the_client_in_an_occupation_text = models.TextField(max_length=255, null=True, blank=True)
+    is_the_client_in_an_occupation_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_property_portfolio_fully_completed = models.CharField(
         max_length=20,
         choices=HasPropertyPortfolioFullyCompletedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_property_portfolio_fully_completed_text = models.TextField(max_length=255, null=True, blank=True)
+    has_property_portfolio_fully_completed_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_proposed_property_details_fully_completed = models.CharField(
         max_length=20,
         choices=HasPropertyDetailsFullyCompletedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_proposed_property_details_fully_completed_text = models.TextField(max_length=255, null=True, blank=True)
+    has_proposed_property_details_fully_completed_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_your_needs_fully_completed = models.CharField(
         max_length=20,
         choices=HasYourNeedsFullyCompletedChoices.choices,
         null=True,
-        blank = True
+        blank=True,
     )
-    has_your_needs_fully_completed_text = models.TextField(max_length=255, null=True, blank=True)
+    has_your_needs_fully_completed_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_repayment_vehicle_recorded = models.CharField(
         max_length=20,
         choices=HasRepaymentVehicleRecordedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_repayment_vehicle_recorded_text = models.TextField(max_length=255, null=True, blank=True)
+    has_repayment_vehicle_recorded_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     have_figures_been_input = models.CharField(
         max_length=20,
         choices=HaveFiguresBeenInputChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    have_figures_been_input_text = models.TextField(max_length=255, null=True, blank=True)
+    have_figures_been_input_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     is_deposit_come_from_sale_of_property = models.CharField(
         max_length=20,
         choices=IsDepositComeFromSaleOfPropertyChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    is_deposit_come_from_sale_of_property_text = models.TextField(max_length=255, null=True, blank=True)
+    is_deposit_come_from_sale_of_property_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_adviser_completed_calculator = models.CharField(
         max_length=20,
         choices=HasAdviserCompletedCalculatorChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_adviser_completed_calculator_text = models.TextField(max_length=255, null=True, blank=True)
+    has_adviser_completed_calculator_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_accountant_solicitor_details_confirmed = models.CharField(
         max_length=20,
         choices=HasAccountantSolicitorDetailsBeenConfirmedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_accountant_solicitor_details_confirmed_text = models.TextField(max_length=255, null=True, blank=True)
+    has_accountant_solicitor_details_confirmed_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_credit_commitments_fully_completed = models.CharField(
         max_length=20,
         choices=HasCreditCommitmentsFullyCompletedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_credit_commitments_fully_completed_text = models.TextField(max_length=255, null=True, blank=True)
+    has_credit_commitments_fully_completed_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     is_any_credit_commitments = models.CharField(
         max_length=20,
         choices=IsAnyCreditCommitmentsChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    is_any_credit_commitments_text = models.TextField(max_length=255, null=True, blank=True)
+    is_any_credit_commitments_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_client_adverse_credit = models.CharField(
         max_length=20,
         choices=HasClientAdverseCreditChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_client_adverse_credit_text = models.TextField(max_length=255, null=True, blank=True)
+    has_client_adverse_credit_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_budget_planner_been_completed = models.CharField(
         max_length=20,
         choices=HasBudgetPlannerBeenCompletedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_budget_planner_been_completed_text = models.TextField(max_length=255, null=True, blank=True)
+    has_budget_planner_been_completed_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_all_direct_debits_been_recorded = models.CharField(
         max_length=20,
         choices=HasAllDirectDebitsBeenRecordedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_all_direct_debits_been_recorded_text = models.TextField(max_length=255, null=True, blank=True)
+    has_all_direct_debits_been_recorded_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_adviser_sourced_mortgage_requirements = models.CharField(
         max_length=20,
         choices=HasAdviserSourcedMortgageRequirementsChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_adviser_sourced_mortgage_requirement_text = models.TextField(max_length=255, null=True, blank=True)
+    has_adviser_sourced_mortgage_requirement_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     does_figures_stated_in_mortgage_requirements = models.CharField(
         max_length=20,
         choices=FiguresStatedInMortgageRequirementsChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    does_figures_stated_in_mortgage_requirements_text = models.TextField(max_length=255, null=True, blank=True)
+    does_figures_stated_in_mortgage_requirements_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     are_results_stored_in_order_of_client_preference = models.CharField(
         max_length=20,
         choices=AreResultsStoredInOrderOfClientPreferenceChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    are_results_stored_in_order_of_client_preference_text = models.TextField(max_length=255, null=True, blank=True)
+    are_results_stored_in_order_of_client_preference_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     is_recommended_product_showing_evidence_research = models.CharField(
         max_length=20,
         choices=IsRecommendedProductShowingEvidenceResearchChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    is_recommended_product_showing_evidence_research_text = models.TextField(max_length=255, null=True, blank=True)
+    is_recommended_product_showing_evidence_research_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     is_the_address_on_the_kfi_correct = models.CharField(
         max_length=20,
         choices=IsTheAddressOnTheKFICorrectChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    is_the_address_on_the_kfi_correct_text = models.TextField(max_length=255, null=True, blank=True)
+    is_the_address_on_the_kfi_correct_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     does_figures_features_mortgage_requirements = models.CharField(
         max_length=20,
         choices=DoesFiguresFeaturesMortgageRequirementsChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    does_figures_features_mortgage_requirement_text = models.TextField(max_length=255, null=True, blank=True)
+    does_figures_features_mortgage_requirement_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     does_monthly_payment_fit_within_disposable_income = models.CharField(
         max_length=20,
         choices=DoesMonthlyPaymentFitWithinDisposableIncomeChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    does_monthly_payment_fit_within_disposable_income_text = models.TextField(max_length=255, null=True, blank=True)
+    does_monthly_payment_fit_within_disposable_income_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     are_fees_disclosed_correctly = models.CharField(
         max_length=20,
         choices=AreFeesDisclosedCorrectlyChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    are_fees_disclosed_correctly_text = models.TextField(max_length=255, null=True, blank=True)
+    are_fees_disclosed_correctly_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     lender_fees_added = models.CharField(
-        max_length=20,
-        choices=LenderFeesAddedChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=LenderFeesAddedChoices.choices, null=True, blank=True
     )
     lender_fees_added_text = models.TextField(max_length=255, null=True, blank=True)
     has_illustration_been_produced = models.CharField(
         max_length=20,
         choices=HasIllustrationBeenProducedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_illustration_been_produced_text = models.TextField(max_length=255, null=True, blank=True)
+    has_illustration_been_produced_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     interest_only = models.CharField(
-        max_length=20,
-        choices=InterestOnlyChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=InterestOnlyChoices.choices, null=True, blank=True
     )
     interest_only_text = models.TextField(max_length=255, null=True, blank=True)
     has_product_been_fully_completed = models.CharField(
         max_length=20,
         choices=HasProductBeenFullyCompletedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_product_been_fully_completed_text = models.TextField(max_length=255, null=True, blank=True)
+    has_product_been_fully_completed_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     personal_details_match_the_factfind = models.CharField(
         max_length=20,
         choices=PersonalDetailsMatchTheFactfindChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    personal_details_match_the_factfind_text = models.TextField(max_length=255, null=True, blank=True)
-    does_employment_and_income_details_match =models.CharField(
+    personal_details_match_the_factfind_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
+    does_employment_and_income_details_match = models.CharField(
         max_length=20,
         choices=DoesEmploymentIncomeDetailsMatchChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    does_employment_and_income_details_match_text = models.TextField(max_length=255, null=True, blank=True)
+    does_employment_and_income_details_match_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     does_property_loan_details_match = models.CharField(
         max_length=20,
         choices=DoesPropertyLoanDetailsMatchChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    does_property_loan_details_match_text = models.TextField(max_length=255, null=True, blank=True)
+    does_property_loan_details_match_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     does_mortgage_application_confirm = models.CharField(
         max_length=20,
         choices=DoesMortgageApplicationConfirmChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    does_mortgage_application_confirm_text = models.TextField(max_length=255, null=True, blank=True)
+    does_mortgage_application_confirm_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_suitability_letter_been_generated = models.CharField(
         max_length=20,
         choices=HasSuitabilityLetterBeenGeneratedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_suitability_letter_been_generated_text = models.TextField(max_length=255, null=True, blank=True)
+    has_suitability_letter_been_generated_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     post_application_changes = models.CharField(
         max_length=20,
         choices=PostApplicationChangesChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    post_application_changes_text = models.TextField(max_length=255, null=True, blank=True)
+    post_application_changes_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     is_applicants_live_at_separate_addresses = models.CharField(
         max_length=20,
         choices=IsApplicantsLiveAtSeparateAddressesChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    is_applicants_live_at_separate_addresses_text = models.TextField(max_length=255, null=True, blank=True)
+    is_applicants_live_at_separate_addresses_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     is_replacement_suitability_letter = models.CharField(
         max_length=20,
-        choices = IsReplacementSuitabilityLetterChoices.choices,
+        choices=IsReplacementSuitabilityLetterChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    is_replacement_suitability_letter_text = models.TextField(max_length=255, null=True, blank=True)
+    is_replacement_suitability_letter_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_reasons_for_mortgage_been_personalised = models.CharField(
         max_length=20,
-        choices = HasReasonsForMortgageBeenPersonalisedChoices.choices,
+        choices=HasReasonsForMortgageBeenPersonalisedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_reasons_for_mortgage_been_personalised_text = models.TextField(max_length=255, null=True, blank=True)
+    has_reasons_for_mortgage_been_personalised_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_meeting_discussion_been_personalised = models.CharField(
         max_length=20,
-        choices = HasMeetingDiscussionBeenPersonalisedChoices.choices,
+        choices=HasMeetingDiscussionBeenPersonalisedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_meeting_discussion_been_personalised_text = models.TextField(max_length=255, null=True, blank=True)
+    has_meeting_discussion_been_personalised_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_circumstances_objectives_personalised = models.CharField(
         max_length=20,
-        choices = HasCircumstancesObjectivesPersonalisedChoices.choices,
+        choices=HasCircumstancesObjectivesPersonalisedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_circumstances_objectives_personalised_text = models.TextField(max_length=255, null=True, blank=True)
+    has_circumstances_objectives_personalised_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_budget_affordability_been_personalised = models.CharField(
         max_length=20,
         choices=HasBudgetAffordabilityBeenPersonalisedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_budget_affordability_been_personalised_text = models.TextField(max_length=255, null=True, blank=True)
+    has_budget_affordability_been_personalised_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_new_mortgage_details_been_completed = models.CharField(
         max_length=20,
         choices=HasNewMortgageDetailsBeenCompletedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_new_mortgage_details_been_complete_text = models.TextField(max_length=255, null=True, blank=True)
+    has_new_mortgage_details_been_complete_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_mortgage_section_one_personalised = models.CharField(
         max_length=20,
-        choices = HasMortgageSectionOnePersonalisedChoices.choices,
+        choices=HasMortgageSectionOnePersonalisedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_mortgage_section_one_personalised_text = models.TextField(max_length=255, null=True, blank=True)
+    has_mortgage_section_one_personalised_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_mortgage_section_two_personalised = models.CharField(
         max_length=20,
         choices=HasMortgageSectionTwoPersonalisedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_mortgage_section_two_personalised_text = models.TextField(max_length=255, null=True, blank=True)
+    has_mortgage_section_two_personalised_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     are_we_recommending_repayment_method = models.CharField(
         max_length=20,
         choices=AreWeRecommendingRepaymentMethodChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    are_we_recommending_repayment_method_text = models.TextField(max_length=255, null=True, blank=True)
+    are_we_recommending_repayment_method_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     are_we_recommending_mortgage_type = models.CharField(
         max_length=20,
         choices=AreWeRecommendingRepaymentTypeChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    are_we_recommending_mortgage_type_text = models.TextField(max_length=255, null=True, blank=True)
+    are_we_recommending_mortgage_type_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     are_we_recommending_mortgage_term = models.CharField(
         max_length=20,
         choices=AreWeRecommendingRepaymentTermChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    are_we_recommending_mortgage_term_text = models.TextField(max_length=255, null=True, blank=True)
-    are_we_recommending_mortgage_lender =models.CharField(
+    are_we_recommending_mortgage_term_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
+    are_we_recommending_mortgage_lender = models.CharField(
         max_length=20,
         choices=AreWeRecommendingRepaymentLenderChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    are_we_recommending_mortgage_lender_text = models.TextField(max_length=255, null=True, blank=True)
+    are_we_recommending_mortgage_lender_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     are_we_recommending_mortgage_amount = models.CharField(
         max_length=20,
         choices=AreWeRecommendingRepaymentAmountChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    are_we_recommending_mortgage_amount_text = models.TextField(max_length=255, null=True, blank=True)
+    are_we_recommending_mortgage_amount_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     are_cost_and_fees_been_completed = models.CharField(
         max_length=20,
         choices=AreCostAndFeesBeenCompletedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    are_cost_and_fees_been_complete_text = models.TextField(max_length=255, null=True, blank=True)
+    are_cost_and_fees_been_complete_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     are_disadvantages_risks_been_selected = models.CharField(
         max_length=20,
         choices=AreDisadvantagesRisksBeenSelectedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    are_disadvantages_risks_been_selected_text = models.TextField(max_length=255, null=True, blank=True)
+    are_disadvantages_risks_been_selected_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_adviser_personalised = models.CharField(
         max_length=20,
         choices=HasAdviserPersonalisedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_adviser_personalised_text = models.TextField(max_length=255, null=True, blank=True)
+    has_adviser_personalised_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_adviser_included = models.CharField(
-        max_length=20,
-        choices=HasAdviserIncludedChoices.choices,
-        null=True,
-        blank=True
+        max_length=20, choices=HasAdviserIncludedChoices.choices, null=True, blank=True
     )
     has_adviser_included_text = models.TextField(max_length=255, null=True, blank=True)
-    has_protection_section_personalised =models.CharField(
+    has_protection_section_personalised = models.CharField(
         max_length=20,
         choices=HasProtectionSectionPersonalisedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_protection_section_personalised_text = models.TextField(max_length=255, null=True, blank=True)
+    has_protection_section_personalised_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_b_and_c_section_personalised = models.CharField(
         max_length=20,
         choices=HasBASectionPersonalisedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_b_and_c_section_personalised_text = models.TextField(max_length=255, null=True, blank=True)
+    has_b_and_c_section_personalised_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     has_wills_section_personalised = models.CharField(
         max_length=20,
         choices=HasWillsSectionPersonalisedChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    has_wills_section_personalised_text = models.TextField(max_length=255, null=True, blank=True)
+    has_wills_section_personalised_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
     does_recommended_product_match_your_needs_section = models.CharField(
         max_length=20,
         choices=DoesRecommendedProductMatchYourNeedsSectionChoices.choices,
         null=True,
-        blank=True
+        blank=True,
     )
-    does_recommended_product_match_your_needs_section_text = models.TextField(max_length=255, null=True, blank=True)
+    does_recommended_product_match_your_needs_section_text = models.TextField(
+        max_length=255, null=True, blank=True
+    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")

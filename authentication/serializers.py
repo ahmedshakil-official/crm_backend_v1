@@ -9,18 +9,26 @@ from common.enums import RoleChoices, UserTypeChoices
 from common.serializers import CommonUserSerializer
 
 
-
 User = get_user_model()
+
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """
     Serializer for the User model that includes the desired fields.
     """
+
     profile_image = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('email', 'phone', 'first_name', 'last_name', 'profile_image', 'user_type')
+        fields = (
+            "email",
+            "phone",
+            "first_name",
+            "last_name",
+            "profile_image",
+            "user_type",
+        )
 
     def get_profile_image(self, obj):
         """
@@ -28,16 +36,17 @@ class CustomUserSerializer(serializers.ModelSerializer):
         """
         if obj.profile_image:
             # Construct the full URL, handling potential issues.
-            request = self.context.get('request')
+            request = self.context.get("request")
             if request:
                 return request.build_absolute_uri(obj.profile_image.url)
             else:
-                return obj.profile_image.url #important for other cases
+                return obj.profile_image.url  # important for other cases
         return None
 
 
 # authentication/serializers.py
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
@@ -52,7 +61,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
-        data = super().validate(attrs)          # {'access', 'refresh'}
+        data = super().validate(attrs)  # {'access', 'refresh'}
         # Add whatever you want in the HTTP response:
         data["user"] = {
             "first_name": self.user.first_name,
@@ -64,9 +73,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             ),
         }
         return data
-
-
-
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):

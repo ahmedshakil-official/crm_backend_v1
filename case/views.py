@@ -53,7 +53,12 @@ from .models import (
     Product,
     BudgetPlanner,
     Fees,
-    DipHistory, CreditCommitments, Suitability, OtherQuestion, Compliance, MortgageNeeds,
+    DipHistory,
+    CreditCommitments,
+    Suitability,
+    OtherQuestion,
+    Compliance,
+    MortgageNeeds,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -87,8 +92,12 @@ from .serializers import (
     ProductSerializer,
     BudgetPlannerSerializer,
     FeesSerializer,
-    DipHistorySerializer, CreditCommitmentsSerializer, SuitabilitySerializer, OtherQuestionSerializers,
-    ComplianceSerializers, MortgageNeedsSerializers,
+    DipHistorySerializer,
+    CreditCommitmentsSerializer,
+    SuitabilitySerializer,
+    OtherQuestionSerializers,
+    ComplianceSerializers,
+    MortgageNeedsSerializers,
 )
 
 
@@ -1082,19 +1091,20 @@ class DipHistoryRetrieveUpdateApiView(RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
+
 class CreditCommitmentsListCreateApiView(ListCreateAPIView):
     serializer_class = CreditCommitmentsSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs['case_alias']
+        case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
         return CreditCommitments.objects.filter(case=case)
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs['case_alias']
+        case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
-        applicant = serializer.validated_data['applicant']
+        applicant = serializer.validated_data["applicant"]
 
         # Check if the applicant is the case lead
         if applicant == case.lead:
@@ -1110,10 +1120,11 @@ class CreditCommitmentsListCreateApiView(ListCreateAPIView):
     def _save_credit_commitment(self, serializer, case):
         serializer.save(
             case=case,
-            applicant=serializer.validated_data['applicant'],
+            applicant=serializer.validated_data["applicant"],
             created_by=self.request.user,
-            updated_by=self.request.user
+            updated_by=self.request.user,
         )
+
 
 class CreditCommitmentsRetrieveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
     serializer_class = CreditCommitmentsSerializer
@@ -1121,7 +1132,7 @@ class CreditCommitmentsRetrieveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView
     lookup_field = "alias"
 
     def get_queryset(self):
-        case_alias = self.kwargs['case_alias']
+        case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
         return CreditCommitments.objects.filter(case=case)
 
@@ -1171,10 +1182,7 @@ class OtherQuestionListCreateApiView(ListCreateAPIView):
     def perform_create(self, serializer):
         case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
-        serializer.save(
-            case=case,
-            created_by=self.request.user
-        )
+        serializer.save(case=case, created_by=self.request.user)
 
 
 class ComplianceRetrieveUpdateApiView(RetrieveUpdateAPIView):
@@ -1183,7 +1191,7 @@ class ComplianceRetrieveUpdateApiView(RetrieveUpdateAPIView):
     queryset = Compliance.objects.all()
 
     def get_object(self):
-        case_alias = self.kwargs['case_alias']
+        case_alias = self.kwargs["case_alias"]
         compliance = Compliance.objects.get(case__alias=case_alias)
         return compliance
 
@@ -1197,7 +1205,7 @@ class MortgageNeedsRetrieveUpdateApiView(RetrieveUpdateAPIView):
     queryset = MortgageNeeds.objects.all()
 
     def get_object(self):
-        case_alias = self.kwargs['case_alias']
+        case_alias = self.kwargs["case_alias"]
         mortgage_needs = MortgageNeeds.objects.get(case__alias=case_alias)
         return mortgage_needs
 

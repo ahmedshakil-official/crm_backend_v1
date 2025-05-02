@@ -122,490 +122,591 @@ class MeetingStatusChoices(models.TextChoices):
     ON_HOLD = "ON_HOLD", _("On Hold")
     SUCCESS = "SUCCESS", _("Success")
 
+
 class CircumstancesObjectivesChoices(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
+
 
 class BudgetAffordabilityChoices(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
 
+
 class NewMortgageDetailsChoices(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
+
 
 class RecommendingRepaymentMethodChoices(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
 
+
 class RecommendingMortgageTypeChoices(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
+
 
 class RecommendingMortgageLenderChoice(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
 
+
 class RecommendingMortgageAmountChoice(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
+
 
 class CostsFeesChoice(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
 
+
 class DisadvantageRisksChoice(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
+
 
 class CostAdviceChoice(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
 
+
 class ProtectionChoice(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
+
 
 class BuildingsInsuranceChoice(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
 
+
 class WillsChoice(models.TextChoices):
     GENERAL = "GENERAL", _("General")
     SHARIA = "SHARIA", _("Sharia")
-    
+
+
 class RemedialActionsRequiredChoices(models.TextChoices):
     YES = "YES", _("Yes")
     NO = "NO", _("No")
 
+
 class RemedialActionsCompleteChoices(models.TextChoices):
     YES = "YES", _("Yes")
     NO = "NO", _("No")
+
 
 class TermsBusinessChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class PrivacyNoticeChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class FeeAgreementChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class FactfindFilledChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class NivoIDVcheckChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class FinancialSanctionsCheckedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class ProofOfIDChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class ProofOfAddressChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class ProofOfIncomeChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class ProofOfDepositChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class BankStatementsChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class CreditReports(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class AffordabilityCalculatorChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class EvidenceOfResearchChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class AgreementPrincipleChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class SignedApplicationChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class SuitabilityLetterChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class MortgageOfferChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class DebtConsolidationCalculatorChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class SharedEquityDocumentationChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class ProofOfLendingChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class ProofOfRepaymentChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class LoanDetailsFullyCompletedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasSourceOfLeadBeenRecordedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class RealisticProximityToTheAdvisorChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class PersonalDetailsChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class RetirementAgeChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class DoesTheOccupationComparedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class EmploymentDetailsChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasDueDiligenceBeenCompletedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class DoesTheStatedIncomeChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class DoesTheStatedNetIncomeChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class IsTheClientInAnOccupationChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasPropertyPortfolioFullyCompletedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasPropertyDetailsFullyCompletedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
-class  HasYourNeedsFullyCompletedChoices(models.TextChoices):
+
+class HasYourNeedsFullyCompletedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasRepaymentVehicleRecordedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HaveFiguresBeenInputChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class IsDepositComeFromSaleOfPropertyChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasAdviserCompletedCalculatorChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasAccountantSolicitorDetailsBeenConfirmedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasCreditCommitmentsFullyCompletedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class IsAnyCreditCommitmentsChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasClientAdverseCreditChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasBudgetPlannerBeenCompletedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasAllDirectDebitsBeenRecordedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasAdviserSourcedMortgageRequirementsChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class FiguresStatedInMortgageRequirementsChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class AreResultsStoredInOrderOfClientPreferenceChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class IsRecommendedProductShowingEvidenceResearchChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class IsTheAddressOnTheKFICorrectChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class DoesFiguresFeaturesMortgageRequirementsChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class DoesMonthlyPaymentFitWithinDisposableIncomeChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class AreFeesDisclosedCorrectlyChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class LenderFeesAddedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasIllustrationBeenProducedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class InterestOnlyChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasProductBeenFullyCompletedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class PersonalDetailsMatchTheFactfindChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class DoesEmploymentIncomeDetailsMatchChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class DoesPropertyLoanDetailsMatchChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class DoesMortgageApplicationConfirmChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasSuitabilityLetterBeenGeneratedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class PostApplicationChangesChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class IsApplicantsLiveAtSeparateAddressesChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class IsReplacementSuitabilityLetterChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasReasonsForMortgageBeenPersonalisedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasMeetingDiscussionBeenPersonalisedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasCircumstancesObjectivesPersonalisedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasBudgetAffordabilityBeenPersonalisedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasNewMortgageDetailsBeenCompletedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasMortgageSectionOnePersonalisedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasMortgageSectionTwoPersonalisedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class AreWeRecommendingRepaymentMethodChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class AreWeRecommendingRepaymentTypeChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class AreWeRecommendingRepaymentTermChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class AreWeRecommendingRepaymentLenderChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class AreWeRecommendingRepaymentAmountChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class AreCostAndFeesBeenCompletedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class AreDisadvantagesRisksBeenSelectedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasAdviserPersonalisedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasAdviserIncludedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class HasProtectionSectionPersonalisedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasBASectionPersonalisedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
 
+
 class HasWillsSectionPersonalisedChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
 
 class DoesRecommendedProductMatchYourNeedsSectionChoices(models.TextChoices):
     YES = "YES", _("YES")
