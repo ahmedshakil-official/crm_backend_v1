@@ -240,6 +240,9 @@ REST_FRAMEWORK = {
 DJOSER = {
     "SERIALIZERS": {
         "user_create": "authentication.serializers.CustomUserCreateSerializer",
+        "user": "authentication.serializers.CustomUserSerializer",
+        # 🔑 this is the one that matters for JWT
+        "token_create": "authentication.serializers.CustomTokenObtainPairSerializer",
     },
     "USERNAME_FIELD": "email",
 }
@@ -247,6 +250,9 @@ DJOSER = {
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("JWT",),
     "ACCESS_TOKEN_LIFETIME": timedelta(days=120),
+    "TOKEN_OBTAIN_SERIALIZER": (
+        "authentication.serializers.CustomTokenObtainPairSerializer"
+    ),
 }
 
 SPECTACULAR_SETTINGS = {
