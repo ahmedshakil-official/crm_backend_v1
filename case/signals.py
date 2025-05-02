@@ -212,8 +212,3 @@ def create_compliance(sender, instance, created, **kwargs):
         Compliance.objects.create(case=instance)
 
 
-@receiver(post_save, sender="case.Case")
-def create_mortgage_needs(sender, instance, created, **kwargs):
-    if created:
-        MortgageNeeds = apps.get_model("case", "MortgageNeeds")
-        MortgageNeeds.objects.create(case=instance)
