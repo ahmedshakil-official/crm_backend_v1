@@ -52,7 +52,7 @@ from common.enums import (
     AreWeRecommendingRepaymentAmountChoices, AreCostAndFeesBeenCompletedChoices,
     AreDisadvantagesRisksBeenSelectedChoices, HasAdviserPersonalisedChoices, HasAdviserIncludedChoices,
     HasProtectionSectionPersonalisedChoices, HasBASectionPersonalisedChoices, HasWillsSectionPersonalisedChoices,
-    DoesRecommendedProductMatchYourNeedsSectionChoices, ExtraAnswerChoices,
+    DoesRecommendedProductMatchYourNeedsSectionChoices,
 )
 from organization.models import Organization
 from .enums import (
@@ -2353,15 +2353,9 @@ class Suitability(CreatedAtUpdatedAtBaseModel):
         ordering = ("-created_at", "-updated_at")
 
 
-class ExtraAnswer(CreatedAtUpdatedAtBaseModel):
+class OtherQuestion(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="other_questions")
     answer = models.CharField(max_length=10000, null=True, blank=True)
-    extra_answer_choices = models.CharField(
-        max_length=250,
-        choices=ExtraAnswerChoices.choices,
-        null=True,
-        blank=True
-    )
 
     class Meta:
         ordering = ("-created_at", "-updated_at")

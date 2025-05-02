@@ -58,7 +58,7 @@ from .models import (
     CreditCommitments, Suitability, ExtraQuestion, CircumstancesObjectives, BudgetAffordability, NewMortgageDetails,
     RecommendingRepaymentMethod, RecommendingMortgageType, RecommendingTerm, RecommendingMortgageLender,
     RecommendingMortgageAmount, CostsFees, Protection, CostAdvice, DisadvantageRisks, BuildingsInsurance, Wills,
-    Compliance, MortgageNeeds, ExtraAnswer,
+    OtherQuestion, Compliance, MortgageNeeds,
 )
 from authentication.models import User
 from common.serializers import (
@@ -2429,8 +2429,8 @@ class RecommendingMortgageLenderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context['request'].user
         # Set created_by and updated_by fields
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         instance = RecommendingMortgageLender.objects.create(**validated_data)
         return instance
@@ -2939,18 +2939,17 @@ class SuitabilitySerializer(serializers.ModelSerializer):
         return instance
 
 
-class ExtraAnswerSerializers(serializers.ModelSerializer):
+class OtherQuestionSerializers(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
     case = CommonCaseSerializer(read_only=True)
 
     class Meta:
-        model = ExtraAnswer
+        model = OtherQuestion
         fields = [
             "alias",
             "case",
             "answer",
-            "extra_answer_choices",
             "created_at",
             "updated_at",
             "created_by",

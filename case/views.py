@@ -53,7 +53,7 @@ from .models import (
     Product,
     BudgetPlanner,
     Fees,
-    DipHistory, CreditCommitments, Suitability, Compliance, MortgageNeeds, ExtraQuestion, ExtraAnswer,
+    DipHistory, CreditCommitments, Suitability, OtherQuestion, Compliance, MortgageNeeds,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -87,8 +87,8 @@ from .serializers import (
     ProductSerializer,
     BudgetPlannerSerializer,
     FeesSerializer,
-    DipHistorySerializer, CreditCommitmentsSerializer, SuitabilitySerializer,
-    ComplianceSerializers, MortgageNeedsSerializers, ExtraAnswerSerializers,
+    DipHistorySerializer, CreditCommitmentsSerializer, SuitabilitySerializer, OtherQuestionSerializers,
+    ComplianceSerializers, MortgageNeedsSerializers,
 )
 
 
@@ -1159,14 +1159,14 @@ class SuitabilityRetrieveUpdateApiView(RetrieveUpdateDestroyAPIView):
         return super().update(request, *args, **kwargs)
 
 
-class ExtraAnswerListCreateApiView(ListCreateAPIView):
-    serializer_class = ExtraAnswerSerializers
+class OtherQuestionListCreateApiView(ListCreateAPIView):
+    serializer_class = OtherQuestionSerializers
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
-        return ExtraAnswer.objects.filter(case=case)
+        return OtherQuestion.objects.filter(case=case)
 
     def perform_create(self, serializer):
         case_alias = self.kwargs["case_alias"]
