@@ -1180,7 +1180,7 @@ class OtherQuestionListCreateApiView(ListCreateAPIView):
 class ComplianceRetrieveUpdateApiView(RetrieveUpdateAPIView):
     serializer_class = ComplianceSerializers
     permission_classes = [IsAuthenticated]
-    queryset = Suitability.objects.all()
+    queryset = Compliance.objects.all()
 
     def get_object(self):
         case_alias = self.kwargs['case_alias']
