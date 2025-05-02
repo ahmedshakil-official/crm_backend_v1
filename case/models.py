@@ -1847,13 +1847,13 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
         Case, on_delete=models.CASCADE, related_name="mortgage_needs"
     )
-    repayment_method = models.CharField(max_length=700, null=True, blank=True)
-    monthly_mortgage_payments = models.CharField(max_length=700, null=True, blank=True)
-    specific_mortgage_deal = models.CharField(max_length=700, null=True, blank=True)
-    referred_monthly_budget = models.CharField(max_length=700, null=True, blank=True)
-    retirement_age = models.CharField(max_length=700, null=True, blank=True)
+    repayment_method = models.CharField(max_length=10000, null=True, blank=True)
+    monthly_mortgage_payments = models.CharField(max_length=10000, null=True, blank=True)
+    specific_mortgage_deal = models.CharField(max_length=10000, null=True, blank=True)
+    referred_monthly_budget = models.CharField(max_length=10000, null=True, blank=True)
+    retirement_age = models.CharField(max_length=10000, null=True, blank=True)
     what_suitable_mortgage_features_are_important = models.CharField(
-        max_length=700, null=True, blank=True
+        max_length=10000, null=True, blank=True
     )
     front_costs = models.BooleanField(default=False)
     is_ability_to_make_overpayments = models.BooleanField(default=False)
@@ -1871,10 +1871,10 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     ltd_company_btl = models.BooleanField(default=False)
     any_incentives = models.BooleanField(default=False)
     considering_debt_consolidation = models.CharField(
-        max_length=700, null=True, blank=True
+        max_length=10000, null=True, blank=True
     )
     anticipate_any_changes_notes = models.CharField(
-        max_length=700, null=True, blank=True
+        max_length=10000, null=True, blank=True
     )
     anticipate_any_changes = models.BooleanField(default=False)
     buildings = models.BooleanField(default=False)
@@ -1886,11 +1886,11 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     personal_possessions_confirm = models.BooleanField(default=False)
     have_you_a_will_in_place = models.BooleanField(default=False)
     have_you_a_will_in_place_note = models.CharField(
-        max_length=700, null=True, blank=True
+        max_length=10000, null=True, blank=True
     )
-    mortgage_requirements_note = models.CharField(max_length=700, null=True, blank=True)
+    mortgage_requirements_note = models.CharField(max_length=10000, null=True, blank=True)
     mortgage_requirements = models.BooleanField(default=False)
-    notes = models.CharField(max_length=700, null=True, blank=True)
+    notes = models.CharField(max_length=10000, null=True, blank=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1930,14 +1930,14 @@ class ExtraQuestion(CreatedAtUpdatedAtBaseModel):
         ordering = ("-created_at", "-updated_at")
 
 class CircumstancesObjectives(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_three = models.CharField(max_length=700, null=True, blank=True)
-    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=710000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=710000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=710000, null=True, blank=True)
+    question_two = models.CharField(max_length=710000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=710000, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=710000, null=True, blank=True)
+    question_three = models.CharField(max_length=710000, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=710000, null=True, blank=True)
 
     circumstances_type = models.CharField(
         max_length=20,
@@ -1952,12 +1952,12 @@ class CircumstancesObjectives(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two} {self.question_three}"
 
 class BudgetAffordability(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=710000, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=10000, null=True, blank=True)
 
     budget_affordability_type = models.CharField(
         max_length=20,
@@ -1972,12 +1972,12 @@ class BudgetAffordability(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two}"
 
 class NewMortgageDetails(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=10000, null=True, blank=True)
 
     new_mortgage_details_type = models.CharField(
         max_length=20,
@@ -1992,18 +1992,18 @@ class NewMortgageDetails(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two}"
 
 class RecommendingRepaymentMethod(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_three = models.CharField(max_length=700, null=True, blank=True)
-    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_four = models.CharField(max_length=700, null=True, blank=True)
-    question_four_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_five = models.CharField(max_length=700, null=True, blank=True)
-    question_five_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_three = models.CharField(max_length=10000, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_four = models.CharField(max_length=10000, null=True, blank=True)
+    question_four_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_five = models.CharField(max_length=10000, null=True, blank=True)
+    question_five_answer = models.CharField(max_length=10000, null=True, blank=True)
 
     recommending_repayment_method_type = models.CharField(
         max_length=20,
@@ -2018,16 +2018,16 @@ class RecommendingRepaymentMethod(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two} {self.question_three}"
 
 class RecommendingMortgageType(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_three = models.CharField(max_length=700, null=True, blank=True)
-    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_four = models.CharField(max_length=700, null=True, blank=True)
-    question_four_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_three = models.CharField(max_length=10000, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_four = models.CharField(max_length=10000, null=True, blank=True)
+    question_four_answer = models.CharField(max_length=10000, null=True, blank=True)
 
     recommending_mortgage_type = models.CharField(
         max_length=20,
@@ -2042,8 +2042,8 @@ class RecommendingMortgageType(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two} {self.question_three}"
 
 class RecommendingTerm(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
 
     recommending_term = models.CharField(
         max_length=20,
@@ -2058,13 +2058,13 @@ class RecommendingTerm(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one}"
 
 class RecommendingMortgageLender(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_three = models.CharField(max_length=700, null=True, blank=True)
-    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_three = models.CharField(max_length=10000, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=10000, null=True, blank=True)
 
     recommending_mortgage_lender_type = models.CharField(
         max_length=20,
@@ -2079,13 +2079,13 @@ class RecommendingMortgageLender(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two}"
 
 class RecommendingMortgageAmount(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_three = models.CharField(max_length=700, null=True, blank=True)
-    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_three = models.CharField(max_length=10000, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=10000, null=True, blank=True)
 
     recommending_mortgage_amount = models.CharField(
         max_length=20,
@@ -2100,13 +2100,13 @@ class RecommendingMortgageAmount(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two} {self.question_three}"
 
 class CostsFees(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_three = models.CharField(max_length=700, null=True, blank=True)
-    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_three = models.CharField(max_length=10000, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=10000, null=True, blank=True)
 
     costs_fees = models.CharField(
         max_length=20,
@@ -2121,25 +2121,25 @@ class CostsFees(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two} {self.question_three}"
 
 class DisadvantageRisks(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_three = models.CharField(max_length=700, null=True, blank=True)
-    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_four = models.CharField(max_length=700, null=True, blank=True)
-    question_four_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_five = models.CharField(max_length=700, null=True, blank=True)
-    question_five_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_six = models.CharField(max_length=700, null=True, blank=True)
-    question_six_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_seven = models.CharField(max_length=700, null=True, blank=True)
-    question_seven_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_eight = models.CharField(max_length=700, null=True, blank=True)
-    question_eight_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_nine = models.CharField(max_length=700, null=True, blank=True)
-    question_nine_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_three = models.CharField(max_length=10000, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_four = models.CharField(max_length=10000, null=True, blank=True)
+    question_four_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_five = models.CharField(max_length=10000, null=True, blank=True)
+    question_five_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_six = models.CharField(max_length=10000, null=True, blank=True)
+    question_six_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_seven = models.CharField(max_length=10000, null=True, blank=True)
+    question_seven_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_eight = models.CharField(max_length=10000, null=True, blank=True)
+    question_eight_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_nine = models.CharField(max_length=10000, null=True, blank=True)
+    question_nine_answer = models.CharField(max_length=10000, null=True, blank=True)
 
     disadvantage_risks = models.CharField(
         max_length=20,
@@ -2154,12 +2154,12 @@ class DisadvantageRisks(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two} {self.question_three}"
 
 class CostAdvice(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=10000, null=True, blank=True)
 
     cost_advice = models.CharField(
         max_length=20,
@@ -2174,18 +2174,18 @@ class CostAdvice(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two}"
 
 class Protection(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_three = models.CharField(max_length=700, null=True, blank=True)
-    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_three_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_four = models.CharField(max_length=700, null=True, blank=True)
-    question_four_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_four_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_three = models.CharField(max_length=10000, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_three_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_four = models.CharField(max_length=10000, null=True, blank=True)
+    question_four_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_four_sharia = models.CharField(max_length=10000, null=True, blank=True)
 
     protection = models.CharField(
         max_length=20,
@@ -2200,18 +2200,18 @@ class Protection(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two}"
 
 class BuildingsInsurance(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_two_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_three = models.CharField(max_length=700, null=True, blank=True)
-    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_three_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_four = models.CharField(max_length=700, null=True, blank=True)
-    question_four_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_five_sharia = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_three = models.CharField(max_length=10000, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_three_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_four = models.CharField(max_length=10000, null=True, blank=True)
+    question_four_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_five_sharia = models.CharField(max_length=10000, null=True, blank=True)
 
     buildings_insurance = models.CharField(
         max_length=20,
@@ -2226,13 +2226,13 @@ class BuildingsInsurance(CreatedAtUpdatedAtBaseModel):
         return f"{self.question_one} {self.question_two}"
 
 class Wills(CreatedAtUpdatedAtBaseModel):
-    question_one = models.CharField(max_length=700, null=True, blank=True)
-    question_one_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_one_sharia = models.CharField(max_length=700, null=True, blank=True)
-    question_two = models.CharField(max_length=700, null=True, blank=True)
-    question_two_answer = models.CharField(max_length=700, null=True, blank=True)
-    question_three = models.CharField(max_length=700, null=True, blank=True)
-    question_three_answer = models.CharField(max_length=700, null=True, blank=True)
+    question_one = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_one_sharia = models.CharField(max_length=10000, null=True, blank=True)
+    question_two = models.CharField(max_length=10000, null=True, blank=True)
+    question_two_answer = models.CharField(max_length=10000, null=True, blank=True)
+    question_three = models.CharField(max_length=10000, null=True, blank=True)
+    question_three_answer = models.CharField(max_length=10000, null=True, blank=True)
 
     wills = models.CharField(
         max_length=20,
@@ -2355,7 +2355,7 @@ class Suitability(CreatedAtUpdatedAtBaseModel):
 
 class OtherQuestion(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="other_questions")
-    answer = models.CharField(max_length=700, null=True, blank=True)
+    answer = models.CharField(max_length=10000, null=True, blank=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
