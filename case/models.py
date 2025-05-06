@@ -196,7 +196,7 @@ from .enums import (
     CreditCommitmentsChoices,
     TypeChoices,
     CourtOrderedChoices,
-    PaidOnCompletionChoices,
+    PaidOnCompletionChoices, ExtraAnswerChoices,
 )
 from .signals import (
     create_loan_details,
@@ -2442,11 +2442,18 @@ class Suitability(CreatedAtUpdatedAtBaseModel):
         ordering = ("-created_at", "-updated_at")
 
 
-class OtherQuestion(CreatedAtUpdatedAtBaseModel):
+class ExtraAnswer(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
         Case, on_delete=models.CASCADE, related_name="other_questions"
     )
+    section_choices = models.CharField(
+        max_length=250,
+        choices=ExtraAnswerChoices.choices,
+        null=True,
+        blank=True
+    )
     answer = models.CharField(max_length=10000, null=True, blank=True)
+
 
     class Meta:
         ordering = ("-created_at", "-updated_at")

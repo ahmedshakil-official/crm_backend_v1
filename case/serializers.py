@@ -72,7 +72,7 @@ from .models import (
     DisadvantageRisks,
     BuildingsInsurance,
     Wills,
-    OtherQuestion,
+    ExtraAnswer,
     Compliance,
     MortgageNeeds,
 )
@@ -2940,16 +2940,17 @@ class SuitabilitySerializer(serializers.ModelSerializer):
         return instance
 
 
-class OtherQuestionSerializers(serializers.ModelSerializer):
+class ExtraAnswerSerializers(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
     case = CommonCaseSerializer(read_only=True)
 
     class Meta:
-        model = OtherQuestion
+        model = ExtraAnswer
         fields = [
             "alias",
             "case",
+            "section_choices",
             "answer",
             "created_at",
             "updated_at",

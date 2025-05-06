@@ -967,3 +967,20 @@ class CourtOrderedChoices(models.TextChoices):
 class PaidOnCompletionChoices(models.TextChoices):
     YES = "YES", _("Yes")
     NO = "NO", _("No")
+
+
+class ExtraAnswerChoices(models.TextChoices):
+    YOUR_CIRCUMSTANCES_AND_OBJECTIVES = "YOUR_CIRCUMSTANCES_AND_OBJECTIVES", _("Your circumstances and objectives")
+    BUDGET_AND_AFFORDABILITY = "BUDGET_AND_AFFORDABILITY", _("Budget and affordability")
+    NEW_MORTGAGE_DETAILS = "NEW_MORTGAGE_DETAILS", _("New mortgage details")
+    RECOMMENDED_REPAYMENT_METHOD = "RECOMMENDED_REPAYMENT_METHOD", _("Why are we recommending this repayment method?")
+    RECOMMENDED_MORTGAGE_TYPE = "RECOMMENDED_MORTGAGE_TYPE", _("Why are we recommending this mortgage type?")
+    RECOMMENDED_TERM = "RECOMMENDED_TERM", _("Why are we recommending this term?")
+    RECOMMENDED_LENDER = "RECOMMENDED_LENDER", _("Why are we recommending this mortgage lender?")
+    RECOMMENDED_AMOUNT = "RECOMMENDED_AMOUNT", _("Why are we recommending this mortgage amount?")
+    COSTS_AND_FEES = "COSTS_AND_FEES", _("What are the costs and fees?")
+    DISADVANTAGES_AND_RISKS = "DISADVANTAGES_AND_RISKS", _("What are the disadvantages and risks?")
+    COST_OF_ADVICE = "COST_OF_ADVICE", _("What is the cost of our advice?")
+    PROTECTION = "PROTECTION", _("What is the protection?")
+    BUILDINGS_INSURANCE = "BUILDINGS_INSURANCE", _("What is the buildings insurance?")
+    WILLS = "WILLS", _("What is the wills?")

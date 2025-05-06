@@ -56,7 +56,7 @@ from .models import (
     DipHistory,
     CreditCommitments,
     Suitability,
-    OtherQuestion,
+    ExtraAnswer,
     Compliance,
     MortgageNeeds,
 )
@@ -95,7 +95,7 @@ from .serializers import (
     DipHistorySerializer,
     CreditCommitmentsSerializer,
     SuitabilitySerializer,
-    OtherQuestionSerializers,
+    ExtraAnswerSerializers,
     ComplianceSerializers,
     MortgageNeedsSerializers,
 )
@@ -1170,14 +1170,14 @@ class SuitabilityRetrieveUpdateApiView(RetrieveUpdateDestroyAPIView):
         return super().update(request, *args, **kwargs)
 
 
-class OtherQuestionListCreateApiView(ListCreateAPIView):
-    serializer_class = OtherQuestionSerializers
+class ExtraAnswerListCreateApiView(ListCreateAPIView):
+    serializer_class = ExtraAnswerSerializers
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         case_alias = self.kwargs["case_alias"]
         case = get_object_or_404(Case, alias=case_alias)
-        return OtherQuestion.objects.filter(case=case)
+        return ExtraAnswer.objects.filter(case=case)
 
     def perform_create(self, serializer):
         case_alias = self.kwargs["case_alias"]
