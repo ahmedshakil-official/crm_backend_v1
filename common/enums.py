@@ -611,3 +611,27 @@ class DoesRecommendedProductMatchYourNeedsSectionChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
+class ExtraAnswerChoices(models.TextChoices):
+    Your_Circumstances_And_Objectives = "YOUR_CIRCUMSTANCES_AND_OBJECTIVES", _("YOUR CIRCUMSTANCES AND OBJECTIVES")
+    Budget_And_Affordability = "BUDGET_AND_AFFORDABILITY", _("BUDGET AND AFFORDABILITY")
+    New_Mortgage_Details = "NEW_MORTGAGE_DETAILS", _("NEW MORTGAGE DETAILS")
+    Why_Are_We_Recommending_This_Repayment_Method = "WHY_ARE_WE_RECOMMENDING_THIS_REPAYMENT_METHOD", _(
+        "WHY ARE WE RECOMMENDING THIS REPAYMENT METHOD?")
+    Why_Are_We_Recommending_This_Mortgage_Type = "WHY_ARE_WE_RECOMMENDING_THIS_MORTGAGE_TYPE", _(
+        "WHY ARE WE RECOMMENDING THIS MORTGAGE TYPE?")
+    Why_Are_You_Recommending_This_Term = "WHY_ARE_YOU_RECOMMENDING_THIS_TERM", _("WHY ARE WE RECOMMENDING THIS TERM?")
+    Why_Are_We_Recommending_This_Mortgage_Lender = "WHY_ARE_WE_RECOMMENDING_THIS_MORTGAGE_LENDER", _(
+        "WHY ARE WE RECOMMENDING THIS MORTGAGE LENDER?")
+    Why_Are_We_Recommending_This_Mortgage_Amount = "WHY_ARE_WE_RECOMMENDING_THIS_MORTGAGE_AMOUNT", _(
+        "WHY ARE WE RECOMMENDING THIS MORTGAGE AMOUNT?")
+    What_Are_The_Costs_And_Fees = "WHAT_ARE_THE_COSTS_AND_FEES", _("WHAT ARE THE COSTS AND FEES?")
+    What_Are_The_Disadvantages_And_Risks = "WHAT_ARE_THE_DISADVANTAGES_AND_RISKS", _(
+        "WHAT ARE THE DISADVANTAGES AND RISKS?")
+    What_Is_The_Cost_Of_Our_Advice = "WHAT_IS_THE_COST_OF_OUR_ADVICE", _("WHAT IS THE COST OF OUR ADVICE?")
+    What_Is_The_Protection = "WHAT_IS_THE_PROTECTION", _("WHAT IS THE PROTECTION?")
+    What_Is_The_Buildings_Insurance = "WHAT_IS_THE_BUILDINGS_INSURANCE", _("WHAT IS THE BUILDINGS INSURANCE?")
+    What_Is_The_Wills = "WHAT_IS_THE_WILLS", _("WHAT IS THE WILLS?")
+
+
+

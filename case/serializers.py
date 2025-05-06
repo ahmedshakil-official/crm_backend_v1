@@ -58,7 +58,7 @@ from .models import (
     CreditCommitments, Suitability, ExtraQuestion, CircumstancesObjectives, BudgetAffordability, NewMortgageDetails,
     RecommendingRepaymentMethod, RecommendingMortgageType, RecommendingTerm, RecommendingMortgageLender,
     RecommendingMortgageAmount, CostsFees, Protection, CostAdvice, DisadvantageRisks, BuildingsInsurance, Wills,
-    OtherQuestion, Compliance, MortgageNeeds,
+    Compliance, MortgageNeeds, ExtraAnswer,
 )
 from authentication.models import User
 from common.serializers import (
@@ -2939,17 +2939,18 @@ class SuitabilitySerializer(serializers.ModelSerializer):
         return instance
 
 
-class OtherQuestionSerializers(serializers.ModelSerializer):
+class ExtraAnswerSerializers(serializers.ModelSerializer):
     created_by = CommonUserWithIdSerializer(read_only=True)
     updated_by = CommonUserWithIdSerializer(read_only=True)
     case = CommonCaseSerializer(read_only=True)
 
     class Meta:
-        model = OtherQuestion
+        model = ExtraAnswer
         fields = [
             "alias",
             "case",
             "answer",
+            "extra_answer_choices",
             "created_at",
             "updated_at",
             "created_by",
