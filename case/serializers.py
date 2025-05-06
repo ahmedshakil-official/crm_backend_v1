@@ -3178,7 +3178,6 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = MortgageNeeds
-
         fields = [
             "alias",
             "case",
@@ -3193,7 +3192,8 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
             "is_early_repayment_charges",
             "is_minimise_any_lender_arrangement_costs",
             "is_ability_to_add_fees_to_the_mortgage",
-            "is_ability_to_add_fees_mortgage",
+            "is_ability_to_add_fees_mortgage_extra_interest_will_be_payable",
+            "note_one",
             "cashback",
             "portability",
             "guarantor_jbsp",
@@ -3203,9 +3203,24 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
             "sharia_compliant_mortgages",
             "ltd_company_btl",
             "any_incentives",
+            "note_two",
             "considering_debt_consolidation",
-            "anticipate_any_changes_notes",
             "anticipate_any_changes",
+            "anticipate_any_changes_notes",
+            "app_one_life_cover",
+            "app_one_critical_illness",
+            "app_one_income_protection",
+            "app_one_asu",
+            "app_one_pmi",
+            "app_one_family_income_benefit",
+            "app_one_buildings_and_contents",
+            "app_two_life_cover",
+            "app_two_critical_illness",
+            "app_two_income_protection",
+            "app_two_asu",
+            "app_two_pmi",
+            "app_two_family_income_benefit",
+            "app_two_buildings_and_contents",
             "buildings",
             "contents",
             "accidental_damage",
@@ -3217,13 +3232,12 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
             "have_you_a_will_in_place_note",
             "mortgage_requirements_note",
             "mortgage_requirements",
-            "notes",
+            "note_three",
             "created_by",
             "updated_by",
             "created_at",
             "updated_at",
         ]
-
         read_only_fields = [
             "alias",
             "created_by",
@@ -3231,3 +3245,4 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+

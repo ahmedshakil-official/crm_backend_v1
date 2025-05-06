@@ -1927,7 +1927,8 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     is_early_repayment_charges = models.BooleanField(default=False)
     is_minimise_any_lender_arrangement_costs = models.BooleanField(default=False)
     is_ability_to_add_fees_to_the_mortgage = models.BooleanField(default=False)
-    is_ability_to_add_fees_mortgage = models.BooleanField(default=False)
+    is_ability_to_add_fees_mortgage_extra_interest_will_be_payable = models.BooleanField(default=False)
+    note_one = models.CharField(max_length=10000, null=True, blank=True)
     cashback = models.BooleanField(default=False)
     portability = models.BooleanField(default=False)
     guarantor_jbsp = models.BooleanField(default=False)
@@ -1937,13 +1938,32 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     sharia_compliant_mortgages = models.BooleanField(default=False)
     ltd_company_btl = models.BooleanField(default=False)
     any_incentives = models.BooleanField(default=False)
+    note_two = models.CharField(max_length=10000, null=True, blank=True)
     considering_debt_consolidation = models.CharField(
         max_length=10000, null=True, blank=True
     )
+    anticipate_any_changes = models.BooleanField(default=False)
     anticipate_any_changes_notes = models.CharField(
         max_length=10000, null=True, blank=True
     )
-    anticipate_any_changes = models.BooleanField(default=False)
+    app_one_life_cover = models.BooleanField(default=False)
+    app_one_critical_illness = models.BooleanField(default=False)
+    app_one_income_protection = models.BooleanField(default=False)
+    app_one_asu = models.BooleanField(default=False)
+    app_one_pmi = models.BooleanField(default=False)
+    app_one_family_income_benefit = models.BooleanField(default=False)
+    app_one_buildings_and_contents = models.BooleanField(default=False)
+
+    app_two_life_cover = models.BooleanField(default=False)
+    app_two_critical_illness = models.BooleanField(default=False)
+    app_two_income_protection = models.BooleanField(default=False)
+    app_two_asu = models.BooleanField(default=False)
+    app_two_pmi = models.BooleanField(default=False)
+    app_two_family_income_benefit = models.BooleanField(default=False)
+    app_two_buildings_and_contents = models.BooleanField(default=False)
+
+
+
     buildings = models.BooleanField(default=False)
     contents = models.BooleanField(default=False)
     accidental_damage = models.BooleanField(default=False)
@@ -1959,13 +1979,13 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
         max_length=10000, null=True, blank=True
     )
     mortgage_requirements = models.BooleanField(default=False)
-    notes = models.CharField(max_length=10000, null=True, blank=True)
+    note_three = models.CharField(max_length=10000, null=True, blank=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
 
     def __str__(self):
-        return f"{self.notes} {self.repayment_method}"
+        return f"{self.repayment_method}"
 
 
 class MortgageFeatures(CreatedAtUpdatedAtBaseModel):
