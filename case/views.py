@@ -131,7 +131,7 @@ class CaseListCreateApiView(ListCreateAPIView):
         )
 
         if hasattr(user, "user_type") and user.user_type.upper() == "LEAD":
-            queryset = queryset.filter(lead=user)
+            return queryset.filter(lead=user)
 
         return queryset
 
