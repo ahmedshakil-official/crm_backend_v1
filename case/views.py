@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models.functions import Lead
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework import status
@@ -119,13 +120,21 @@ class CaseListCreateApiView(ListCreateAPIView):
     ]
 
     def get_queryset(self):
-        # Get the organization associated with the user
+        user = self.request.user
         organization = get_object_or_404(
             Organization, organization_users__user=self.request.user
         )
-        return Case.objects.select_related("organization", "lead", "created_by").filter(
-            organization=organization, is_removed=False
+
+        queryset = Case.objects.select_related("organization", "lead", "created_by").filter(
+            organization=organization,
+            is_removed=False
         )
+
+        if hasattr(user, "user_type") and user.user_type.upper() == "LEAD":
+            return queryset.filter(lead=user)
+
+        return queryset
+
 
     def perform_create(self, serializer):
         # Get the organization associated with the user
