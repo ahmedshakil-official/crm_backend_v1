@@ -16,7 +16,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization
@@ -59,7 +58,7 @@ from .models import (
     Suitability,
     ExtraAnswer,
     Compliance,
-    MortgageNeeds,
+    MortgageNeeds, MortgageFeatures,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -102,6 +101,35 @@ from .serializers import (
 )
 
 
+class CaseRelatedViewMixin:
+    """
+    Mixin providing common functionality for case-related views.
+    Handles case retrieval and caching to avoid repetitive database queries.
+    """
+
+    def get_case(self):
+        """
+        Fetches and caches the case instance based on the alias in the URL.
+        Raises NotFound if the case doesn't exist.
+        """
+        if not hasattr(self, '_cached_case'):
+            case_alias = self.kwargs.get('case_alias')
+            if not case_alias:
+                raise NotFound("Case alias not provided in URL.")
+            try:
+                self._cached_case = Case.objects.get(alias=case_alias)
+            except Case.DoesNotExist:
+                raise NotFound("Case not found.")
+        return self._cached_case
+
+    def get_serializer_context(self):
+        """Add case to serializer context if the view is case-related."""
+        context = super().get_serializer_context()
+        if 'case_alias' in self.kwargs:
+            context['case'] = self.get_case()
+        return context
+
+
 class CaseListCreateApiView(ListCreateAPIView):
     serializer_class = CaseListCreateSerializer
     permission_classes = [IsAuthenticated]
@@ -124,20 +152,15 @@ class CaseListCreateApiView(ListCreateAPIView):
         organization = get_object_or_404(
             Organization, organization_users__user=self.request.user
         )
-
         queryset = Case.objects.select_related("organization", "lead", "created_by").filter(
             organization=organization,
             is_removed=False
         )
-
         if hasattr(user, "user_type") and user.user_type.upper() == "LEAD":
             return queryset.filter(lead=user)
-
         return queryset
 
-
     def perform_create(self, serializer):
-        # Get the organization associated with the user
         organization = get_object_or_404(
             Organization, organization_users__user=self.request.user
         )
@@ -147,7 +170,6 @@ class CaseListCreateApiView(ListCreateAPIView):
         )
 
     def get_serializer_context(self):
-        # Add the request to the serializer context to allow dynamic queryset for 'lead' field
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
@@ -159,7 +181,6 @@ class CaseRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
     lookup_field = "alias"
 
     def get_queryset(self):
-        # Retrieve the organization for the logged-in user
         organization = get_object_or_404(
             Organization, organization_users__user=self.request.user
         )
@@ -174,7 +195,7 @@ class CaseRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
         instance.save()
 
 
-class FileListCreateApiView(ListCreateAPIView):
+class FileListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = FileSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
@@ -183,98 +204,47 @@ class FileListCreateApiView(ListCreateAPIView):
     def get_filterset_kwargs(self):
         kwargs = super().get_filterset_kwargs()
         kwargs["request"] = self.request
-        kwargs["case"] = self.get_case()  # Ensure you pass the relevant case
+        kwargs["case"] = self.get_case()
         return kwargs
 
-    def get_case(self):
-        """
-        Fetches and caches the case instance based on the alias in the URL.
-        """
-        if not hasattr(self, "_case"):
-            case_alias = self.kwargs.get("case_alias")
-            try:
-                self._case = Case.objects.get(alias=case_alias)
-            except Case.DoesNotExist:
-                raise NotFound("Case not found.")
-        return self._case
-
     def get_queryset(self):
-        case = self.get_case()  # Ensure case is fetched
-        return Files.objects.filter(case=case)
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update(
-            {
-                "case": self.get_case(),  # Use the helper method to get the case
-                "request": self.request,
-            }
-        )
-        return context
+        return Files.objects.filter(case=self.get_case())
 
 
-class FileRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
+class FileRetrieveUpdateDeleteApiView(CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = FileSerializer
     permission_classes = [IsAuthenticated]
-    lookup_field = "alias"  # Lookup by alias for file
+    lookup_field = "alias"
 
     def get_object(self):
-        # Fetch the case and file associated with the case_alias and alias
-        case_alias = self.kwargs.get("case_alias")
+        case = self.get_case()
         file_alias = self.kwargs.get("alias")
-
-        # Get the case associated with the case_alias
-        case = get_object_or_404(Case, alias=case_alias)
-
-        # Fetch the file by its alias and case
-        file = get_object_or_404(Files, case=case, alias=file_alias)
-
-        return file
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update(
-            {
-                "case": self.get_object().case,  # Access the case associated with the file
-                "request": self.request,
-            }
-        )
-        return context
+        return get_object_or_404(Files, case=case, alias=file_alias)
 
     def perform_update(self, serializer):
-        # Assign updated_by on update
         serializer.save(updated_by=self.request.user)
 
     def perform_destroy(self, instance):
-        # Permanently delete the file
-        instance.delete()  # This will permanently delete the file from the database
-
-        # Return a 204 No Content response after deleting the file
+        instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class JointUserListCreateApiView(ListCreateAPIView):
+class JointUserListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = JointUserSerializer
 
     def get_queryset(self):
-        case_alias = self.kwargs.get("case_alias")
-        case = get_object_or_404(Case, alias=case_alias)
-        return JointUser.objects.filter(case=case, is_removed=False)
+        return JointUser.objects.filter(case=self.get_case(), is_removed=False)
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs.get("case_alias")
-        case = get_object_or_404(Case, alias=case_alias)
-        serializer.save(case=case)
+        serializer.save(case=self.get_case())
 
 
-class JointUserRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
+class JointUserRetrieveUpdateDeleteApiView(CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = JointUserSerializer
     lookup_field = "alias"
 
     def get_queryset(self):
-        case_alias = self.kwargs.get("case_alias")
-        case = get_object_or_404(Case, alias=case_alias)
-        return JointUser.objects.filter(case=case)
+        return JointUser.objects.filter(case=self.get_case())
 
     def perform_destroy(self, instance):
         instance.is_removed = True
@@ -282,231 +252,159 @@ class JointUserRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
         instance.save()
 
 
-class CaseUserListApiView(ListAPIView):
+class CaseUserListApiView(CaseRelatedViewMixin, ListAPIView):
     serializer_class = CaseUserListSerializer
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-
-        try:
-            case = Case.objects.get(alias=case_alias)
-        except Case.DoesNotExist:
-            raise NotFound("Case not found.")
-
-        return JointUser.objects.filter(case=case, is_removed=False)
+        return JointUser.objects.filter(case=self.get_case(), is_removed=False)
 
     def list(self, request, *args, **kwargs):
         joint_users = self.get_queryset()
-
-        case_alias = self.kwargs["case_alias"]
-        try:
-            case = Case.objects.get(alias=case_alias)
-        except Case.DoesNotExist:
-            raise NotFound("Case not found.")
-
+        case = self.get_case()
         lead_user = CommonUserWithIdSerializer(case.lead).data
         joint_users_data = CaseUserListSerializer(joint_users, many=True).data
-
         return Response({"lead_user": lead_user, "joint_users": joint_users_data})
 
 
-class LoanDetailsListCreateApiView(ListCreateAPIView):
+class LoanDetailsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = LoanDetailsSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs.get("case_alias")
-        case = get_object_or_404(Case, alias=case_alias)
-        return LoanDetails.objects.filter(case=case)
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        case_alias = self.kwargs.get("case_alias")
-        case = get_object_or_404(Case, alias=case_alias)
-        context.update({"case": case})
-        return context
+        return LoanDetails.objects.filter(case=self.get_case())
 
     def perform_create(self, serializer):
-        case = self.get_serializer_context().get("case")
-        serializer.save(created_by=self.request.user, case=case)
+        serializer.save(created_by=self.request.user, case=self.get_case())
 
 
-class LoanDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+class LoanDetailsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = LoanDetailsSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
     def get_object(self):
-        case_alias = self.kwargs.get("case_alias")
+        case = self.get_case()
         loan_alias = self.kwargs.get("alias")
-        case = get_object_or_404(Case, alias=case_alias)
-        loan_details = get_object_or_404(LoanDetails, case=case, alias=loan_alias)
-        return loan_details
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update({"case": self.get_object().case})
-        return context
+        return get_object_or_404(LoanDetails, case=case, alias=loan_alias)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-class CaseUserListViewOnlyApiView(ListAPIView):
+class CaseUserListViewOnlyApiView(CaseRelatedViewMixin, ListAPIView):
     serializer_class = CommonUserWithIdSerializer
 
     def get_queryset(self):
-        # Retrieve the Case by alias from the URL
-        case_alias = self.kwargs.get("case_alias")
-        case = get_object_or_404(Case, alias=case_alias)
-
-        # Collect user IDs from the lead and joint users
+        case = self.get_case()
         user_ids = set()
         if case.lead:
             user_ids.add(case.lead.id)
-
-        # Add joint_user IDs (excluding removed ones)
         joint_user_ids = case.joint_users.filter(is_removed=False).values_list(
             "joint_user_id", flat=True
         )
         user_ids.update(joint_user_ids)
-
-        # Return a QuerySet of User objects matching the collected IDs
         return User.objects.filter(id__in=user_ids)
 
 
-class ApplicantDetailsListApiView(ListAPIView):
-
+class ApplicantDetailsListApiView(CaseRelatedViewMixin, ListAPIView):
     serializer_class = ApplicantDetailsSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs.get("case_alias")
-        return ApplicantDetails.objects.filter(case__alias=case_alias)
+        return ApplicantDetails.objects.filter(case=self.get_case())
 
 
-class ApplicantDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+class ApplicantDetailsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     queryset = ApplicantDetails.objects.all()
     serializer_class = ApplicantDetailsSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
     def get_object(self):
-        case_alias = self.kwargs.get("case_alias")
+        case = self.get_case()
         alias = self.kwargs.get("alias")
-        return get_object_or_404(ApplicantDetails, case__alias=case_alias, alias=alias)
+        return get_object_or_404(ApplicantDetails, case=case, alias=alias)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-class DependantListCreateApiView(ListCreateAPIView):
+class DependantListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = DependantSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-
-        case_alias = self.kwargs.get("case_alias")
+        case = self.get_case()
         alias = self.kwargs.get("alias")
         return Dependant.objects.filter(
-            applicant_details__case__alias=case_alias, applicant_details__alias=alias
+            applicant_details__case=case, applicant_details__alias=alias
         )
 
     def perform_create(self, serializer):
-
-        case_alias = self.kwargs.get("case_alias")
+        case = self.get_case()
         alias = self.kwargs.get("alias")
-
         applicant_details = get_object_or_404(
-            ApplicantDetails,
-            case__alias=case_alias,
-            alias=alias,
+            ApplicantDetails, case=case, alias=alias
         )
-
         serializer.save(applicant_details=applicant_details)
 
 
-class CompanyInfoListCreateApiView(ListCreateAPIView):
+class CompanyInfoListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = CompanyInfoSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """Return all CompanyInfo rows linked to the specified ApplicantDetails."""
-        case_alias = self.kwargs["case_alias"]
+        case = self.get_case()
         alias = self.kwargs["alias"]
         return CompanyInfo.objects.filter(
-            applicant_details__case__alias=case_alias, applicant_details__alias=alias
+            applicant_details__case=case, applicant_details__alias=alias
         )
 
     def perform_create(self, serializer):
-        """Attach the correct ApplicantDetails before saving the new CompanyInfo."""
-        case_alias = self.kwargs["case_alias"]
+        case = self.get_case()
         alias = self.kwargs["alias"]
         applicant_details = get_object_or_404(
-            ApplicantDetails, case__alias=case_alias, alias=alias
+            ApplicantDetails, case=case, alias=alias
         )
         serializer.save(applicant_details=applicant_details)
 
 
-class DirectorShareholderListCreateApiView(ListCreateAPIView):
+class DirectorShareholderListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = DirectorShareholderSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """
-        Filter DirectorShareholder records by:
-         - case__alias
-         - applicant_details__alias
-         - company_name
-        """
-        case_alias = self.kwargs["case_alias"]
+        case = self.get_case()
         alias = self.kwargs["alias"]
         company_name = self.kwargs["company_name"]
-
         return DirectorShareholder.objects.filter(
-            company__applicant_details__case__alias=case_alias,
+            company__applicant_details__case=case,
             company__applicant_details__alias=alias,
             company__company_name=company_name,
         )
 
     def perform_create(self, serializer):
-        """
-        Automatically set the correct CompanyInfo for the newly created shareholder.
-        """
-        case_alias = self.kwargs["case_alias"]
+        case = self.get_case()
         alias = self.kwargs["alias"]
         company_name = self.kwargs["company_name"]
-
-        # Look up the matching CompanyInfo record
         company = get_object_or_404(
             CompanyInfo,
-            applicant_details__case__alias=case_alias,
+            applicant_details__case=case,
             applicant_details__alias=alias,
             company_name=company_name,
         )
-
-        # Attach the company to the new DirectorShareholder record
         serializer.save(company=company)
 
 
-class EmploymentDetailsListApiView(ListAPIView):
-    """
-    Returns a list of all EmploymentDetails associated with a specific case.
-    """
-
+class EmploymentDetailsListApiView(CaseRelatedViewMixin, ListAPIView):
     serializer_class = EmploymentDetailsSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        return EmploymentDetails.objects.filter(case__alias=case_alias)
+        return EmploymentDetails.objects.filter(case=self.get_case())
 
 
-class EmploymentDetailsCreateApiView(CreateAPIView):
-    """
-    Creates a new EmploymentDetails record.
-    """
-
+class EmploymentDetailsCreateApiView(CaseRelatedViewMixin, CreateAPIView):
     serializer_class = EmploymentDetailsSerializer
     permission_classes = [IsAuthenticated]
 
@@ -514,223 +412,201 @@ class EmploymentDetailsCreateApiView(CreateAPIView):
         return EmploymentDetails.objects.all()
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
+        case = self.get_case()
         user_obj = get_object_or_404(User, pk=self.kwargs["pk"])
-        case_obj = get_object_or_404(Case, alias=case_alias)
-
         serializer.save(
-            case=case_obj,
+            case=case,
             user=user_obj,
             created_by=self.request.user,
         )
 
 
-class EmploymentDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
-    """
-    Retrieve or update a single EmploymentDetails instance by its 'alias' field.
-    """
-
+class EmploymentDetailsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = EmploymentDetailsSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        return EmploymentDetails.objects.filter(case__alias=case_alias)
+        return EmploymentDetails.objects.filter(case=self.get_case())
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-class AdverseListApiView(ListAPIView):
-
+class AdverseListApiView(CaseRelatedViewMixin, ListAPIView):
     serializer_class = AdverseSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs.get("case_alias")
-        return Adverse.objects.filter(case__alias=case_alias)
+        return Adverse.objects.filter(case=self.get_case())
 
 
-class AdverseRetrieveUpdateApiView(RetrieveUpdateAPIView):
-    """
-    Retrieve or update a single EmploymentDetails instance by its 'alias' field.
-    """
-
+class AdverseRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = AdverseSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        return Adverse.objects.filter(case__alias=case_alias)
+        return Adverse.objects.filter(case=self.get_case())
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-# views for RegisterLoan
-class RegisterLoanListCreateApiView(ListCreateAPIView):
+class RegisterLoanListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = RegisterLoanSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        case = self.get_case()
         alias = self.kwargs.get("alias")
-        return RegisterLoan.objects.filter(adverse__alias=alias)
+        return RegisterLoan.objects.filter(
+            adverse__case=case, adverse__alias=alias
+        )
 
     def perform_create(self, serializer):
-        alias = self.kwargs["alias"]
-        adverse = get_object_or_404(Adverse, alias=alias)
-        serializer.save(adverse=adverse, created_by=self.request.user)
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        adverse = get_object_or_404(Adverse, case=case, alias=alias)
+        serializer.save(adverse=adverse)
 
 
-class CCJListCreateApiView(ListCreateAPIView):
+class CCJListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = CCJSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        case = self.get_case()
         alias = self.kwargs.get("alias")
-        return CCJ.objects.filter(adverse__alias=alias)
+        return CCJ.objects.filter(
+            adverse__case=case, adverse__alias=alias
+        )
 
     def perform_create(self, serializer):
-        alias = self.kwargs["alias"]
-        adverse = get_object_or_404(Adverse, alias=alias)
-        serializer.save(adverse=adverse, created_by=self.request.user)
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        adverse = get_object_or_404(Adverse, case=case, alias=alias)
+        serializer.save(adverse=adverse)
 
 
-class PaymentCommitmentListCreateApiView(ListCreateAPIView):
+class PaymentCommitmentListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = PaymentCommitmentSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        case = self.get_case()
         alias = self.kwargs.get("alias")
-        return PaymentCommitment.objects.filter(adverse__alias=alias)
+        return PaymentCommitment.objects.filter(
+            adverse__case=case, adverse__alias=alias
+        )
 
     def perform_create(self, serializer):
-        alias = self.kwargs["alias"]
-        adverse = get_object_or_404(Adverse, alias=alias)
-        serializer.save(adverse=adverse, created_by=self.request.user)
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        adverse = get_object_or_404(Adverse, case=case, alias=alias)
+        serializer.save(adverse=adverse)
 
 
-# views for Property Repossessed
-class PropertyRepossessedListCreateApiView(ListCreateAPIView):
+class PropertyRepossessedListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = PropertyRepossessedSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        case = self.get_case()
         alias = self.kwargs.get("alias")
-        return PropertyRepossessed.objects.filter(adverse__alias=alias)
+        return PropertyRepossessed.objects.filter(
+            adverse__case=case, adverse__alias=alias
+        )
 
     def perform_create(self, serializer):
-        alias = self.kwargs["alias"]
-        adverse = get_object_or_404(Adverse, alias=alias)
-        serializer.save(adverse=adverse, created_by=self.request.user)
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        adverse = get_object_or_404(Adverse, case=case, alias=alias)
+        serializer.save(adverse=adverse)
 
 
-class BankruptListCreateApiView(ListCreateAPIView):
+class BankruptListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = BankruptSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        case = self.get_case()
         alias = self.kwargs.get("alias")
-        return Bankrupt.objects.filter(adverse__alias=alias)
+        return Bankrupt.objects.filter(
+            adverse__case=case, adverse__alias=alias
+        )
 
     def perform_create(self, serializer):
-        alias = self.kwargs["alias"]
-        adverse = get_object_or_404(Adverse, alias=alias)
-        serializer.save(adverse=adverse, created_by=self.request.user)
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        adverse = get_object_or_404(Adverse, case=case, alias=alias)
+        serializer.save(adverse=adverse)
 
 
-class IndividualVoluntaryListCreateApiView(ListCreateAPIView):
+class IndividualVoluntaryListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = IndividualVoluntarySerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        case = self.get_case()
         alias = self.kwargs.get("alias")
-        return IndividualVoluntary.objects.filter(adverse__alias=alias)
+        return IndividualVoluntary.objects.filter(
+            adverse__case=case, adverse__alias=alias
+        )
 
     def perform_create(self, serializer):
-        alias = self.kwargs["alias"]
-        adverse = get_object_or_404(Adverse, alias=alias)
-        serializer.save(adverse=adverse, created_by=self.request.user)
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        adverse = get_object_or_404(Adverse, case=case, alias=alias)
+        serializer.save(adverse=adverse)
 
 
-class DebtManagementPlanListCreateApiView(ListCreateAPIView):
+class DebtManagementPlanListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = DebtManagementPlanSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        case = self.get_case()
         alias = self.kwargs.get("alias")
-        return DebtManagementPlan.objects.filter(adverse__alias=alias)
+        return DebtManagementPlan.objects.filter(
+            adverse__case=case, adverse__alias=alias
+        )
 
     def perform_create(self, serializer):
-        alias = self.kwargs["alias"]
-        adverse = get_object_or_404(Adverse, alias=alias)
-        serializer.save(adverse=adverse, created_by=self.request.user)
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        adverse = get_object_or_404(Adverse, case=case, alias=alias)
+        serializer.save(adverse=adverse)
 
 
-class PayDayLoanListCreateApiView(ListCreateAPIView):
+class PayDayLoanListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = PayDayLoanSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        case = self.get_case()
         alias = self.kwargs.get("alias")
-        return PayDayLoan.objects.filter(adverse__alias=alias)
+        return PayDayLoan.objects.filter(
+            adverse__case=case, adverse__alias=alias
+        )
 
     def perform_create(self, serializer):
-        alias = self.kwargs["alias"]
-        adverse = get_object_or_404(Adverse, alias=alias)
-        serializer.save(adverse=adverse, created_by=self.request.user)
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        adverse = get_object_or_404(Adverse, case=case, alias=alias)
+        serializer.save(adverse=adverse)
 
 
-class PropertyListCreateApiView(ListCreateAPIView):
-    """
-    Remember some points:
-    1. It has foreign key with case
-    2. Many to many field with users. So property could be lead user from case model or joint users of this case.
-    3. request.user should be created_by.
-    """
-
+class PropertyListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """Retrieve all properties for a given case."""
-        case = get_object_or_404(Case, alias=self.kwargs["case_alias"])
-        return Property.objects.filter(case=case)
+        return Property.objects.filter(case=self.get_case())
 
     def perform_create(self, serializer):
-        """Validate and create a new property entry."""
-        case = get_object_or_404(Case, alias=self.kwargs["case_alias"])
-
-        # Fetch valid applicants (lead + joint users)
-        valid_applicants = [case.lead.id]  # Lead user
-        joint_users = case.joint_users.values_list(
-            "joint_user_id", flat=True
-        )  # Joint users
-        valid_applicants.extend(joint_users)
-
-        # Extract applicant list from request
-        applicant_ids = self.request.data.get("applicant_ids", [])  # FIXED HERE
-
-        # Validate that all provided applicants belong to the case
-        invalid_applicants = [
-            uid for uid in applicant_ids if uid not in valid_applicants
-        ]
-        if invalid_applicants:
-            return Response(
-                {"error": "Some applicants are not associated with this case."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Save the property with the validated applicants
-        property_instance = serializer.save(
-            case=case,
-            created_by=self.request.user,
-        )
-        property_instance.applicant.set(applicant_ids)  # FIXED HERE
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        case = self.get_case()
+        serializer.save(case=case, created_by=self.request.user)
 
 
 class SolicitorListCreateApiView(ListCreateAPIView):
@@ -738,12 +614,10 @@ class SolicitorListCreateApiView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return SolicitorAccountant.objects.filter(user_type=UserTypeChoices.SOLICITOR)
+        return SolicitorAccountant.objects.filter(user_type='SOLICITOR')
 
     def perform_create(self, serializer):
-        serializer.save(
-            user_type=UserTypeChoices.SOLICITOR, created_by=self.request.user
-        )
+        serializer.save(user_type='SOLICITOR', created_by=self.request.user)
 
 
 class AccountantListCreateApiView(ListCreateAPIView):
@@ -751,368 +625,301 @@ class AccountantListCreateApiView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return SolicitorAccountant.objects.filter(user_type=UserTypeChoices.ACCOUNTANT)
+        return SolicitorAccountant.objects.filter(user_type='ACCOUNTANT')
 
     def perform_create(self, serializer):
-        serializer.save(
-            user_type=UserTypeChoices.ACCOUNTANT, created_by=self.request.user
-        )
+        serializer.save(user_type='ACCOUNTANT', created_by=self.request.user)
 
 
-class CaseSolicitorApiView(ListCreateAPIView):
-    serializer_class = CaseSolicitorSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        return CaseSolicitor.objects.filter(case=case)
-
-    def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        serializer.save(case=case, created_by=self.request.user)
-
-
-class CaseSolicitorUpdateApiView(UpdateAPIView):
-    queryset = CaseSolicitor.objects.all()
-    serializer_class = CaseSolicitorSerializer
-    permission_classes = [IsAuthenticated]
-
-    def update(self, request, *args, **kwargs):
-        case_solicitor = self.get_object()
-
-        solicitor_pk = request.data.get("solicitor")
-        solicitor = get_object_or_404(SolicitorAccountant, pk=solicitor_pk)
-
-        case_solicitor.solicitor = solicitor
-        case_solicitor.updated_by = self.request.user
-        case_solicitor.save()
-
-        return Response(self.get_serializer(case_solicitor).data)
-
-
-class CaseAccountantsApiView(ListCreateAPIView):
+class CaseAccountantsApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = CaseAccountantSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        return CaseAccountant.objects.filter(case=case)
+        return CaseAccountant.objects.filter(case=self.get_case())
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
+        case = self.get_case()
         serializer.save(case=case, created_by=self.request.user)
 
 
-class CaseAccountantUpdateApiView(UpdateAPIView):
-    queryset = CaseAccountant.objects.all()
-    serializer_class = CaseAccountantSerializer
+class CaseSolicitorApiView(CaseRelatedViewMixin, ListCreateAPIView):
+    serializer_class = CaseSolicitorSerializer
     permission_classes = [IsAuthenticated]
 
-    def update(self, request, *args, **kwargs):
-        case_accountant = self.get_object()
-        accountant_pk = request.data.get("accountant")
-        accountant = get_object_or_404(SolicitorAccountant, pk=accountant_pk)
+    def get_queryset(self):
+        return CaseSolicitor.objects.filter(case=self.get_case())
 
-        case_accountant.accountant = accountant
-        case_accountant.updated_by = self.request.user
-        case_accountant.save()
-
-        return Response(self.get_serializer(case_accountant).data)
+    def perform_create(self, serializer):
+        case = self.get_case()
+        serializer.save(case=case, created_by=self.request.user)
 
 
 class SolicitorRetrieveUpdateApiView(RetrieveUpdateAPIView):
-    queryset = SolicitorAccountant.objects.all()
     serializer_class = SolicitorAccountantSerializer
+    permission_classes = [IsAuthenticated]
     lookup_field = "alias"
+
+    def get_queryset(self):
+        return SolicitorAccountant.objects.filter(user_type='SOLICITOR')
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
 class AccountantRetrieveUpdateApiView(RetrieveUpdateAPIView):
-    queryset = SolicitorAccountant.objects.all()
     serializer_class = SolicitorAccountantSerializer
+    permission_classes = [IsAuthenticated]
     lookup_field = "alias"
+
+    def get_queryset(self):
+        return SolicitorAccountant.objects.filter(user_type='ACCOUNTANT')
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-class ExistingProtectionListApiView(ListAPIView):
+class ExistingProtectionListApiView(CaseRelatedViewMixin, ListAPIView):
     serializer_class = ExistingProtectionSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case_obj = get_object_or_404(Case, alias=case_alias)
-        return ExistingProtection.objects.filter(case=case_obj)
+        return ExistingProtection.objects.filter(case=self.get_case())
 
 
-class ExistingProtectionCreateApiView(CreateAPIView):
+class ExistingProtectionCreateApiView(CaseRelatedViewMixin, CreateAPIView):
     serializer_class = ExistingProtectionSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
+        case = self.get_case()
         user_obj = get_object_or_404(User, pk=self.kwargs["pk"])
-        case_obj = get_object_or_404(Case, alias=case_alias)
-
-        # Check if the user is a valid applicant
-        valid_applicants = {case_obj.lead.id}  # Lead user ID
-        valid_applicants.update(
-            JointUser.objects.filter(case=case_obj).values_list(
-                "joint_user_id", flat=True
-            )
-        )  # Joint user IDs
-
-        if user_obj.id not in valid_applicants:
-            raise PermissionDenied("You are not authorized to create this record.")
-
-        serializer.save(
-            case=case_obj,
-            user=user_obj,
-            created_by=self.request.user,
-        )
+        serializer.save(case=case, user=user_obj, created_by=self.request.user)
 
 
-class ExistingProtectionRetrieveUpdateApiView(RetrieveUpdateAPIView):
-    queryset = ExistingProtection.objects.all()
+class ExistingProtectionRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = ExistingProtectionSerializer
+    permission_classes = [IsAuthenticated]
     lookup_field = "alias"
+
+    def get_object(self):
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        return get_object_or_404(ExistingProtection, case=case, alias=alias)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-class NoteListCreateApiView(ListCreateAPIView):
+class NoteListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = NotesSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields = [
-        "name",
-        "category",
-        "task_priority",
-    ]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        return Notes.objects.filter(case=case)
+        return Notes.objects.filter(case=self.get_case())
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
+        case = self.get_case()
         serializer.save(case=case, created_by=self.request.user)
 
 
-class NoteRetrieveUpdateApiView(RetrieveUpdateAPIView):
-    queryset = Notes.objects.all()
+class NoteRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = NotesSerializer
+    permission_classes = [IsAuthenticated]
     lookup_field = "alias"
+
+    def get_object(self):
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        return get_object_or_404(Notes, case=case, alias=alias)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-class PropertyDetailsListCreateApiView(ListCreateAPIView):
+class PropertyDetailsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = PropertyDetailsSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        return PropertyDetails.objects.filter(case=case)
+        return PropertyDetails.objects.filter(case=self.get_case())
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
+        case = self.get_case()
         serializer.save(case=case, created_by=self.request.user)
 
 
-class PropertyDetailsRetrieveUpdateApiView(RetrieveUpdateAPIView):
-    queryset = PropertyDetails.objects.all()
+class PropertyDetailsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = PropertyDetailsSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
+    def get_object(self):
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        return get_object_or_404(PropertyDetails, case=case, alias=alias)
+
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-class OtherOccupantsListCreateApiView(ListCreateAPIView):
+class OtherOccupantsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = OtherOccupantsSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        return OtherOccupants.objects.filter(case=case)
+        return OtherOccupants.objects.filter(case=self.get_case())
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
+        case = self.get_case()
         serializer.save(case=case, created_by=self.request.user)
 
 
-class OtherOccupantsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+class OtherOccupantsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = OtherOccupantsSerializer
+    permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
-    def get_queryset(self):
-        return OtherOccupants.objects.select_related("case").all()
+    def get_object(self):
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        return get_object_or_404(OtherOccupants, case=case, alias=alias)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-class ProductListCreateApiView(ListCreateAPIView):
+class ProductListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        return Product.objects.filter(case=case)
+        return Product.objects.filter(case=self.get_case())
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
+        case = self.get_case()
         serializer.save(case=case, created_by=self.request.user)
 
 
-class ProductRetrieveUpdateApiView(RetrieveUpdateAPIView):
+class ProductRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
-    def get_queryset(self):
-        return Product.objects.select_related("case").all()
+    def get_object(self):
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        return get_object_or_404(Product, case=case, alias=alias)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-class BudgetPlannerListCreateApiView(ListCreateAPIView):
+class BudgetPlannerListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = BudgetPlannerSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        return BudgetPlanner.objects.filter(case__alias=case_alias)
+        return BudgetPlanner.objects.filter(case=self.get_case())
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        # So the serializer has access to request.user
-        context["request"] = self.request
-        return context
-
-    @transaction.atomic
     def perform_create(self, serializer):
-        # We fetch the case based on the URL's case_alias
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-
-        # We set the case on BudgetPlanner, ignoring any case in request data
-        serializer.save(case=case)
+        case = self.get_case()
+        serializer.save(case=case, created_by=self.request.user)
 
 
-class BudgetPlannerRetrieveUpdateApiView(RetrieveUpdateAPIView):
+class BudgetPlannerRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = BudgetPlannerSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
-    queryset = BudgetPlanner.objects.all()
 
-    def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        return BudgetPlanner.objects.filter(case__alias=case_alias)
+    def get_object(self):
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        return get_object_or_404(BudgetPlanner, case=case, alias=alias)
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["request"] = self.request
-        return context
-
-    @transaction.atomic
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
 
 
-class FeesInListCreateApiView(ListCreateAPIView):
+class FeesInListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = FeesSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        return Fees.objects.filter(case=case, fees_type=FeesChoices.FEES_IN)
+        case = self.get_case()
+        return Fees.objects.filter(case=case, fee_type=FeesChoices.FEES_IN)
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        serializer.save(
-            case=case, fees_type=FeesChoices.FEES_IN, created_by=self.request.user
-        )
+        case = self.get_case()
+        serializer.save(case=case, fee_type=FeesChoices.FEES_IN, created_by=self.request.user)
 
 
-class FeesOutListCreateApiView(ListCreateAPIView):
+class FeesOutListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = FeesSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        return Fees.objects.filter(case=case, fees_type=FeesChoices.FEES_OUT)
+        case = self.get_case()
+        return Fees.objects.filter(case=case, fee_type=FeesChoices.FEES_OUT)
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        serializer.save(
-            case=case, fees_type=FeesChoices.FEES_OUT, created_by=self.request.user
-        )
+        case = self.get_case()
+        serializer.save(case=case, fee_type=FeesChoices.FEES_OUT, created_by=self.request.user)
 
 
-class DipHistoryListCreateApiView(ListCreateAPIView):
+class FeesRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
+    serializer_class = FeesSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "alias"
+
+    def get_object(self):
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        return get_object_or_404(Fees, case=case, alias=alias)
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+
+
+
+class DipHistoryListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = DipHistorySerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
+        case = self.get_case()
         return DipHistory.objects.filter(case=case)
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
+        case = self.get_case()
         serializer.save(case=case, created_by=self.request.user)
 
 
-class DipHistoryRetrieveUpdateApiView(RetrieveUpdateAPIView):
+
+class DipHistoryRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = DipHistorySerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
-    def get_queryset(self):
-        return DipHistory.objects.select_related("case").all()
+    def get_object(self):
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        return get_object_or_404(DipHistory, case=case, alias=alias)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-class CreditCommitmentsListCreateApiView(ListCreateAPIView):
+class CreditCommitmentsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = CreditCommitmentsSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
+        case = self.get_case()
         return CreditCommitments.objects.filter(case=case)
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
+        case = self.get_case()
         applicant = serializer.validated_data["applicant"]
 
         # Check if the applicant is the case lead
@@ -1135,20 +942,15 @@ class CreditCommitmentsListCreateApiView(ListCreateAPIView):
         )
 
 
-class CreditCommitmentsRetrieveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
+class CreditCommitmentsRetrieveUpdateDestroyApiView(CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = CreditCommitmentsSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
-    def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
-        return CreditCommitments.objects.filter(case=case)
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["case_alias"] = self.kwargs["case_alias"]
-        return context
+    def get_object(self):
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        return get_object_or_404(CreditCommitments, case=case, alias=alias)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
@@ -1157,19 +959,13 @@ class CreditCommitmentsRetrieveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView
         instance.delete()
 
 
-class SuitabilityRetrieveUpdateApiView(RetrieveUpdateDestroyAPIView):
+class SuitabilityRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = SuitabilitySerializer
     permission_classes = [IsAuthenticated]
-    queryset = Suitability.objects.all()
 
     def get_object(self):
-        case_alias = self.kwargs["case_alias"]
-        return get_object_or_404(Suitability, case__alias=case_alias)
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["request"] = self.request
-        return context
+        case = self.get_case()
+        return get_object_or_404(Suitability, case=case)
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
@@ -1179,44 +975,40 @@ class SuitabilityRetrieveUpdateApiView(RetrieveUpdateDestroyAPIView):
         return super().update(request, *args, **kwargs)
 
 
-class ExtraAnswerListCreateApiView(ListCreateAPIView):
+class ExtraAnswerListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = ExtraAnswerSerializers
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
+        case = self.get_case()
         return ExtraAnswer.objects.filter(case=case)
 
     def perform_create(self, serializer):
-        case_alias = self.kwargs["case_alias"]
-        case = get_object_or_404(Case, alias=case_alias)
+        case = self.get_case()
         serializer.save(case=case, created_by=self.request.user)
 
 
-class ComplianceRetrieveUpdateApiView(RetrieveUpdateAPIView):
+class ComplianceRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = ComplianceSerializers
     permission_classes = [IsAuthenticated]
-    queryset = Compliance.objects.all()
 
     def get_object(self):
-        case_alias = self.kwargs["case_alias"]
-        compliance = Compliance.objects.get(case__alias=case_alias)
-        return compliance
+        case = self.get_case()
+        return get_object_or_404(Compliance, case=case)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
 
-class MortgageNeedsRetrieveUpdateApiView(RetrieveUpdateAPIView):
+class MortgageNeedsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = MortgageNeedsSerializers
     permission_classes = [IsAuthenticated]
-    queryset = MortgageNeeds.objects.all()
 
     def get_object(self):
-        case_alias = self.kwargs["case_alias"]
-        mortgage_needs = MortgageNeeds.objects.get(case__alias=case_alias)
-        return mortgage_needs
+        case = self.get_case()
+        return get_object_or_404(MortgageNeeds, case=case)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
+
