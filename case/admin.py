@@ -16,6 +16,7 @@ from case.models import (
     ExistingProtection,
     LoanDetails,
     MortgageNeeds,
+    Product
 )
 
 # Register your models here.
@@ -34,6 +35,7 @@ admin.site.register(CaseAccountant)
 admin.site.register(ExistingProtection)
 admin.site.register(LoanDetails)
 admin.site.register(MortgageNeeds)
+admin.site.register(Product)
 
 
 @admin.register(ApplicantDetails)
