@@ -5,7 +5,7 @@ from djoser.conf import settings
 from djoser.serializers import UserCreateSerializer
 from authentication.models import User
 from organization.models import Organization, OrganizationUser
-from common.enums import RoleChoices, UserTypeChoices
+from common.enums import UserTypeChoices
 from common.serializers import CommonUserSerializer
 
 

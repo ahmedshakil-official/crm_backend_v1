@@ -1,58 +1,60 @@
 from django.db import models
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied, NotFound
 
-from common.enums import RoleChoices, UserTypeChoices
-from common.models import User
-from common.views import (
-    BaseOrganizationUserListCreateView,
-    BaseOrganizationUserRetrieveUpdateDeleteView,
-)
+from common.enums import UserTypeChoices
 from organization.models import Organization, OrganizationUser
-from organization.serializers import OrganizationSerializer, OrganizationUserSerializer
+from organization.serializers import OrganizationUserSerializer
 from .serializers import (
     OrganizationUserListCreateSerializer,
-    UserRetrieveUpdateDeleteSerializer,
     OrganizationUserRetrieveUpdateDeleteSerializer,
 )
 
 
-# from organizationuser.serializers import LeadSerializer, ClientSerializer, AdvisorSerializer, IntroducerSerializer
+class AuthenticationRequiredMixin:
+    """Mixin to handle authentication checks"""
 
-
-class OrganizationUserListCreateView(ListCreateAPIView):
-    serializer_class = OrganizationUserSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        # Get the user's organization(s)
+    def check_authentication(self):
         if not self.request.user.is_authenticated:
             raise ValidationError("User must be authenticated.")
 
+    def get_user_organization(self):
+        self.check_authentication()
+        organization = Organization.objects.filter(
+            organization_users__user=self.request.user
+        ).first()
+        if not organization:
+            raise PermissionDenied(
+                "You cannot perform this action without being associated with an organization."
+            )
+        return organization
+
+
+class BaseOrganizationUserView:
+    """Base class containing common functionality for organization user views"""
+    permission_classes = [IsAuthenticated]
+    lookup_field = "alias"
+
+    def get_base_queryset(self):
+        self.check_authentication()
         user_organizations = Organization.objects.filter(
             organization_users__user=self.request.user
         )
-
-        # Return users created by the user or associated with their organization(s)
         return OrganizationUser.objects.filter(
             organization__in=user_organizations
         ).select_related("organization", "user", "created_by", "updated_by")
 
+
+class OrganizationUserListCreateView(AuthenticationRequiredMixin, BaseOrganizationUserView, ListCreateAPIView):
+    """Generic view for listing and creating organization users without role restriction"""
+    serializer_class = OrganizationUserSerializer
+
+    def get_queryset(self):
+        return self.get_base_queryset()
+
     def perform_create(self, serializer):
-
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Automatically assign the organization of the request user
-        # Assuming a single organization for simplicity
-        organization = Organization.objects.filter(
-            organization_users__user=self.request.user
-        ).first()
-
-        if not organization:
-            raise ValidationError("You are not associated with any organization.")
-
+        organization = self.get_user_organization()
         serializer.save(
             organization=organization,
             created_by=self.request.user,
@@ -60,309 +62,78 @@ class OrganizationUserListCreateView(ListCreateAPIView):
         )
 
 
-class OrganizationUserRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
+class OrganizationUserRetrieveUpdateDeleteView(AuthenticationRequiredMixin, BaseOrganizationUserView,
+                                               RetrieveUpdateDestroyAPIView):
+    """Generic view for retrieving, updating and deleting organization users without role restriction"""
     serializer_class = OrganizationUserSerializer
-    permission_classes = [IsAuthenticated]
-    lookup_field = "alias"
 
     def get_queryset(self):
-        # Similar filtering as in the ListCreateAPIView
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-
-        user_organizations = Organization.objects.filter(
-            organization_users__user=self.request.user
-        )
-
-        return OrganizationUser.objects.filter(
-            organization__in=user_organizations
-        ).select_related("organization", "user", "created_by", "updated_by")
+        return self.get_base_queryset()
 
     def perform_update(self, serializer):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
+        self.check_authentication()
         serializer.save(updated_by=self.request.user)
 
 
-class LeadListCreateView(ListCreateAPIView):
-    """
-    View to list and create Leads for the authenticated user's organization.
-    """
+class BaseRoleSpecificView:
+    """Base class for role-specific views"""
+    role = None  # Must be set by subclasses
 
+    def get_role_filtered_queryset(self):
+        base_queryset = self.get_base_queryset()
+        return base_queryset.filter(role=self.role)
+
+
+class RoleSpecificListCreate(BaseRoleSpecificView, OrganizationUserListCreateView):
     serializer_class = OrganizationUserListCreateSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Get all organizations the user is associated with
-        user_organizations = Organization.objects.filter(
-            organization_users__user=self.request.user
-        )
-
-        # Get Leads either created by the user or belonging to their organizations
-        return OrganizationUser.objects.filter(
-            organization__in=user_organizations, role=RoleChoices.LEAD
-        ).select_related("organization", "user", "created_by", "updated_by")
+        return self.get_role_filtered_queryset()
 
     def perform_create(self, serializer):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Ensure the user is part of at least one organization
-        user_organization = Organization.objects.filter(
-            organization_users__user=self.request.user
-        ).first()
-
-        if not user_organization:
-            raise PermissionDenied(
-                "You cannot create leads without being associated with an organization."
-            )
-
-        # Save the Lead with the organization and role
+        organization = self.get_user_organization()
         serializer.save(
-            role=RoleChoices.LEAD,
-            organization=user_organization,
+            role=self.role,
+            organization=organization,
             created_by=self.request.user,
         )
 
 
-class LeadRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    """
-    View to retrieve, update, or delete a specific Lead.
-    """
-
+class RoleSpecificRetrieveUpdateDelete(BaseRoleSpecificView, OrganizationUserRetrieveUpdateDeleteView):
     serializer_class = OrganizationUserRetrieveUpdateDeleteSerializer
-    permission_classes = [IsAuthenticated]
-    lookup_field = "alias"
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Get all organizations the user is associated with
-        user_organizations = Organization.objects.filter(
-            organization_users__user=self.request.user
-        )
-
-        # Restrict access to Leads created by the user or within their organizations
-        return OrganizationUser.objects.filter(
-            organization__in=user_organizations, role=RoleChoices.LEAD
-        ).select_related("organization", "user", "created_by", "updated_by")
-
-    def perform_update(self, serializer):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Set the updated_by field during updates
-        serializer.save(updated_by=self.request.user)
+        return self.get_role_filtered_queryset()
 
 
-class ClientListCreateView(ListCreateAPIView):
-    """
-    View to list and create Clients for the authenticated user's organization.
-    """
-
-    serializer_class = OrganizationUserListCreateSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Get all organizations the user is associated with
-        user_organizations = Organization.objects.filter(
-            organization_users__user=self.request.user
-        )
-
-        # Get Clients either created by the user or belonging to their organizations
-        return OrganizationUser.objects.filter(
-            organization__in=user_organizations, role=RoleChoices.CLIENT
-        ).select_related("organization", "user", "created_by", "updated_by")
-
-    def perform_create(self, serializer):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Ensure the user is part of at least one organization
-        user_organization = Organization.objects.filter(
-            organization_users__user=self.request.user
-        ).first()
-
-        if not user_organization:
-            raise PermissionDenied(
-                "You cannot create clients without being associated with an organization."
-            )
-
-        # Save the Client with the organization and role
-        serializer.save(
-            role=RoleChoices.CLIENT,
-            organization=user_organization,
-            created_by=self.request.user,
-        )
+# Role-specific view implementations
+class LeadListCreateView(RoleSpecificListCreate):
+    role = UserTypeChoices.LEAD
 
 
-class ClientRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    """
-    View to retrieve, update, or delete a specific Client.
-    """
-
-    serializer_class = OrganizationUserRetrieveUpdateDeleteSerializer
-    permission_classes = [IsAuthenticated]
-    lookup_field = "alias"
-
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Get all organizations the user is associated with
-        user_organizations = Organization.objects.filter(
-            organization_users__user=self.request.user
-        )
-
-        # Restrict access to Clients created by the user or within their organizations
-        return OrganizationUser.objects.filter(
-            organization__in=user_organizations, role=RoleChoices.CLIENT
-        ).select_related("organization", "user", "created_by", "updated_by")
-
-    def perform_update(self, serializer):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Set the updated_by field during updates
-        serializer.save(updated_by=self.request.user)
+class LeadRetrieveUpdateDeleteView(RoleSpecificRetrieveUpdateDelete):
+    role = UserTypeChoices.LEAD
 
 
-class IntroducerListCreateView(ListCreateAPIView):
-    """
-    View to list and create Clients for the authenticated user's organization.
-    """
-
-    serializer_class = OrganizationUserListCreateSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Get all organizations the user is associated with
-        user_organizations = Organization.objects.filter(
-            organization_users__user=self.request.user
-        )
-
-        # Get Clients either created by the user or belonging to their organizations
-        return OrganizationUser.objects.filter(
-            organization__in=user_organizations, role=RoleChoices.INTRODUCER
-        ).select_related("organization", "user", "created_by", "updated_by")
-
-    def perform_create(self, serializer):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Ensure the user is part of at least one organization
-        user_organization = Organization.objects.filter(
-            organization_users__user=self.request.user
-        ).first()
-
-        if not user_organization:
-            raise PermissionDenied(
-                "You cannot create clients without being associated with an organization."
-            )
-
-        # Save the Client with the organization and role
-        serializer.save(
-            role=RoleChoices.INTRODUCER,
-            organization=user_organization,
-            created_by=self.request.user,
-        )
+class ClientListCreateView(RoleSpecificListCreate):
+    role = UserTypeChoices.CLIENT
 
 
-class IntroducerRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    """
-    View to retrieve, update, or delete a specific Client.
-    """
-
-    serializer_class = OrganizationUserRetrieveUpdateDeleteSerializer
-    permission_classes = [IsAuthenticated]
-    lookup_field = "alias"
-
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Get all organizations the user is associated with
-        user_organizations = Organization.objects.filter(
-            organization_users__user=self.request.user
-        )
-
-        # Restrict access to Clients created by the user or within their organizations
-        return OrganizationUser.objects.filter(
-            organization__in=user_organizations, role=RoleChoices.INTRODUCER
-        ).select_related("organization", "user", "created_by", "updated_by")
-
-    def perform_update(self, serializer):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Set the updated_by field during updates
-        serializer.save(updated_by=self.request.user)
+class ClientRetrieveUpdateDeleteView(RoleSpecificRetrieveUpdateDelete):
+    role = UserTypeChoices.CLIENT
 
 
-class AdvisorListCreateView(ListCreateAPIView):
-    """
-    View to list and create Clients for the authenticated user's organization.
-    """
-
-    serializer_class = OrganizationUserListCreateSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Get all organizations the user is associated with
-        user_organizations = Organization.objects.filter(
-            organization_users__user=self.request.user
-        )
-
-        # Get Clients either created by the user or belonging to their organizations
-        return OrganizationUser.objects.filter(
-            organization__in=user_organizations, role=RoleChoices.ADVISOR
-        ).select_related("organization", "user", "created_by", "updated_by")
-
-    def perform_create(self, serializer):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Ensure the user is part of at least one organization
-        user_organization = Organization.objects.filter(
-            organization_users__user=self.request.user
-        )
-
-        if not user_organization:
-            raise PermissionDenied(
-                "You cannot create clients without being associated with an organization."
-            )
-
-        # Save the Client with the organization and role
-        serializer.save(
-            role=RoleChoices.ADVISOR,
-            organization=user_organization,
-            created_by=self.request.user,
-        )
+class IntroducerListCreateView(RoleSpecificListCreate):
+    role = UserTypeChoices.INTRODUCER
 
 
-class AdvisorRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    """
-    View to retrieve, update, or delete a specific Client.
-    """
+class IntroducerRetrieveUpdateDeleteView(RoleSpecificRetrieveUpdateDelete):
+    role = UserTypeChoices.INTRODUCER
 
-    serializer_class = OrganizationUserRetrieveUpdateDeleteSerializer
-    permission_classes = [IsAuthenticated]
-    lookup_field = "alias"
 
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Get all organizations the user is associated with
-        user_organizations = Organization.objects.filter(
-            organization_users__user=self.request.user
-        ).prefetch_related("organizationuser_set")
+class AdvisorListCreateView(RoleSpecificListCreate):
+    role = UserTypeChoices.ADVISOR
 
-        # Restrict access to Clients created by the user or within their organizations
-        return OrganizationUser.objects.filter(
-            organization__in=user_organizations, role=RoleChoices.ADVISOR
-        ).select_related("organization", "user", "created_by", "updated_by")
 
-    def perform_update(self, serializer):
-        if not self.request.user.is_authenticated:
-            raise ValidationError("User must be authenticated.")
-        # Set the updated_by field during updates
-        serializer.save(updated_by=self.request.user)
+class AdvisorRetrieveUpdateDeleteView(RoleSpecificRetrieveUpdateDelete):
+    role = UserTypeChoices.ADVISOR

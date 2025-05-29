@@ -65,7 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin, CreatedAtUpdatedAtBaseModel):
         help_text=_("Designates whether this user should be treated as active."),
     )
     user_type = models.CharField(
-        max_length=20, choices=UserTypeChoices.choices, default=UserTypeChoices.LEAD
+        max_length=100, choices=UserTypeChoices.choices, default=UserTypeChoices.LEAD
     )
     city = models.CharField(
         db_index=True, max_length=64, unique=False, null=True, blank=True, default=None

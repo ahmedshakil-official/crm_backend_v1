@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_filters.conf import settings
 
-from common.enums import GenderChoices, RoleChoices
+from common.enums import GenderChoices, OrganizationRoleChoices, NetworkRoleChoices
 from common.fields import TimestampThumbnailImageField
 from common.models import NameSlugDescriptionBaseModel, CreatedAtUpdatedAtBaseModel
 from authentication.models import User
@@ -97,8 +97,8 @@ class OrganizationUser(CreatedAtUpdatedAtBaseModel):
     )
     role = models.CharField(
         max_length=64,
-        choices=RoleChoices.choices,
-        default=RoleChoices.ADVISOR,
+        choices=OrganizationRoleChoices.choices,
+        default=OrganizationRoleChoices.ORGANIZATION_SUPPORT,
         verbose_name=_("Role"),
     )
     designation = models.CharField(
@@ -158,8 +158,8 @@ class NetworkUser(CreatedAtUpdatedAtBaseModel):
     )
     role = models.CharField(
         max_length=64,
-        choices=RoleChoices.choices,
-        default=RoleChoices.ADMIN,
+        choices=NetworkRoleChoices.choices,
+        default=NetworkRoleChoices.NETWORK_SUPPORT,
         verbose_name=_("Role"),
     )
     designation = models.CharField(

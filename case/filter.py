@@ -10,7 +10,7 @@ from common.enums import (
     ApplicantTypeChoices,
     CaseStatusChoices,
     CaseStageChoices,
-    RoleChoices,
+    UserTypeChoices,
     FileTypeChoices,
 )
 from .models import Case, Files
@@ -55,7 +55,7 @@ class CaseFilter(filters.FilterSet):
             # Filter Users based on the Organization and Role
             self.filters["created_by"].queryset = User.objects.filter(
                 organization_users__organization=organization,
-                organization_users__role=RoleChoices.ADVISOR,
+                organization_users__role=UserTypeChoices.ADVISOR,
             )
 
 

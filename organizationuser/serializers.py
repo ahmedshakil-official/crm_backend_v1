@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from authentication.models import User
 from organization.models import OrganizationUser
-from common.enums import RoleChoices, UserTypeChoices
+from common.enums import OrganizationRoleChoices, NetworkRoleChoices, UserTypeChoices
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -79,10 +79,10 @@ class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
 
         # Map role to user_type
         role_to_user_type_map = {
-            RoleChoices.LEAD: UserTypeChoices.LEAD,
-            RoleChoices.CLIENT: UserTypeChoices.CLIENT,
-            RoleChoices.ADVISOR: UserTypeChoices.ADVISOR,
-            RoleChoices.INTRODUCER: UserTypeChoices.INTRODUCER,
+            OrganizationRoleChoices.LEAD: UserTypeChoices.LEAD,
+            OrganizationRoleChoices.CLIENT: UserTypeChoices.CLIENT,
+            OrganizationRoleChoices.ADVISOR: UserTypeChoices.ADVISOR,
+            OrganizationRoleChoices.INTRODUCER: UserTypeChoices.INTRODUCER,
         }
         user.user_type = role_to_user_type_map.get(
             validated_data.get("role", None), user.user_type

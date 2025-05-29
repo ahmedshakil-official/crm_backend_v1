@@ -7,7 +7,7 @@ from djoser.serializers import UserCreateSerializer
 
 from case.models import Case
 from case.utils import get_random_string
-from common.enums import UserTypeChoices, RoleChoices
+from common.enums import UserTypeChoices
 from common.models import User
 from organization.models import OrganizationUser, Organization
 

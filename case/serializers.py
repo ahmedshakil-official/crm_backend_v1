@@ -3,7 +3,7 @@ from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 
-from common.enums import UserTypeChoices, RoleChoices
+from common.enums import UserTypeChoices
 from case.enums import (
     UserTypeChoices as SolicitorTypeChoices,
     IncomeTypeChoices,
@@ -306,7 +306,7 @@ class JointUserSerializer(serializers.ModelSerializer):
         OrganizationUser.objects.create(
             user=joint_user,
             organization=organization,
-            role=RoleChoices.JOINT_USER,
+            role=UserTypeChoices.JOINT_USER,
             official_email=joint_user_data.get("email"),
             official_phone=joint_user_data.get("phone"),
         )

@@ -27,6 +27,29 @@ class UserTypeChoices(models.TextChoices):
     SERVICE_HOLDER = "SERVICE_HOLDER", _("Service Holder")
     JOINT_USER = "JOINT_USER", _("Joint User")
 
+    # Network-level roles
+    NETWORK_CEO = "NETWORK_CEO", _("Network CEO")
+    NETWORK_COO = "NETWORK_COO", _("Network COO")
+    NETWORK_SYSTEM_DEVELOPER = "NETWORK_SYSTEM_DEVELOPER", _("Network System Developer")
+    NETWORK_COMPLIANCE_MANAGER = "NETWORK_COMPLIANCE_MANAGER", _("Network Compliance Manager")
+    NETWORK_COMPLIANCE_ASSISTANT = "NETWORK_COMPLIANCE_ASSISTANT", _("Network Compliance Assistant")
+    NETWORK_PRINCIPAL_ADVISER = "NETWORK_PRINCIPAL_ADVISER", _("Network Principal Adviser")
+    NETWORK_ADVISER = "NETWORK_ADVISER", _("Network Adviser")
+    NETWORK_ADMIN = "NETWORK_ADMIN", _("Network Admin")
+    NETWORK_SUPPORT = "NETWORK_SUPPORT", _("Network Support Staff")
+
+    # Organization-level (AR Firm) roles
+    ORGANIZATION_CEO = "ORGANIZATION_CEO", _("Organization CEO")
+    ORGANIZATION_COO = "ORGANIZATION_COO", _("Organization COO")
+    ORGANIZATION_SYSTEM_DEVELOPER = "ORGANIZATION_SYSTEM_DEVELOPER", _("Organization System Developer")
+    ORGANIZATION_COMPLIANCE_MANAGER = "ORGANIZATION_COMPLIANCE_MANAGER", _("Organization Compliance Manager")
+    ORGANIZATION_COMPLIANCE_ASSISTANT = "ORGANIZATION_COMPLIANCE_ASSISTANT", _("Organization Compliance Assistant")
+    ORGANIZATION_PRINCIPAL_ADVISER = "ORGANIZATION_PRINCIPAL_ADVISER", _("Organization Principal Adviser")
+    ORGANIZATION_ADVISER = "ORGANIZATION_ADVISER", _("Organization Adviser")
+    ORGANIZATION_ADMIN = "ORGANIZATION_ADMIN", _("Organization Admin")
+    ORGANIZATION_SUPPORT = "ORGANIZATION_SUPPORT", _("Organization Support Staff")
+
+
 
 class GenderChoices(models.TextChoices):
     MALE = "MALE", _("Male")
@@ -34,13 +57,44 @@ class GenderChoices(models.TextChoices):
     OTHER = "OTHER", _("Other")
 
 
-class RoleChoices(models.TextChoices):
+class OrganizationRoleChoices(models.TextChoices):
     INTRODUCER = "INTRODUCER", _("Introducer")
     ADVISOR = "ADVISOR", _("Advisor")
     ADMIN = "ADMIN", _("Admin")
     LEAD = "LEAD", _("Lead")
     CLIENT = "CLIENT", _("Client")
     JOINT_USER = "JOINT_USER", _("Joint User")
+
+    # Organization-level (AR Firm) roles
+    ORGANIZATION_CEO = "ORGANIZATION_CEO", _("Organization CEO")
+    ORGANIZATION_COO = "ORGANIZATION_COO", _("Organization COO")
+    ORGANIZATION_SYSTEM_DEVELOPER = "ORGANIZATION_SYSTEM_DEVELOPER", _("Organization System Developer")
+    ORGANIZATION_COMPLIANCE_MANAGER = "ORGANIZATION_COMPLIANCE_MANAGER", _("Organization Compliance Manager")
+    ORGANIZATION_COMPLIANCE_ASSISTANT = "ORGANIZATION_COMPLIANCE_ASSISTANT", _("Organization Compliance Assistant")
+    ORGANIZATION_PRINCIPAL_ADVISER = "ORGANIZATION_PRINCIPAL_ADVISER", _("Organization Principal Adviser")
+    ORGANIZATION_ADVISER = "ORGANIZATION_ADVISER", _("Organization Adviser")
+    ORGANIZATION_ADMIN = "ORGANIZATION_ADMIN", _("Organization Admin")
+    ORGANIZATION_SUPPORT = "ORGANIZATION_SUPPORT", _("Organization Support Staff")
+
+
+class NetworkRoleChoices(models.TextChoices):
+    INTRODUCER = "INTRODUCER", _("Introducer")
+    ADVISOR = "ADVISOR", _("Advisor")
+    ADMIN = "ADMIN", _("Admin")
+    LEAD = "LEAD", _("Lead")
+    CLIENT = "CLIENT", _("Client")
+    JOINT_USER = "JOINT_USER", _("Joint User")
+
+    # Network-level roles
+    NETWORK_CEO = "NETWORK_CEO", _("Network CEO")
+    NETWORK_COO = "NETWORK_COO", _("Network COO")
+    NETWORK_SYSTEM_DEVELOPER = "NETWORK_SYSTEM_DEVELOPER", _("Network System Developer")
+    NETWORK_COMPLIANCE_MANAGER = "NETWORK_COMPLIANCE_MANAGER", _("Network Compliance Manager")
+    NETWORK_COMPLIANCE_ASSISTANT = "NETWORK_COMPLIANCE_ASSISTANT", _("Network Compliance Assistant")
+    NETWORK_PRINCIPAL_ADVISER = "NETWORK_PRINCIPAL_ADVISER", _("Network Principal Adviser")
+    NETWORK_ADVISER = "NETWORK_ADVISER", _("Network Adviser")
+    NETWORK_ADMIN = "NETWORK_ADMIN", _("Network Admin")
+    NETWORK_SUPPORT = "NETWORK_SUPPORT", _("Network Support Staff")
 
 
 class ProductCategoryChoices(models.TextChoices):
