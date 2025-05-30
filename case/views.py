@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 from django.db.models.functions import Lead
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
@@ -18,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
-from organization.models import Organization
+from organization.models import Organization, Network, OrganizationUser, NetworkUser
 from .common import (
     RegisterLoan,
     PaymentCommitment,
@@ -129,70 +130,115 @@ class CaseRelatedViewMixin:
             context['case'] = self.get_case()
         return context
 
+    def get_user_context(self):
+        """
+        Determines if user is associated with an organization or network.
+        Returns a dict with 'type' and 'instance' keys.
+        """
+        user = self.request.user
 
-class CaseListCreateApiView(ListCreateAPIView):
+        # Check if user is associated with an organization
+        try:
+            organization = Organization.objects.get(organization_users__user=user)
+            return {'type': 'organization', 'instance': organization}
+        except Organization.DoesNotExist:
+            pass
+
+        # Check if user is associated with a network
+        try:
+            network = Network.objects.get(network_users__user=user)
+            return {'type': 'network', 'instance': network}
+        except Network.DoesNotExist:
+            pass
+
+        # If neither found, raise error
+        raise NotFound("User is not associated with any organization or network.")
+
+
+class CaseAuthenticationMixin:
+    """Mixin to handle case-specific authentication and permissions"""
+
+    def check_authentication(self):
+        if not self.request.user.is_authenticated:
+            raise ValidationError("User must be authenticated.")
+
+    def get_user_association(self):
+        """Get user's organization or network association"""
+        self.check_authentication()
+        user = self.request.user
+
+        # Check organization association
+        org_user = OrganizationUser.objects.filter(user=user).first()
+        if org_user:
+            return {
+                'type': 'organization',
+                'organization': org_user.organization,
+                'network': org_user.organization.network
+            }
+
+        # Check network association
+        network_user = NetworkUser.objects.filter(user=user).first()
+        if network_user:
+            return {
+                'type': 'network',
+                'network': network_user.network,
+                'organization': None
+            }
+
+        raise PermissionDenied(
+            "You cannot perform this action without being associated with an organization or network."
+        )
+
+    def get_case_queryset(self):
+        """Get cases based on user association"""
+        self.check_authentication()
+        user_association = self.get_user_association()
+
+        if user_association['type'] == 'organization':
+            # Organization users see cases from their organization
+            return Case.objects.filter(
+                organization=user_association['organization']
+            ).select_related('organization', 'network', 'lead', 'created_by', 'updated_by')
+
+        elif user_association['type'] == 'network':
+            # Network users see cases from their entire network
+            return Case.objects.filter(
+                Q(network=user_association['network']) |
+                Q(organization__network=user_association['network'])
+            ).select_related('organization', 'network', 'lead', 'created_by', 'updated_by')
+
+        return Case.objects.none()
+
+
+class CaseListCreateApiView(CaseAuthenticationMixin, ListCreateAPIView):
+    """List and create cases for both organization and network users"""
     serializer_class = CaseListCreateSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_class = CaseFilter
-    search_fields = [
-        "name",
-        "case_category",
-        "applicant_type",
-        "case_status",
-        "case_stage",
-        "lead__first_name",
-        "lead__last_name",
-        "lead__phone",
-        "lead__email",
-    ]
+    lookup_field = "alias"
 
     def get_queryset(self):
-        user = self.request.user
-        organization = get_object_or_404(
-            Organization, organization_users__user=self.request.user
-        )
-        queryset = Case.objects.select_related("organization", "lead", "created_by").filter(
-            organization=organization,
-            is_removed=False
-        )
-        if hasattr(user, "user_type") and user.user_type.upper() == "LEAD":
-            return queryset.filter(lead=user)
-        return queryset
+        return self.get_case_queryset()
 
     def perform_create(self, serializer):
-        organization = get_object_or_404(
-            Organization, organization_users__user=self.request.user
-        )
-        serializer.save(
-            organization=organization,
-            created_by=self.request.user,
-        )
+        user_association = self.get_user_association()
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["request"] = self.request
-        return context
+        # The serializer's create method will handle organization/network assignment
+        # based on the user's association
+        serializer.save()
 
 
-class CaseRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
+class CaseRetrieveUpdateDeleteApiView(CaseAuthenticationMixin, RetrieveUpdateDestroyAPIView):
+    """Retrieve, update, and delete cases for both organization and network users"""
     serializer_class = CaseRetrieveUpdateDeleteSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
     def get_queryset(self):
-        organization = get_object_or_404(
-            Organization, organization_users__user=self.request.user
-        )
-        return Case.objects.filter(organization=organization)
+        return self.get_case_queryset()
 
     def perform_update(self, serializer):
-        instance = serializer.save(updated_by=self.request.user)
-
-    def perform_destroy(self, instance):
-        instance.is_removed = True
-        instance.updated_by = self.request.user
-        instance.save()
+        # The serializer's update method will handle user tracking
+        serializer.save()
 
 
 class FileListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):

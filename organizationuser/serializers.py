@@ -1,7 +1,8 @@
 from django.db import transaction
 from rest_framework import serializers
 from authentication.models import User
-from organization.models import OrganizationUser
+from common.serializers import CommonUserSerializer
+from organization.models import OrganizationUser, NetworkUser
 from common.enums import OrganizationRoleChoices, NetworkRoleChoices, UserTypeChoices
 
 
@@ -211,3 +212,281 @@ class OrganizationUserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer
         instance.save()
 
         return instance
+
+
+class NetworkUserListSerializer(serializers.ModelSerializer):
+    """Base serializer for NetworkUser listing"""
+    user_detail = CommonUserSerializer(read_only=True, source="user")
+    network_detail = serializers.SerializerMethodField()
+
+    class Meta:
+        model = NetworkUser
+        fields = [
+            "id",
+            "alias",
+            "user_detail",
+            "network_detail",
+            "role",
+            "designation",
+            "official_email",
+            "official_phone",
+            "gender",
+            "joining_date",
+        ]
+        read_only_fields = [
+            "id",
+            "alias",
+            "user_detail",
+            "network_detail",
+        ]
+
+    def get_network_detail(self, obj):
+        return {
+            "id": obj.network.id,
+            "name": obj.network.name,
+            "email": obj.network.email,
+        }
+
+
+class NetworkUserSerializer(NetworkUserListSerializer):
+    """Full NetworkUser serializer with all fields"""
+    user_detail = CommonUserSerializer(read_only=True, source="user")
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), write_only=True
+    )
+    created_by = CommonUserSerializer(read_only=True)
+    updated_by = CommonUserSerializer(read_only=True)
+
+    class Meta(NetworkUserListSerializer.Meta):
+        model = NetworkUser
+        fields = NetworkUserListSerializer.Meta.fields + [
+            "user",
+            "network",
+            "permanent_address",
+            "present_address",
+            "dob",
+            "registration_number",
+            "degree",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = NetworkUserListSerializer.Meta.read_only_fields + [
+            "network",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+        extra_kwargs = {
+            "designation": {"required": False, "allow_null": True},
+            "official_email": {"required": False, "allow_null": True},
+            "official_phone": {"required": False, "allow_null": True},
+            "permanent_address": {"required": False, "allow_null": True},
+            "present_address": {"required": False, "allow_null": True},
+            "dob": {"required": False, "allow_null": True},
+            "joining_date": {"required": False, "allow_null": True},
+            "registration_number": {"required": False, "allow_null": True},
+            "degree": {"required": False, "allow_null": True},
+        }
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            # Get users from the same network or users created by the requesting user
+            user_networks = Network.objects.filter(
+                network_users__user=request.user
+            )
+
+            fields["user"].queryset = User.objects.filter(
+                Q(network_users__network__in=user_networks) |
+                Q(created_by=request.user)
+            ).distinct()
+        return fields
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Unified User serializer for both Network and Organization"""
+    password = serializers.CharField(write_only=True)
+    alias = serializers.UUIDField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "alias",
+            "email",
+            "first_name",
+            "last_name",
+            "phone",
+            "password",
+            "user_type",
+        ]
+        read_only_fields = ["user_type"]
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            email=validated_data["email"],
+            first_name=validated_data.get("first_name", ""),
+            last_name=validated_data.get("last_name", ""),
+            phone=validated_data.get("phone", ""),
+            password=validated_data["password"],
+        )
+        return user
+
+
+class NetworkUserListCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating NetworkUsers with specific roles"""
+    user = UserSerializer()
+    alias = serializers.UUIDField(read_only=True)
+    created_by = UserSerializer(read_only=True)
+
+    class Meta:
+        model = NetworkUser
+        fields = [
+            "alias",
+            "user",
+            "role",
+            "designation",
+            "official_email",
+            "official_phone",
+            "permanent_address",
+            "present_address",
+            "dob",
+            "gender",
+            "joining_date",
+            "registration_number",
+            "degree",
+            "created_by",
+            "created_at",
+        ]
+        read_only_fields = [
+            "alias",
+            "official_email",
+            "official_phone",
+            "created_by",
+            "role",
+            "created_at",
+        ]
+
+    @transaction.atomic
+    def create(self, validated_data):
+        user_data = validated_data.pop("user")
+
+        # Create user
+        user_serializer = UserSerializer(data=user_data)
+        user_serializer.is_valid(raise_exception=True)
+        user = user_serializer.save()
+
+        # Map role to user_type
+        role_to_user_type_map = {
+            NetworkRoleChoices.LEAD: UserTypeChoices.LEAD,
+            NetworkRoleChoices.CLIENT: UserTypeChoices.CLIENT,
+            NetworkRoleChoices.ADVISOR: UserTypeChoices.ADVISOR,
+            NetworkRoleChoices.INTRODUCER: UserTypeChoices.INTRODUCER,
+        }
+        user.user_type = role_to_user_type_map.get(
+            validated_data.get("role", None), user.user_type
+        )
+        user.save()
+
+        # Get the network from the request's context
+        network_user = self.context["request"].user.network_users.first()
+        if not network_user:
+            raise serializers.ValidationError(
+                "User is not associated with any network."
+            )
+        network = network_user.network
+
+        # Set official_email and official_phone based on user data
+        validated_data["official_email"] = user.email
+        validated_data["official_phone"] = user.phone
+
+        # Remove 'network' from validated_data if present
+        validated_data.pop("network", None)
+
+        # Create NetworkUser
+        return NetworkUser.objects.create(
+            user=user,
+            network=network,
+            role=validated_data.get("role", ""),
+            created_by=self.context["request"].user,
+            official_email=user.email,
+            official_phone=user.phone,
+            designation=validated_data.get("designation", ""),
+            permanent_address=validated_data.get("permanent_address", ""),
+            present_address=validated_data.get("present_address", ""),
+            dob=validated_data.get("dob", ""),
+            gender=validated_data.get("gender", ""),
+            joining_date=validated_data.get("joining_date", ""),
+            registration_number=validated_data.get("registration_number", ""),
+            degree=validated_data.get("degree", ""),
+        )
+
+
+
+
+class NetworkUserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
+    """Serializer for retrieving, updating, and deleting NetworkUsers"""
+    user = UserRetrieveUpdateDeleteSerializer(write_only=True)
+    user_details = UserSerializer(read_only=True, source="user")
+    created_by = UserSerializer(read_only=True)
+    updated_by = UserSerializer(read_only=True)
+
+    class Meta:
+        model = NetworkUser
+        fields = [
+            "alias",
+            "user",
+            "user_details",
+            "role",
+            "designation",
+            "official_email",
+            "official_phone",
+            "permanent_address",
+            "present_address",
+            "dob",
+            "joining_date",
+            "registration_number",
+            "degree",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "alias",
+            "user_details",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+    def update(self, instance, validated_data):
+        # Extract user data and update
+        user_data = validated_data.pop("user", {})
+        if user_data:
+            user_serializer = UserRetrieveUpdateDeleteSerializer(
+                instance.user, data=user_data, partial=True
+            )
+            user_serializer.is_valid(raise_exception=True)
+            user_serializer.save()
+
+        # Update NetworkUser fields
+        if "permanent_address" in validated_data:
+            instance.user.address = validated_data["permanent_address"]
+            instance.user.save()
+
+        # Set the updated_by field
+        instance.updated_by = self.context["request"].user
+
+        # Update NetworkUser fields and save
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        return instance
+

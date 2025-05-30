@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
@@ -14,7 +15,7 @@ from case.enums import (
     InsuranceTypeChoices,
     SubTotalsTypeChoices,
 )
-from organization.models import Organization, OrganizationUser
+from organization.models import Organization, OrganizationUser, NetworkUser
 from .common import (
     RegisterLoan,
     PaymentCommitment,
@@ -83,11 +84,13 @@ from common.serializers import (
     CommonUserWithPasswordSerializer,
     CommonCaseSerializer,
     CommonUserWithIdSerializer,
+    CommonNetworkSerializer
 )
 
 
 class CaseListCreateSerializer(serializers.ModelSerializer):
     organization = CommonOrganizationSerializer(read_only=True)
+    network = CommonNetworkSerializer(read_only=True)
     lead_user = CommonUserWithIdSerializer(read_only=True, source="lead")
     lead = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.none(),
@@ -105,9 +108,8 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
             "lead",
             "lead_user",
             "organization",
+            "network",
             "case_category",
-            # "applicant_type",
-            # "case_status",
             "case_stage",
             "notes",
             "is_removed",
@@ -120,6 +122,8 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
             "alias",
             "name",
             "lead_user",
+            "organization",
+            "network",
             "created_by",
             "is_removed",
             "updated_by",
@@ -130,21 +134,72 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Dynamically adjust the queryset for the 'lead' field based on the organization of the current user
-        organization = Organization.objects.filter(
-            organization_users__user=self.context["request"].user
-        ).first()
-        if organization:
-            # Only allow users who are Leads and belong to the same organization as the current user
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            self._set_lead_queryset(request.user)
 
+    def _set_lead_queryset(self, user):
+        """Set the lead queryset based on whether user is from organization or network"""
+        # Check if user is associated with an organization
+        organization_user = OrganizationUser.objects.filter(user=user).first()
+        if organization_user:
+            # For organization users: only leads from the same organization
             self.fields["lead"].queryset = User.objects.filter(
-                user_type="LEAD", organization_users__organization=organization
+                user_type="LEAD",
+                organization_users__organization=organization_user.organization
             )
+            return
+
+        # Check if user is associated with a network
+        network_user = NetworkUser.objects.filter(user=user).first()
+        if network_user:
+            # For network users: leads from all organizations in the network + direct network leads
+            self.fields["lead"].queryset = User.objects.filter(
+                Q(user_type="LEAD", organization_users__organization__network=network_user.network) |
+                Q(user_type="LEAD", network_users__network=network_user.network)
+            ).distinct()
+            return
+
+        # If neither, empty queryset
+        self.fields["lead"].queryset = User.objects.none()
+
+    def create(self, validated_data):
+        """Create case with proper organization/network assignment"""
+        request = self.context.get("request")
+        user = request.user
+
+        # Check if user is from organization
+        organization_user = OrganizationUser.objects.filter(user=user).first()
+        if organization_user:
+            validated_data['organization'] = organization_user.organization
+            validated_data['network'] = organization_user.organization.network
+        else:
+            # Check if user is from network
+            network_user = NetworkUser.objects.filter(user=user).first()
+            if network_user:
+                validated_data['network'] = network_user.network
+                # Organization will be None for network-level cases
+                validated_data['organization'] = None
+            else:
+                raise serializers.ValidationError(
+                    "User must be associated with an organization or network to create cases."
+                )
+
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+
+        return super().create(validated_data)
 
 
 class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
     organization = CommonOrganizationSerializer(read_only=True)
+    network = CommonNetworkSerializer(read_only=True)
     lead_user = CommonUserWithIdSerializer(read_only=True, source="lead")
+    lead = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.none(),
+        write_only=True,
+        required=False,
+    )
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
 
@@ -153,11 +208,11 @@ class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
         fields = [
             "alias",
             "name",
+            "lead",
             "lead_user",
             "organization",
+            "network",
             "case_category",
-            # "applicant_type",
-            # "case_status",
             "case_stage",
             "notes",
             "is_removed",
@@ -170,12 +225,51 @@ class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
             "alias",
             "name",
             "lead_user",
+            "organization",
+            "network",
             "created_by",
             "is_removed",
             "updated_by",
             "created_at",
             "updated_at",
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            self._set_lead_queryset(request.user)
+
+    def _set_lead_queryset(self, user):
+        """Set the lead queryset based on whether user is from organization or network"""
+        # Check if user is associated with an organization
+        organization_user = OrganizationUser.objects.filter(user=user).first()
+        if organization_user:
+            # For organization users: only leads from the same organization
+            self.fields["lead"].queryset = User.objects.filter(
+                user_type="LEAD",
+                organization_users__organization=organization_user.organization
+            )
+            return
+
+        # Check if user is associated with a network
+        network_user = NetworkUser.objects.filter(user=user).first()
+        if network_user:
+            # For network users: leads from all organizations in the network + direct network leads
+            self.fields["lead"].queryset = User.objects.filter(
+                Q(user_type="LEAD", organization_users__organization__network=network_user.network) |
+                Q(user_type="LEAD", network_users__network=network_user.network)
+            ).distinct()
+            return
+
+        # If neither, empty queryset
+        self.fields["lead"].queryset = User.objects.none()
+
+    def update(self, instance, validated_data):
+        """Update case with proper user tracking"""
+        request = self.context.get("request")
+        validated_data['updated_by'] = request.user
+        return super().update(instance, validated_data)
 
 
 class FileSerializer(serializers.ModelSerializer):

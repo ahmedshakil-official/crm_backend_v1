@@ -1,8 +1,8 @@
 from django.urls import path
 
 from organizationuser.views import (
-    OrganizationUserListCreateView,
-    OrganizationUserRetrieveUpdateDeleteView,
+    # OrganizationUserListCreateView,
+    # OrganizationUserRetrieveUpdateDeleteView,
     AdvisorRetrieveUpdateDeleteView,
     AdvisorListCreateView,
     IntroducerRetrieveUpdateDeleteView,
@@ -15,16 +15,16 @@ from organizationuser.views import (
 
 
 urlpatterns = [
-    path(
-        "",
-        OrganizationUserListCreateView.as_view(),
-        name="organization-user-list-create",
-    ),
-    path(
-        "<uuid:alias>/",
-        OrganizationUserRetrieveUpdateDeleteView.as_view(),
-        name="organization-user-retrieve-update-delete",
-    ),
+    # path(
+    #     "",
+    #     OrganizationUserListCreateView.as_view(),
+    #     name="organization-user-list-create",
+    # ),
+    # path(
+    #     "<uuid:alias>/",
+    #     OrganizationUserRetrieveUpdateDeleteView.as_view(),
+    #     name="organization-user-retrieve-update-delete",
+    # ),
     # Lead URLs
     path("leads/", LeadListCreateView.as_view(), name="lead-list-create"),
     path(

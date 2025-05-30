@@ -9,7 +9,7 @@ from case.models import Case
 from case.utils import get_random_string
 from common.enums import UserTypeChoices
 from common.models import User
-from organization.models import OrganizationUser, Organization
+from organization.models import OrganizationUser, Organization, Network
 
 
 class ListSerializer(ModelSerializer):
@@ -121,6 +121,21 @@ class CommonOrganizationSerializer(serializers.ModelSerializer):
             "logo",
             "profile_image",
             "hero_image",
+        ]
+
+
+class CommonNetworkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Network
+        fields = [
+            "alias",
+            "slug",
+            "name",
+            "email",
+            "logo",
+            "profile_image",
+            "hero_image",
+            "primary_mobile",
         ]
 
 

@@ -117,7 +117,7 @@ from common.enums import (
     HasWillsSectionPersonalisedChoices,
     DoesRecommendedProductMatchYourNeedsSectionChoices,
 )
-from organization.models import Organization
+from organization.models import Organization, Network
 from .enums import (
     ApplicationTypeChoices,
     MortgageTypeChoices,
@@ -218,9 +218,10 @@ from .utils import upload_to_case_files
 
 
 class Case(CreatedAtUpdatedAtBaseModel):
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=True)
     lead = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=True)
+    network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=True)
     case_category = models.CharField(
         max_length=50,
         choices=ProductCategoryChoices.choices,
@@ -271,7 +272,8 @@ class Case(CreatedAtUpdatedAtBaseModel):
         # Get the 3-letter abbreviation for the case stage
         stage_abbreviation = stage_mapping.get(self.case_stage, "UNK")
         # Use the last 8 characters of the alias
-        alias_suffix = str(self.alias).replace("-", "")[-8:]
+        alias_suffix = str(self.id).zfill(8)
+
         return f"{stage_abbreviation}-{alias_suffix}"
 
     def save(self, *args, **kwargs):
