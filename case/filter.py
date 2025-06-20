@@ -13,6 +13,7 @@ from common.enums import (
     UserTypeChoices,
     FileTypeChoices,
 )
+from organization.models import OrganizationUser, NetworkUser
 from .models import Case, Files
 
 
@@ -51,12 +52,29 @@ class CaseFilter(filters.FilterSet):
         super().__init__(*args, **kwargs)
         # Dynamically set the queryset for the created_by field
         if hasattr(self, "request") and self.request is not None:
-            organization = self.request.user.organization_users.first().organization
-            # Filter Users based on the Organization and Role
-            self.filters["created_by"].queryset = User.objects.filter(
-                organization_users__organization=organization,
-                organization_users__role=UserTypeChoices.ADVISOR,
-            )
+            user = self.request.user
+            
+            # Check if user is associated with an organization
+            org_user = OrganizationUser.objects.filter(user=user).first()
+            if org_user:
+                organization = org_user.organization
+                # Filter Users based on the Organization and Role
+                self.filters["created_by"].queryset = User.objects.filter(
+                    organization_users__organization=organization,
+                    organization_users__role=UserTypeChoices.ADVISOR,
+                )
+            else:
+                # Check if user is associated with a network
+                network_user = NetworkUser.objects.filter(user=user).first()
+                if network_user:
+                    network = network_user.network
+                    # Filter Users based on the Network and Role
+                    self.filters["created_by"].queryset = User.objects.filter(
+                        Q(organization_users__organization__network=network) |
+                        Q(network_users__network=network),
+                        Q(organization_users__role=UserTypeChoices.ADVISOR) |
+                        Q(network_users__role=UserTypeChoices.ADVISOR)
+                    ).distinct()
 
 
 class FileFilter(filters.FilterSet):
@@ -83,17 +101,28 @@ class FileFilter(filters.FilterSet):
         super().__init__(*args, **kwargs)
 
         if self.request:
-            # Limit `created_by` to advisors in the user's organization
-            user_organization = self.request.user.organization
-            self.filters["created_by"].queryset = User.objects.filter(
-                organization=user_organization, role="advisor"
-            )
+            # Get user's organization or network
+            user = self.request.user
+            org_user = OrganizationUser.objects.filter(user=user).first()
+            network_user = NetworkUser.objects.filter(user=user).first()
+            
+            if org_user:
+                # Limit `created_by` to advisors in the user's organization
+                self.filters["created_by"].queryset = User.objects.filter(
+                    organization_users__organization=org_user.organization,
+                    organization_users__role=UserTypeChoices.ADVISOR
+                )
+            elif network_user:
+                # Limit `created_by` to advisors in the user's network
+                self.filters["created_by"].queryset = User.objects.filter(
+                    Q(organization_users__organization__network=network_user.network) |
+                    Q(network_users__network=network_user.network),
+                    Q(organization_users__role=UserTypeChoices.ADVISOR) |
+                    Q(network_users__role=UserTypeChoices.ADVISOR)
+                ).distinct()
 
             # Limit `file_owner` to valid owners based on the provided case
-            case = kwargs.get("alias", None)
-            print("=" * 20)
-            print(case)
-            print("=" * 20)
+            case = kwargs.get("case", None)
             if case:
                 lead = case.lead
                 joint_users = case.joint_users.values_list("joint_user", flat=True)
