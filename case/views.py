@@ -14,6 +14,7 @@ from rest_framework.generics import (
     UpdateAPIView,
 )
 from django.shortcuts import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -214,6 +215,13 @@ class CaseListCreateApiView(CaseAuthenticationMixin, ListCreateAPIView):
     """List and create cases for both organization and network users"""
     serializer_class = CaseListCreateSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_class = CaseFilter
+    search_fields = ['name', 'lead__first_name', 'lead__last_name', 'lead__phone', 'lead__email', 'case_category',
+                     'case_status']
+    pagination_class = PageNumberPagination
+
+
     lookup_field = "alias"
 
     def get_queryset(self):

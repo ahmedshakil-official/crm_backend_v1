@@ -235,6 +235,8 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
     ],
     "COERCE_DECIMAL_TO_STRING": False,
+    "PAGE_SIZE": 10,
+
 }
 
 DJOSER = {
