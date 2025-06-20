@@ -204,8 +204,7 @@ class CaseAuthenticationMixin:
         elif user_association['type'] == 'network':
             # Network users see cases from their entire network
             return Case.objects.filter(
-                Q(network=user_association['network']) |
-                Q(organization__network=user_association['network'])
+                network=user_association['network']
             ).select_related('organization', 'network', 'lead', 'created_by', 'updated_by')
 
         return Case.objects.none()
