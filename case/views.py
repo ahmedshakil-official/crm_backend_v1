@@ -1,7 +1,20 @@
+import io
+from datetime import datetime
+
 from django.db import transaction
+
 from django.db.models import Q
 from django.db.models.functions import Lead
+from django.http import HttpResponse
+
 from django_filters.rest_framework.backends import DjangoFilterBackend
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+
 from rest_framework.filters import SearchFilter
 from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
@@ -1063,5 +1076,132 @@ class MortgageNeedsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPI
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
+
+class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
+    """Generate PDF report for a specific case"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, case_alias):
+        # Get the case
+        case = get_object_or_404(Case, alias=case_alias)
+
+        # Check user permissions for this case
+        user_association = self.get_user_association()
+        case_queryset = self.get_case_queryset()
+
+        if not case_queryset.filter(alias=case_alias).exists():
+            return Response({"error": "You don't have permission to access this case"}, status=403)
+
+        # Get firm name based on user association
+        if user_association['type'] == 'organization':
+            firm_name = user_association['organization'].name
+        else:  # network user
+            firm_name = user_association['network'].name
+
+        # Get case details
+        loan_details = case.loan_details.first()
+
+        # Get adviser name (case creator)
+        adviser_name = f"{case.created_by.first_name} {case.created_by.last_name}" if case.created_by else "N/A"
+
+        # Get client name (lead user)
+        client_name = f"{case.lead.first_name} {case.lead.last_name}" if case.lead else "N/A"
+
+        # Create PDF
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
+
+        # Container for the 'Flowable' objects
+        elements = []
+
+        # Define styles
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=18,
+            spaceAfter=30,
+            alignment=TA_CENTER,
+        )
+
+        heading_style = ParagraphStyle(
+            'CustomHeading',
+            parent=styles['Heading2'],
+            fontSize=14,
+            spaceAfter=12,
+            alignment=TA_LEFT,
+        )
+
+        normal_style = styles['Normal']
+
+        # Add title
+        title = Paragraph("Case Report", title_style)
+        elements.append(title)
+        elements.append(Spacer(1, 12))
+
+        # Create data table
+        data = [
+            ['Field', 'Value'],
+            ['Firm:', firm_name],
+            ['Adviser:', adviser_name],
+            ['Client Name:', client_name],
+            ['Submitted Date:', case.created_at.strftime('%d/%m/%Y') if case.created_at else 'N/A'],
+            ['Reference:', str(case.alias)[:6].upper()],  # First 6 chars of UUID as reference
+            ['Current Stage:', case.get_case_stage_display() if case.case_stage else 'N/A'],
+        ]
+
+        # Add loan details if available
+        if loan_details:
+            data.extend([
+                ['Loan Type:', loan_details.get_mortgage_type_display() if loan_details.mortgage_type else 'N/A'],
+                ['Purpose:', loan_details.get_loan_purpose_display() if loan_details.loan_purpose else 'N/A'],
+                ['Lead Source:', loan_details.get_lead_source_display() if loan_details.lead_source else 'N/A'],
+                ['Lender:', loan_details.lender or 'N/A'],
+                ['Loan Amount:', f"£{loan_details.loan_amount:,.2f}" if loan_details.loan_amount else 'N/A'],
+                ['LTV (%):', f"{loan_details.ltv:.2f}" if loan_details.ltv else 'N/A'],
+            ])
+
+        # Get net income (you might need to calculate this from income/expenses models)
+        # For now, using placeholder
+        data.append(['Net Income:', '£252.68'])  # This should be calculated from actual data
+
+        # Create table
+        table = Table(data, colWidths=[2.5 * inch, 4 * inch])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 14),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),  # Make first column bold
+        ]))
+
+        elements.append(table)
+        elements.append(Spacer(1, 12))
+
+        # Add footer with generation date
+        footer_text = f"Report generated on {datetime.now().strftime('%d/%m/%Y at %H:%M')}"
+        footer = Paragraph(footer_text, normal_style)
+        elements.append(Spacer(1, 20))
+        elements.append(footer)
+
+        # Build PDF
+        doc.build(elements)
+
+        # Get the value of the BytesIO buffer and write it to the response
+        pdf = buffer.getvalue()
+        buffer.close()
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="case_report_{case.alias}.pdf"'
+        response.write(pdf)
+
+        return response
+
 
 

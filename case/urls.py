@@ -57,7 +57,7 @@ from .views import (
     SuitabilityRetrieveUpdateApiView,
     ExtraAnswerListCreateApiView,
     ComplianceRetrieveUpdateApiView,
-    MortgageNeedsRetrieveUpdateApiView,
+    MortgageNeedsRetrieveUpdateApiView, CasePDFReportAPIView,
 )
 
 urlpatterns = [
@@ -347,4 +347,10 @@ urlpatterns = [
         MortgageNeedsRetrieveUpdateApiView.as_view(),
         name="mortgage-retrieve-update",
     ),
+    path(
+        "<uuid:case_alias>/report/pdf/",
+        CasePDFReportAPIView.as_view(),
+        name="case-pdf-report",
+    ),
+
 ]
