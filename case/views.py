@@ -1100,7 +1100,7 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
             firm_name = user_association['network'].name
 
         # Get case details
-        loan_details = case.loan_details.first()
+        loan_details = case.loan_details
 
         # Get adviser name (case creator)
         adviser_name = f"{case.created_by.first_name} {case.created_by.last_name}" if case.created_by else "N/A"
