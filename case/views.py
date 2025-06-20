@@ -218,7 +218,7 @@ class CaseListCreateApiView(CaseAuthenticationMixin, ListCreateAPIView):
     filterset_class = CaseFilter
     search_fields = ['name', 'lead__first_name', 'lead__last_name', 'lead__phone', 'lead__email', 'case_category',
                      'case_status']
-    # pagination_class = PageNumberPagination
+    pagination_class = PageNumberPagination
 
 
     lookup_field = "alias"
