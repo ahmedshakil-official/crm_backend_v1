@@ -57,7 +57,8 @@ from .views import (
     SuitabilityRetrieveUpdateApiView,
     ExtraAnswerListCreateApiView,
     ComplianceRetrieveUpdateApiView,
-    MortgageNeedsRetrieveUpdateApiView, CasePDFReportAPIView,
+    MortgageNeedsRetrieveUpdateApiView,
+    CasePDFReportAPIView,
 )
 
 urlpatterns = [
@@ -352,5 +353,4 @@ urlpatterns = [
         CasePDFReportAPIView.as_view(),
         name="case-pdf-report",
     ),
-
 ]

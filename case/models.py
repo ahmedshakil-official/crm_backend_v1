@@ -196,7 +196,8 @@ from .enums import (
     CreditCommitmentsChoices,
     TypeChoices,
     CourtOrderedChoices,
-    PaidOnCompletionChoices, ExtraAnswerChoices,
+    PaidOnCompletionChoices,
+    ExtraAnswerChoices,
 )
 from .signals import (
     create_loan_details,
@@ -218,10 +219,14 @@ from .utils import upload_to_case_files
 
 
 class Case(CreatedAtUpdatedAtBaseModel):
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=True)
+    organization = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, null=True, blank=True
+    )
     lead = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=True)
-    network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=True)
+    network = models.ForeignKey(
+        Network, on_delete=models.CASCADE, null=True, blank=True
+    )
     case_category = models.CharField(
         max_length=50,
         choices=ProductCategoryChoices.choices,
@@ -248,6 +253,16 @@ class Case(CreatedAtUpdatedAtBaseModel):
     )
     notes = models.TextField(blank=True, null=True)
     is_removed = models.BooleanField(default=False, blank=True, db_index=True)
+    # Additional fields for reporting
+    submitted_date = models.DateTimeField(
+        null=True, blank=True, help_text="Date when case was submitted"
+    )
+    completed_date = models.DateTimeField(
+        null=True, blank=True, help_text="Date when case was completed"
+    )
+    last_activity_date = models.DateTimeField(
+        auto_now=True, help_text="Last activity on this case"
+    )
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
@@ -275,6 +290,18 @@ class Case(CreatedAtUpdatedAtBaseModel):
         alias_suffix = str(self.id).zfill(8)
 
         return f"{stage_abbreviation}-{alias_suffix}"
+
+    def generate_organization_report(self, request, filters):
+        """Generate organization report with given filters"""
+        # Implementation similar to OrganizationReportView
+        cases = Case.objects.all()  # Apply appropriate filters
+        return self.create_pdf_report(cases, "Organization Report", None)
+
+    def generate_adviser_report(self, request, filters):
+        """Generate adviser report with given filters"""
+        # Implementation similar to AdviserReportView
+        cases = Case.objects.filter(created_by=request.user)
+        return self.create_pdf_report(cases, "Adviser Report", None)
 
     def save(self, *args, **kwargs):
         # Check if the case_stage has changed
@@ -1929,7 +1956,9 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     is_early_repayment_charges = models.BooleanField(default=False)
     is_minimise_any_lender_arrangement_costs = models.BooleanField(default=False)
     is_ability_to_add_fees_to_the_mortgage = models.BooleanField(default=False)
-    is_ability_to_add_fees_mortgage_extra_interest_will_be_payable = models.BooleanField(default=False)
+    is_ability_to_add_fees_mortgage_extra_interest_will_be_payable = (
+        models.BooleanField(default=False)
+    )
     note_one = models.CharField(max_length=10000, null=True, blank=True)
     cashback = models.BooleanField(default=False)
     portability = models.BooleanField(default=False)
@@ -1963,8 +1992,6 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     app_two_pmi = models.BooleanField(default=False)
     app_two_family_income_benefit = models.BooleanField(default=False)
     app_two_buildings_and_contents = models.BooleanField(default=False)
-
-
 
     buildings = models.BooleanField(default=False)
     contents = models.BooleanField(default=False)
@@ -2469,13 +2496,9 @@ class ExtraAnswer(CreatedAtUpdatedAtBaseModel):
         Case, on_delete=models.CASCADE, related_name="other_questions"
     )
     section_choices = models.CharField(
-        max_length=250,
-        choices=ExtraAnswerChoices.choices,
-        null=True,
-        blank=True
+        max_length=250, choices=ExtraAnswerChoices.choices, null=True, blank=True
     )
     answer = models.CharField(max_length=10000, null=True, blank=True)
-
 
     class Meta:
         ordering = ("-created_at", "-updated_at")

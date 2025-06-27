@@ -67,6 +67,7 @@ PROJECT_APPS = [
     "organization.apps.OrganizationConfig",
     "organizationuser.apps.OrganizationuserConfig",
     "case.apps.CaseConfig",
+    "report.apps.ReportConfig",
 ]
 
 
@@ -236,7 +237,6 @@ REST_FRAMEWORK = {
     ],
     "COERCE_DECIMAL_TO_STRING": False,
     "PAGE_SIZE": 10,
-
 }
 
 DJOSER = {

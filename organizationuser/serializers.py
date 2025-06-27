@@ -216,6 +216,7 @@ class OrganizationUserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer
 
 class NetworkUserListSerializer(serializers.ModelSerializer):
     """Base serializer for NetworkUser listing"""
+
     user_detail = CommonUserSerializer(read_only=True, source="user")
     network_detail = serializers.SerializerMethodField()
 
@@ -250,6 +251,7 @@ class NetworkUserListSerializer(serializers.ModelSerializer):
 
 class NetworkUserSerializer(NetworkUserListSerializer):
     """Full NetworkUser serializer with all fields"""
+
     user_detail = CommonUserSerializer(read_only=True, source="user")
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), write_only=True
@@ -296,19 +298,17 @@ class NetworkUserSerializer(NetworkUserListSerializer):
         request = self.context.get("request")
         if request and hasattr(request, "user"):
             # Get users from the same network or users created by the requesting user
-            user_networks = Network.objects.filter(
-                network_users__user=request.user
-            )
+            user_networks = Network.objects.filter(network_users__user=request.user)
 
             fields["user"].queryset = User.objects.filter(
-                Q(network_users__network__in=user_networks) |
-                Q(created_by=request.user)
+                Q(network_users__network__in=user_networks) | Q(created_by=request.user)
             ).distinct()
         return fields
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Unified User serializer for both Network and Organization"""
+
     password = serializers.CharField(write_only=True)
     alias = serializers.UUIDField(read_only=True)
 
@@ -339,6 +339,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class NetworkUserListCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating NetworkUsers with specific roles"""
+
     user = UserSerializer()
     alias = serializers.UUIDField(read_only=True)
     created_by = UserSerializer(read_only=True)
@@ -426,10 +427,9 @@ class NetworkUserListCreateSerializer(serializers.ModelSerializer):
         )
 
 
-
-
 class NetworkUserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
     """Serializer for retrieving, updating, and deleting NetworkUsers"""
+
     user = UserRetrieveUpdateDeleteSerializer(write_only=True)
     user_details = UserSerializer(read_only=True, source="user")
     created_by = UserSerializer(read_only=True)
@@ -489,4 +489,3 @@ class NetworkUserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
-

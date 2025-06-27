@@ -4,7 +4,7 @@ from case.enums import DebtRepaymentTypeChoices
 
 
 class Command(BaseCommand):
-    help = 'Fix NULL post_debt_repayments references in BudgetPlanner'
+    help = "Fix NULL post_debt_repayments references in BudgetPlanner"
 
     def handle(self, *args, **options):
         # Find BudgetPlanners with NULL post_debt_repayments
@@ -17,7 +17,7 @@ class Command(BaseCommand):
             # Create a new DebtRepayments record
             debt_repayment = DebtRepayments.objects.create(
                 repayment_type=DebtRepaymentTypeChoices.POST_COMPLETION_DEBT_REPAYMENTS,
-                total_debt_repayment=0.00
+                total_debt_repayment=0.00,
             )
 
             # Link it to the budget planner
@@ -27,6 +27,6 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f'Successfully created DebtRepayments records for {count} BudgetPlanner instances'
+                f"Successfully created DebtRepayments records for {count} BudgetPlanner instances"
             )
         )

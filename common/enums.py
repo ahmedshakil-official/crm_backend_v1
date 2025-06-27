@@ -31,9 +31,15 @@ class UserTypeChoices(models.TextChoices):
     NETWORK_CEO = "NETWORK_CEO", _("Network CEO")
     NETWORK_COO = "NETWORK_COO", _("Network COO")
     NETWORK_SYSTEM_DEVELOPER = "NETWORK_SYSTEM_DEVELOPER", _("Network System Developer")
-    NETWORK_COMPLIANCE_MANAGER = "NETWORK_COMPLIANCE_MANAGER", _("Network Compliance Manager")
-    NETWORK_COMPLIANCE_ASSISTANT = "NETWORK_COMPLIANCE_ASSISTANT", _("Network Compliance Assistant")
-    NETWORK_PRINCIPAL_ADVISER = "NETWORK_PRINCIPAL_ADVISER", _("Network Principal Adviser")
+    NETWORK_COMPLIANCE_MANAGER = "NETWORK_COMPLIANCE_MANAGER", _(
+        "Network Compliance Manager"
+    )
+    NETWORK_COMPLIANCE_ASSISTANT = "NETWORK_COMPLIANCE_ASSISTANT", _(
+        "Network Compliance Assistant"
+    )
+    NETWORK_PRINCIPAL_ADVISER = "NETWORK_PRINCIPAL_ADVISER", _(
+        "Network Principal Adviser"
+    )
     NETWORK_ADVISER = "NETWORK_ADVISER", _("Network Adviser")
     NETWORK_ADMIN = "NETWORK_ADMIN", _("Network Admin")
     NETWORK_SUPPORT = "NETWORK_SUPPORT", _("Network Support Staff")
@@ -41,14 +47,21 @@ class UserTypeChoices(models.TextChoices):
     # Organization-level (AR Firm) roles
     ORGANIZATION_CEO = "ORGANIZATION_CEO", _("Organization CEO")
     ORGANIZATION_COO = "ORGANIZATION_COO", _("Organization COO")
-    ORGANIZATION_SYSTEM_DEVELOPER = "ORGANIZATION_SYSTEM_DEVELOPER", _("Organization System Developer")
-    ORGANIZATION_COMPLIANCE_MANAGER = "ORGANIZATION_COMPLIANCE_MANAGER", _("Organization Compliance Manager")
-    ORGANIZATION_COMPLIANCE_ASSISTANT = "ORGANIZATION_COMPLIANCE_ASSISTANT", _("Organization Compliance Assistant")
-    ORGANIZATION_PRINCIPAL_ADVISER = "ORGANIZATION_PRINCIPAL_ADVISER", _("Organization Principal Adviser")
+    ORGANIZATION_SYSTEM_DEVELOPER = "ORGANIZATION_SYSTEM_DEVELOPER", _(
+        "Organization System Developer"
+    )
+    ORGANIZATION_COMPLIANCE_MANAGER = "ORGANIZATION_COMPLIANCE_MANAGER", _(
+        "Organization Compliance Manager"
+    )
+    ORGANIZATION_COMPLIANCE_ASSISTANT = "ORGANIZATION_COMPLIANCE_ASSISTANT", _(
+        "Organization Compliance Assistant"
+    )
+    ORGANIZATION_PRINCIPAL_ADVISER = "ORGANIZATION_PRINCIPAL_ADVISER", _(
+        "Organization Principal Adviser"
+    )
     ORGANIZATION_ADVISER = "ORGANIZATION_ADVISER", _("Organization Adviser")
     ORGANIZATION_ADMIN = "ORGANIZATION_ADMIN", _("Organization Admin")
     ORGANIZATION_SUPPORT = "ORGANIZATION_SUPPORT", _("Organization Support Staff")
-
 
 
 class GenderChoices(models.TextChoices):
@@ -68,10 +81,18 @@ class OrganizationRoleChoices(models.TextChoices):
     # Organization-level (AR Firm) roles
     ORGANIZATION_CEO = "ORGANIZATION_CEO", _("Organization CEO")
     ORGANIZATION_COO = "ORGANIZATION_COO", _("Organization COO")
-    ORGANIZATION_SYSTEM_DEVELOPER = "ORGANIZATION_SYSTEM_DEVELOPER", _("Organization System Developer")
-    ORGANIZATION_COMPLIANCE_MANAGER = "ORGANIZATION_COMPLIANCE_MANAGER", _("Organization Compliance Manager")
-    ORGANIZATION_COMPLIANCE_ASSISTANT = "ORGANIZATION_COMPLIANCE_ASSISTANT", _("Organization Compliance Assistant")
-    ORGANIZATION_PRINCIPAL_ADVISER = "ORGANIZATION_PRINCIPAL_ADVISER", _("Organization Principal Adviser")
+    ORGANIZATION_SYSTEM_DEVELOPER = "ORGANIZATION_SYSTEM_DEVELOPER", _(
+        "Organization System Developer"
+    )
+    ORGANIZATION_COMPLIANCE_MANAGER = "ORGANIZATION_COMPLIANCE_MANAGER", _(
+        "Organization Compliance Manager"
+    )
+    ORGANIZATION_COMPLIANCE_ASSISTANT = "ORGANIZATION_COMPLIANCE_ASSISTANT", _(
+        "Organization Compliance Assistant"
+    )
+    ORGANIZATION_PRINCIPAL_ADVISER = "ORGANIZATION_PRINCIPAL_ADVISER", _(
+        "Organization Principal Adviser"
+    )
     ORGANIZATION_ADVISER = "ORGANIZATION_ADVISER", _("Organization Adviser")
     ORGANIZATION_ADMIN = "ORGANIZATION_ADMIN", _("Organization Admin")
     ORGANIZATION_SUPPORT = "ORGANIZATION_SUPPORT", _("Organization Support Staff")
@@ -89,9 +110,15 @@ class NetworkRoleChoices(models.TextChoices):
     NETWORK_CEO = "NETWORK_CEO", _("Network CEO")
     NETWORK_COO = "NETWORK_COO", _("Network COO")
     NETWORK_SYSTEM_DEVELOPER = "NETWORK_SYSTEM_DEVELOPER", _("Network System Developer")
-    NETWORK_COMPLIANCE_MANAGER = "NETWORK_COMPLIANCE_MANAGER", _("Network Compliance Manager")
-    NETWORK_COMPLIANCE_ASSISTANT = "NETWORK_COMPLIANCE_ASSISTANT", _("Network Compliance Assistant")
-    NETWORK_PRINCIPAL_ADVISER = "NETWORK_PRINCIPAL_ADVISER", _("Network Principal Adviser")
+    NETWORK_COMPLIANCE_MANAGER = "NETWORK_COMPLIANCE_MANAGER", _(
+        "Network Compliance Manager"
+    )
+    NETWORK_COMPLIANCE_ASSISTANT = "NETWORK_COMPLIANCE_ASSISTANT", _(
+        "Network Compliance Assistant"
+    )
+    NETWORK_PRINCIPAL_ADVISER = "NETWORK_PRINCIPAL_ADVISER", _(
+        "Network Principal Adviser"
+    )
     NETWORK_ADVISER = "NETWORK_ADVISER", _("Network Adviser")
     NETWORK_ADMIN = "NETWORK_ADMIN", _("Network Admin")
     NETWORK_SUPPORT = "NETWORK_SUPPORT", _("Network Support Staff")

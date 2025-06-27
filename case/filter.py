@@ -53,7 +53,7 @@ class CaseFilter(filters.FilterSet):
         # Dynamically set the queryset for the created_by field
         if hasattr(self, "request") and self.request is not None:
             user = self.request.user
-            
+
             # Check if user is associated with an organization
             org_user = OrganizationUser.objects.filter(user=user).first()
             if org_user:
@@ -70,10 +70,10 @@ class CaseFilter(filters.FilterSet):
                     network = network_user.network
                     # Filter Users based on the Network and Role
                     self.filters["created_by"].queryset = User.objects.filter(
-                        Q(organization_users__organization__network=network) |
-                        Q(network_users__network=network),
-                        Q(organization_users__role=UserTypeChoices.ADVISOR) |
-                        Q(network_users__role=UserTypeChoices.ADVISOR)
+                        Q(organization_users__organization__network=network)
+                        | Q(network_users__network=network),
+                        Q(organization_users__role=UserTypeChoices.ADVISOR)
+                        | Q(network_users__role=UserTypeChoices.ADVISOR),
                     ).distinct()
 
 
@@ -105,20 +105,20 @@ class FileFilter(filters.FilterSet):
             user = self.request.user
             org_user = OrganizationUser.objects.filter(user=user).first()
             network_user = NetworkUser.objects.filter(user=user).first()
-            
+
             if org_user:
                 # Limit `created_by` to advisors in the user's organization
                 self.filters["created_by"].queryset = User.objects.filter(
                     organization_users__organization=org_user.organization,
-                    organization_users__role=UserTypeChoices.ADVISOR
+                    organization_users__role=UserTypeChoices.ADVISOR,
                 )
             elif network_user:
                 # Limit `created_by` to advisors in the user's network
                 self.filters["created_by"].queryset = User.objects.filter(
-                    Q(organization_users__organization__network=network_user.network) |
-                    Q(network_users__network=network_user.network),
-                    Q(organization_users__role=UserTypeChoices.ADVISOR) |
-                    Q(network_users__role=UserTypeChoices.ADVISOR)
+                    Q(organization_users__organization__network=network_user.network)
+                    | Q(network_users__network=network_user.network),
+                    Q(organization_users__role=UserTypeChoices.ADVISOR)
+                    | Q(network_users__role=UserTypeChoices.ADVISOR),
                 ).distinct()
 
             # Limit `file_owner` to valid owners based on the provided case

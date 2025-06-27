@@ -132,9 +132,9 @@ class OrganizationUserSerializer(OrganizationUserListSerializer):
         return fields
 
 
-
 class NetworkUserListSerializer(serializers.ModelSerializer):
     """Base serializer for NetworkUser listing"""
+
     user_detail = CommonUserSerializer(read_only=True, source="user")
     network_detail = serializers.SerializerMethodField()
 
@@ -167,9 +167,9 @@ class NetworkUserListSerializer(serializers.ModelSerializer):
         }
 
 
-
 class NetworkUserSerializer(NetworkUserListSerializer):
     """Full NetworkUser serializer with all fields"""
+
     user_detail = CommonUserSerializer(read_only=True, source="user")
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), write_only=True
@@ -223,15 +223,13 @@ class NetworkUserSerializer(NetworkUserListSerializer):
         request = self.context.get("request")
         if request and hasattr(request, "user"):
             # Get users from network's organizations or direct network users
-            user_networks = Network.objects.filter(
-                network_users__user=request.user
-            )
+            user_networks = Network.objects.filter(network_users__user=request.user)
 
             # Users from organizations within the network + direct network users
             fields["user"].queryset = User.objects.filter(
-                Q(organization_users__organization__network__in=user_networks) |
-                Q(network_users__network__in=user_networks) |
-                Q(created_by=request.user)
+                Q(organization_users__organization__network__in=user_networks)
+                | Q(network_users__network__in=user_networks)
+                | Q(created_by=request.user)
             ).distinct()
         return fields
 
@@ -248,4 +246,5 @@ class NetworkUserListCreateSerializer(NetworkUserListSerializer):
 
 class NetworkUserRetrieveUpdateDeleteSerializer(NetworkUserSerializer):
     """Serializer for retrieving, updating, and deleting NetworkUsers"""
+
     pass

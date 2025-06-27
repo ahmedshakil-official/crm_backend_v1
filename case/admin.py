@@ -16,7 +16,7 @@ from case.models import (
     ExistingProtection,
     LoanDetails,
     MortgageNeeds,
-    Product
+    Product,
 )
 
 # Register your models here.

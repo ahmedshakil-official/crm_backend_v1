@@ -7,7 +7,6 @@ from common.enums import UserTypeChoices
 from organization.models import Organization, OrganizationUser, Network, NetworkUser
 
 
-
 class AuthenticationRequiredMixin:
     """Mixin to handle authentication checks"""
 
@@ -32,14 +31,15 @@ class AuthenticationRequiredMixin:
                 OrganizationUserListCreateSerializer,
                 OrganizationUserRetrieveUpdateDeleteSerializer,
             )
+
             return {
-                'type': 'organization',
-                'instance': organization_user.organization,
-                'model': OrganizationUser,
-                'full_serializer': OrganizationUserSerializer,
-                'list_create_serializer': OrganizationUserListCreateSerializer,
-                'retrieve_update_delete_serializer': OrganizationUserRetrieveUpdateDeleteSerializer,
-                'foreign_key_field': 'organization'
+                "type": "organization",
+                "instance": organization_user.organization,
+                "model": OrganizationUser,
+                "full_serializer": OrganizationUserSerializer,
+                "list_create_serializer": OrganizationUserListCreateSerializer,
+                "retrieve_update_delete_serializer": OrganizationUserRetrieveUpdateDeleteSerializer,
+                "foreign_key_field": "organization",
             }
 
         # Check if user is associated with a network
@@ -51,14 +51,15 @@ class AuthenticationRequiredMixin:
                 NetworkUserListCreateSerializer,
                 NetworkUserRetrieveUpdateDeleteSerializer,
             )
+
             return {
-                'type': 'network',
-                'instance': network_user.network,
-                'model': NetworkUser,
-                'full_serializer': NetworkUserSerializer,
-                'list_create_serializer': NetworkUserListCreateSerializer,
-                'retrieve_update_delete_serializer': NetworkUserRetrieveUpdateDeleteSerializer,
-                'foreign_key_field': 'network'
+                "type": "network",
+                "instance": network_user.network,
+                "model": NetworkUser,
+                "full_serializer": NetworkUserSerializer,
+                "list_create_serializer": NetworkUserListCreateSerializer,
+                "retrieve_update_delete_serializer": NetworkUserRetrieveUpdateDeleteSerializer,
+                "foreign_key_field": "network",
             }
 
         # If neither found, raise error
@@ -69,6 +70,7 @@ class AuthenticationRequiredMixin:
 
 class BaseUserView:
     """Base class containing common functionality for user views (works for both Organization and Network users)"""
+
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
 
@@ -77,26 +79,26 @@ class BaseUserView:
         user_context = self.get_user_context()
 
         # Get the appropriate model and filter
-        model = user_context['model']
-        instance = user_context['instance']
-        foreign_key_field = user_context['foreign_key_field']
+        model = user_context["model"]
+        instance = user_context["instance"]
+        foreign_key_field = user_context["foreign_key_field"]
 
         # Create filter kwargs dynamically
         filter_kwargs = {foreign_key_field: instance}
 
-        return model.objects.filter(
-            **filter_kwargs
-        ).select_related(foreign_key_field, "user", "created_by", "updated_by")
+        return model.objects.filter(**filter_kwargs).select_related(
+            foreign_key_field, "user", "created_by", "updated_by"
+        )
 
     def get_serializer_class(self):
         """Dynamically return the appropriate serializer class"""
         user_context = self.get_user_context()
-        return user_context['full_serializer']
+        return user_context["full_serializer"]
 
     def get_serializer_context(self):
         """Add user context to serializer"""
         context = super().get_serializer_context()
-        context['user_context'] = self.get_user_context()
+        context["user_context"] = self.get_user_context()
         return context
 
 
@@ -108,20 +110,22 @@ class UserListCreateView(AuthenticationRequiredMixin, BaseUserView, ListCreateAP
 
     def perform_create(self, serializer):
         user_context = self.get_user_context()
-        instance = user_context['instance']
-        foreign_key_field = user_context['foreign_key_field']
+        instance = user_context["instance"]
+        foreign_key_field = user_context["foreign_key_field"]
 
         # Create save kwargs dynamically
         save_kwargs = {
             foreign_key_field: instance,
-            'created_by': self.request.user,
-            'updated_by': self.request.user,
+            "created_by": self.request.user,
+            "updated_by": self.request.user,
         }
 
         serializer.save(**save_kwargs)
 
 
-class UserRetrieveUpdateDeleteView(AuthenticationRequiredMixin, BaseUserView, RetrieveUpdateDestroyAPIView):
+class UserRetrieveUpdateDeleteView(
+    AuthenticationRequiredMixin, BaseUserView, RetrieveUpdateDestroyAPIView
+):
     """Generic view for retrieving, updating and deleting users (works for both org and network users)"""
 
     def get_queryset(self):
@@ -134,6 +138,7 @@ class UserRetrieveUpdateDeleteView(AuthenticationRequiredMixin, BaseUserView, Re
 
 class BaseRoleSpecificView:
     """Base class for role-specific views"""
+
     role = None  # Must be set by subclasses
 
     def get_role_filtered_queryset(self):
@@ -143,7 +148,7 @@ class BaseRoleSpecificView:
     def get_serializer_class(self):
         """Return role-specific serializer for list/create operations"""
         user_context = self.get_user_context()
-        return user_context['list_create_serializer']
+        return user_context["list_create_serializer"]
 
 
 class RoleSpecificListCreate(BaseRoleSpecificView, UserListCreateView):
@@ -153,25 +158,27 @@ class RoleSpecificListCreate(BaseRoleSpecificView, UserListCreateView):
 
     def perform_create(self, serializer):
         user_context = self.get_user_context()
-        instance = user_context['instance']
-        foreign_key_field = user_context['foreign_key_field']
+        instance = user_context["instance"]
+        foreign_key_field = user_context["foreign_key_field"]
 
         # Create save kwargs dynamically
         save_kwargs = {
-            'role': self.role,
+            "role": self.role,
             foreign_key_field: instance,
-            'created_by': self.request.user,
+            "created_by": self.request.user,
         }
 
         serializer.save(**save_kwargs)
 
 
-class RoleSpecificRetrieveUpdateDelete(BaseRoleSpecificView, UserRetrieveUpdateDeleteView):
+class RoleSpecificRetrieveUpdateDelete(
+    BaseRoleSpecificView, UserRetrieveUpdateDeleteView
+):
 
     def get_serializer_class(self):
         """Return role-specific serializer for retrieve/update/delete operations"""
         user_context = self.get_user_context()
-        return user_context['retrieve_update_delete_serializer']
+        return user_context["retrieve_update_delete_serializer"]
 
     def get_queryset(self):
         return self.get_role_filtered_queryset()

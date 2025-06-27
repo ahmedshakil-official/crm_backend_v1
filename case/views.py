@@ -73,7 +73,8 @@ from .models import (
     Suitability,
     ExtraAnswer,
     Compliance,
-    MortgageNeeds, MortgageFeatures,
+    MortgageNeeds,
+    MortgageFeatures,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -127,8 +128,8 @@ class CaseRelatedViewMixin:
         Fetches and caches the case instance based on the alias in the URL.
         Raises NotFound if the case doesn't exist.
         """
-        if not hasattr(self, '_cached_case'):
-            case_alias = self.kwargs.get('case_alias')
+        if not hasattr(self, "_cached_case"):
+            case_alias = self.kwargs.get("case_alias")
             if not case_alias:
                 raise NotFound("Case alias not provided in URL.")
             try:
@@ -140,8 +141,8 @@ class CaseRelatedViewMixin:
     def get_serializer_context(self):
         """Add case to serializer context if the view is case-related."""
         context = super().get_serializer_context()
-        if 'case_alias' in self.kwargs:
-            context['case'] = self.get_case()
+        if "case_alias" in self.kwargs:
+            context["case"] = self.get_case()
         return context
 
     def get_user_context(self):
@@ -154,14 +155,14 @@ class CaseRelatedViewMixin:
         # Check if user is associated with an organization
         try:
             organization = Organization.objects.get(organization_users__user=user)
-            return {'type': 'organization', 'instance': organization}
+            return {"type": "organization", "instance": organization}
         except Organization.DoesNotExist:
             pass
 
         # Check if user is associated with a network
         try:
             network = Network.objects.get(network_users__user=user)
-            return {'type': 'network', 'instance': network}
+            return {"type": "network", "instance": network}
         except Network.DoesNotExist:
             pass
 
@@ -185,18 +186,18 @@ class CaseAuthenticationMixin:
         org_user = OrganizationUser.objects.filter(user=user).first()
         if org_user:
             return {
-                'type': 'organization',
-                'organization': org_user.organization,
-                'network': org_user.organization.network
+                "type": "organization",
+                "organization": org_user.organization,
+                "network": org_user.organization.network,
             }
 
         # Check network association
         network_user = NetworkUser.objects.filter(user=user).first()
         if network_user:
             return {
-                'type': 'network',
-                'network': network_user.network,
-                'organization': None
+                "type": "network",
+                "network": network_user.network,
+                "organization": None,
             }
 
         raise PermissionDenied(
@@ -208,31 +209,42 @@ class CaseAuthenticationMixin:
         self.check_authentication()
         user_association = self.get_user_association()
 
-        if user_association['type'] == 'organization':
+        if user_association["type"] == "organization":
             # Organization users see cases from their organization
             return Case.objects.filter(
-                organization=user_association['organization']
-            ).select_related('organization', 'network', 'lead', 'created_by', 'updated_by')
+                organization=user_association["organization"]
+            ).select_related(
+                "organization", "network", "lead", "created_by", "updated_by"
+            )
 
-        elif user_association['type'] == 'network':
+        elif user_association["type"] == "network":
             # Network users see cases from their entire network
             return Case.objects.filter(
-                network=user_association['network']
-            ).select_related('organization', 'network', 'lead', 'created_by', 'updated_by')
+                network=user_association["network"]
+            ).select_related(
+                "organization", "network", "lead", "created_by", "updated_by"
+            )
 
         return Case.objects.none()
 
 
 class CaseListCreateApiView(CaseAuthenticationMixin, ListCreateAPIView):
     """List and create cases for both organization and network users"""
+
     serializer_class = CaseListCreateSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = CaseFilter
-    search_fields = ['name', 'lead__first_name', 'lead__last_name', 'lead__phone', 'lead__email', 'case_category',
-                     'case_status']
+    search_fields = [
+        "name",
+        "lead__first_name",
+        "lead__last_name",
+        "lead__phone",
+        "lead__email",
+        "case_category",
+        "case_status",
+    ]
     pagination_class = PageNumberPagination
-
 
     lookup_field = "alias"
 
@@ -247,8 +259,11 @@ class CaseListCreateApiView(CaseAuthenticationMixin, ListCreateAPIView):
         serializer.save()
 
 
-class CaseRetrieveUpdateDeleteApiView(CaseAuthenticationMixin, RetrieveUpdateDestroyAPIView):
+class CaseRetrieveUpdateDeleteApiView(
+    CaseAuthenticationMixin, RetrieveUpdateDestroyAPIView
+):
     """Retrieve, update, and delete cases for both organization and network users"""
+
     serializer_class = CaseRetrieveUpdateDeleteSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
@@ -277,7 +292,9 @@ class FileListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
         return Files.objects.filter(case=self.get_case())
 
 
-class FileRetrieveUpdateDeleteApiView(CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView):
+class FileRetrieveUpdateDeleteApiView(
+    CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView
+):
     serializer_class = FileSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
@@ -305,7 +322,9 @@ class JointUserListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
         serializer.save(case=self.get_case())
 
 
-class JointUserRetrieveUpdateDeleteApiView(CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView):
+class JointUserRetrieveUpdateDeleteApiView(
+    CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView
+):
     serializer_class = JointUserSerializer
     lookup_field = "alias"
 
@@ -380,7 +399,9 @@ class ApplicantDetailsListApiView(CaseRelatedViewMixin, ListAPIView):
         return ApplicantDetails.objects.filter(case=self.get_case())
 
 
-class ApplicantDetailsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
+class ApplicantDetailsRetrieveUpdateApiView(
+    CaseRelatedViewMixin, RetrieveUpdateAPIView
+):
     queryset = ApplicantDetails.objects.all()
     serializer_class = ApplicantDetailsSerializer
     permission_classes = [IsAuthenticated]
@@ -409,9 +430,7 @@ class DependantListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     def perform_create(self, serializer):
         case = self.get_case()
         alias = self.kwargs.get("alias")
-        applicant_details = get_object_or_404(
-            ApplicantDetails, case=case, alias=alias
-        )
+        applicant_details = get_object_or_404(ApplicantDetails, case=case, alias=alias)
         serializer.save(applicant_details=applicant_details)
 
 
@@ -429,9 +448,7 @@ class CompanyInfoListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     def perform_create(self, serializer):
         case = self.get_case()
         alias = self.kwargs["alias"]
-        applicant_details = get_object_or_404(
-            ApplicantDetails, case=case, alias=alias
-        )
+        applicant_details = get_object_or_404(ApplicantDetails, case=case, alias=alias)
         serializer.save(applicant_details=applicant_details)
 
 
@@ -487,7 +504,9 @@ class EmploymentDetailsCreateApiView(CaseRelatedViewMixin, CreateAPIView):
         )
 
 
-class EmploymentDetailsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
+class EmploymentDetailsRetrieveUpdateApiView(
+    CaseRelatedViewMixin, RetrieveUpdateAPIView
+):
     serializer_class = EmploymentDetailsSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
@@ -526,9 +545,7 @@ class RegisterLoanListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     def get_queryset(self):
         case = self.get_case()
         alias = self.kwargs.get("alias")
-        return RegisterLoan.objects.filter(
-            adverse__case=case, adverse__alias=alias
-        )
+        return RegisterLoan.objects.filter(adverse__case=case, adverse__alias=alias)
 
     def perform_create(self, serializer):
         case = self.get_case()
@@ -544,9 +561,7 @@ class CCJListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     def get_queryset(self):
         case = self.get_case()
         alias = self.kwargs.get("alias")
-        return CCJ.objects.filter(
-            adverse__case=case, adverse__alias=alias
-        )
+        return CCJ.objects.filter(adverse__case=case, adverse__alias=alias)
 
     def perform_create(self, serializer):
         case = self.get_case()
@@ -598,9 +613,7 @@ class BankruptListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     def get_queryset(self):
         case = self.get_case()
         alias = self.kwargs.get("alias")
-        return Bankrupt.objects.filter(
-            adverse__case=case, adverse__alias=alias
-        )
+        return Bankrupt.objects.filter(adverse__case=case, adverse__alias=alias)
 
     def perform_create(self, serializer):
         case = self.get_case()
@@ -652,9 +665,7 @@ class PayDayLoanListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     def get_queryset(self):
         case = self.get_case()
         alias = self.kwargs.get("alias")
-        return PayDayLoan.objects.filter(
-            adverse__case=case, adverse__alias=alias
-        )
+        return PayDayLoan.objects.filter(adverse__case=case, adverse__alias=alias)
 
     def perform_create(self, serializer):
         case = self.get_case()
@@ -680,10 +691,10 @@ class SolicitorListCreateApiView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return SolicitorAccountant.objects.filter(user_type='SOLICITOR')
+        return SolicitorAccountant.objects.filter(user_type="SOLICITOR")
 
     def perform_create(self, serializer):
-        serializer.save(user_type='SOLICITOR', created_by=self.request.user)
+        serializer.save(user_type="SOLICITOR", created_by=self.request.user)
 
 
 class AccountantListCreateApiView(ListCreateAPIView):
@@ -691,10 +702,10 @@ class AccountantListCreateApiView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return SolicitorAccountant.objects.filter(user_type='ACCOUNTANT')
+        return SolicitorAccountant.objects.filter(user_type="ACCOUNTANT")
 
     def perform_create(self, serializer):
-        serializer.save(user_type='ACCOUNTANT', created_by=self.request.user)
+        serializer.save(user_type="ACCOUNTANT", created_by=self.request.user)
 
 
 class CaseAccountantsApiView(CaseRelatedViewMixin, ListCreateAPIView):
@@ -727,7 +738,7 @@ class SolicitorRetrieveUpdateApiView(RetrieveUpdateAPIView):
     lookup_field = "alias"
 
     def get_queryset(self):
-        return SolicitorAccountant.objects.filter(user_type='SOLICITOR')
+        return SolicitorAccountant.objects.filter(user_type="SOLICITOR")
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
@@ -739,7 +750,7 @@ class AccountantRetrieveUpdateApiView(RetrieveUpdateAPIView):
     lookup_field = "alias"
 
     def get_queryset(self):
-        return SolicitorAccountant.objects.filter(user_type='ACCOUNTANT')
+        return SolicitorAccountant.objects.filter(user_type="ACCOUNTANT")
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
@@ -763,7 +774,9 @@ class ExistingProtectionCreateApiView(CaseRelatedViewMixin, CreateAPIView):
         serializer.save(case=case, user=user_obj, created_by=self.request.user)
 
 
-class ExistingProtectionRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
+class ExistingProtectionRetrieveUpdateApiView(
+    CaseRelatedViewMixin, RetrieveUpdateAPIView
+):
     serializer_class = ExistingProtectionSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
@@ -917,7 +930,9 @@ class FeesInListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
     def perform_create(self, serializer):
         case = self.get_case()
-        serializer.save(case=case, fee_type=FeesChoices.FEES_IN, created_by=self.request.user)
+        serializer.save(
+            case=case, fee_type=FeesChoices.FEES_IN, created_by=self.request.user
+        )
 
 
 class FeesOutListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
@@ -930,7 +945,9 @@ class FeesOutListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
     def perform_create(self, serializer):
         case = self.get_case()
-        serializer.save(case=case, fee_type=FeesChoices.FEES_OUT, created_by=self.request.user)
+        serializer.save(
+            case=case, fee_type=FeesChoices.FEES_OUT, created_by=self.request.user
+        )
 
 
 class FeesRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
@@ -947,7 +964,6 @@ class FeesRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
         serializer.save(updated_by=self.request.user)
 
 
-
 class DipHistoryListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = DipHistorySerializer
     permission_classes = [IsAuthenticated]
@@ -959,7 +975,6 @@ class DipHistoryListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     def perform_create(self, serializer):
         case = self.get_case()
         serializer.save(case=case, created_by=self.request.user)
-
 
 
 class DipHistoryRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
@@ -1008,7 +1023,9 @@ class CreditCommitmentsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView
         )
 
 
-class CreditCommitmentsRetrieveUpdateDestroyApiView(CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView):
+class CreditCommitmentsRetrieveUpdateDestroyApiView(
+    CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView
+):
     serializer_class = CreditCommitmentsSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "alias"
@@ -1025,7 +1042,9 @@ class CreditCommitmentsRetrieveUpdateDestroyApiView(CaseRelatedViewMixin, Retrie
         instance.delete()
 
 
-class SuitabilityRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView):
+class SuitabilityRetrieveUpdateApiView(
+    CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView
+):
     serializer_class = SuitabilitySerializer
     permission_classes = [IsAuthenticated]
 
@@ -1080,6 +1099,7 @@ class MortgageNeedsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPI
 
 class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
     """Generate PDF report for a specific case"""
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, case_alias):
@@ -1091,26 +1111,41 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
         case_queryset = self.get_case_queryset()
 
         if not case_queryset.filter(alias=case_alias).exists():
-            return Response({"error": "You don't have permission to access this case"}, status=403)
+            return Response(
+                {"error": "You don't have permission to access this case"}, status=403
+            )
 
         # Get firm name based on user association
-        if user_association['type'] == 'organization':
-            firm_name = user_association['organization'].name
+        if user_association["type"] == "organization":
+            firm_name = user_association["organization"].name
         else:  # network user
-            firm_name = user_association['network'].name
+            firm_name = user_association["network"].name
 
         # Get case details
         loan_details = case.loan_details
 
         # Get adviser name (case creator)
-        adviser_name = f"{case.created_by.first_name} {case.created_by.last_name}" if case.created_by else "N/A"
+        adviser_name = (
+            f"{case.created_by.first_name} {case.created_by.last_name}"
+            if case.created_by
+            else "N/A"
+        )
 
         # Get client name (lead user)
-        client_name = f"{case.lead.first_name} {case.lead.last_name}" if case.lead else "N/A"
+        client_name = (
+            f"{case.lead.first_name} {case.lead.last_name}" if case.lead else "N/A"
+        )
 
         # Create PDF
         buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
+        doc = SimpleDocTemplate(
+            buffer,
+            pagesize=A4,
+            rightMargin=72,
+            leftMargin=72,
+            topMargin=72,
+            bottomMargin=18,
+        )
 
         # Container for the 'Flowable' objects
         elements = []
@@ -1118,22 +1153,22 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
         # Define styles
         styles = getSampleStyleSheet()
         title_style = ParagraphStyle(
-            'CustomTitle',
-            parent=styles['Heading1'],
+            "CustomTitle",
+            parent=styles["Heading1"],
             fontSize=18,
             spaceAfter=30,
             alignment=TA_CENTER,
         )
 
         heading_style = ParagraphStyle(
-            'CustomHeading',
-            parent=styles['Heading2'],
+            "CustomHeading",
+            parent=styles["Heading2"],
             fontSize=14,
             spaceAfter=12,
             alignment=TA_LEFT,
         )
 
-        normal_style = styles['Normal']
+        normal_style = styles["Normal"]
 
         # Add title
         title = Paragraph("Case Report", title_style)
@@ -1142,50 +1177,105 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
 
         # Create data table
         data = [
-            ['Field', 'Value'],
-            ['Firm:', firm_name],
-            ['Adviser:', adviser_name],
-            ['Client Name:', client_name],
-            ['Submitted Date:', case.created_at.strftime('%d/%m/%Y') if case.created_at else 'N/A'],
-            ['Reference:', str(case.alias)[:6].upper()],  # First 6 chars of UUID as reference
-            ['Current Stage:', case.get_case_stage_display() if case.case_stage else 'N/A'],
+            ["Field", "Value"],
+            ["Firm:", firm_name],
+            ["Adviser:", adviser_name],
+            ["Client Name:", client_name],
+            [
+                "Submitted Date:",
+                case.created_at.strftime("%d/%m/%Y") if case.created_at else "N/A",
+            ],
+            [
+                "Reference:",
+                str(case.alias)[:6].upper(),
+            ],  # First 6 chars of UUID as reference
+            [
+                "Current Stage:",
+                case.get_case_stage_display() if case.case_stage else "N/A",
+            ],
         ]
 
         # Add loan details if available
         if loan_details:
-            data.extend([
-                ['Loan Type:', loan_details.get_mortgage_type_display() if loan_details.mortgage_type else 'N/A'],
-                ['Purpose:', loan_details.get_loan_purpose_display() if loan_details.loan_purpose else 'N/A'],
-                ['Lead Source:', loan_details.get_lead_source_display() if loan_details.lead_source else 'N/A'],
-                ['Lender:', loan_details.lender or 'N/A'],
-                ['Loan Amount:', f"£{loan_details.loan_amount:,.2f}" if loan_details.loan_amount else 'N/A'],
-                ['LTV (%):', f"{loan_details.ltv:.2f}" if loan_details.ltv else 'N/A'],
-            ])
+            data.extend(
+                [
+                    [
+                        "Loan Type:",
+                        (
+                            loan_details.get_mortgage_type_display()
+                            if loan_details.mortgage_type
+                            else "N/A"
+                        ),
+                    ],
+                    [
+                        "Purpose:",
+                        (
+                            loan_details.get_loan_purpose_display()
+                            if loan_details.loan_purpose
+                            else "N/A"
+                        ),
+                    ],
+                    [
+                        "Lead Source:",
+                        (
+                            loan_details.get_lead_source_display()
+                            if loan_details.lead_source
+                            else "N/A"
+                        ),
+                    ],
+                    ["Lender:", loan_details.lender or "N/A"],
+                    [
+                        "Loan Amount:",
+                        (
+                            f"£{loan_details.loan_amount:,.2f}"
+                            if loan_details.loan_amount
+                            else "N/A"
+                        ),
+                    ],
+                    [
+                        "LTV (%):",
+                        f"{loan_details.ltv:.2f}" if loan_details.ltv else "N/A",
+                    ],
+                ]
+            )
 
         # Get net income (you might need to calculate this from income/expenses models)
         # For now, using placeholder
-        data.append(['Net Income:', '£252.68'])  # This should be calculated from actual data
+        data.append(
+            ["Net Income:", "£252.68"]
+        )  # This should be calculated from actual data
 
         # Create table
         table = Table(data, colWidths=[2.5 * inch, 4 * inch])
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 14),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),  # Make first column bold
-        ]))
+        table.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                    ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, 0), 14),
+                    ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                    ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+                    ("GRID", (0, 0), (-1, -1), 1, colors.black),
+                    ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    (
+                        "FONTNAME",
+                        (0, 1),
+                        (0, -1),
+                        "Helvetica-Bold",
+                    ),  # Make first column bold
+                ]
+            )
+        )
 
         elements.append(table)
         elements.append(Spacer(1, 12))
 
         # Add footer with generation date
-        footer_text = f"Report generated on {datetime.now().strftime('%d/%m/%Y at %H:%M')}"
+        footer_text = (
+            f"Report generated on {datetime.now().strftime('%d/%m/%Y at %H:%M')}"
+        )
         footer = Paragraph(footer_text, normal_style)
         elements.append(Spacer(1, 20))
         elements.append(footer)
@@ -1197,11 +1287,10 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
         pdf = buffer.getvalue()
         buffer.close()
 
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="case_report_{case.alias}.pdf"'
+        response = HttpResponse(content_type="application/pdf")
+        response["Content-Disposition"] = (
+            f'attachment; filename="case_report_{case.alias}.pdf"'
+        )
         response.write(pdf)
 
         return response
-
-
-

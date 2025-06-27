@@ -84,7 +84,7 @@ from common.serializers import (
     CommonUserWithPasswordSerializer,
     CommonCaseSerializer,
     CommonUserWithIdSerializer,
-    CommonNetworkSerializer
+    CommonNetworkSerializer,
 )
 
 
@@ -146,7 +146,7 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
             # For organization users: only leads from the same organization
             self.fields["lead"].queryset = User.objects.filter(
                 user_type="LEAD",
-                organization_users__organization=organization_user.organization
+                organization_users__organization=organization_user.organization,
             )
             return
 
@@ -155,8 +155,11 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
         if network_user:
             # For network users: leads from all organizations in the network + direct network leads
             self.fields["lead"].queryset = User.objects.filter(
-                Q(user_type="LEAD", organization_users__organization__network=network_user.network) |
-                Q(user_type="LEAD", network_users__network=network_user.network)
+                Q(
+                    user_type="LEAD",
+                    organization_users__organization__network=network_user.network,
+                )
+                | Q(user_type="LEAD", network_users__network=network_user.network)
             ).distinct()
             return
 
@@ -171,22 +174,22 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
         # Check if user is from organization
         organization_user = OrganizationUser.objects.filter(user=user).first()
         if organization_user:
-            validated_data['organization'] = organization_user.organization
-            validated_data['network'] = organization_user.organization.network
+            validated_data["organization"] = organization_user.organization
+            validated_data["network"] = organization_user.organization.network
         else:
             # Check if user is from network
             network_user = NetworkUser.objects.filter(user=user).first()
             if network_user:
-                validated_data['network'] = network_user.network
+                validated_data["network"] = network_user.network
                 # Organization will be None for network-level cases
-                validated_data['organization'] = None
+                validated_data["organization"] = None
             else:
                 raise serializers.ValidationError(
                     "User must be associated with an organization or network to create cases."
                 )
 
-        validated_data['created_by'] = user
-        validated_data['updated_by'] = user
+        validated_data["created_by"] = user
+        validated_data["updated_by"] = user
 
         return super().create(validated_data)
 
@@ -248,7 +251,7 @@ class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
             # For organization users: only leads from the same organization
             self.fields["lead"].queryset = User.objects.filter(
                 user_type="LEAD",
-                organization_users__organization=organization_user.organization
+                organization_users__organization=organization_user.organization,
             )
             return
 
@@ -257,8 +260,11 @@ class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
         if network_user:
             # For network users: leads from all organizations in the network + direct network leads
             self.fields["lead"].queryset = User.objects.filter(
-                Q(user_type="LEAD", organization_users__organization__network=network_user.network) |
-                Q(user_type="LEAD", network_users__network=network_user.network)
+                Q(
+                    user_type="LEAD",
+                    organization_users__organization__network=network_user.network,
+                )
+                | Q(user_type="LEAD", network_users__network=network_user.network)
             ).distinct()
             return
 
@@ -268,7 +274,7 @@ class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         """Update case with proper user tracking"""
         request = self.context.get("request")
-        validated_data['updated_by'] = request.user
+        validated_data["updated_by"] = request.user
         return super().update(instance, validated_data)
 
 
@@ -3339,4 +3345,3 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-
