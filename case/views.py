@@ -926,12 +926,12 @@ class FeesInListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
     def get_queryset(self):
         case = self.get_case()
-        return Fees.objects.filter(case=case, fee_type=FeesChoices.FEES_IN)
+        return Fees.objects.filter(case=case, fees_type=FeesChoices.FEES_IN)
 
     def perform_create(self, serializer):
         case = self.get_case()
         serializer.save(
-            case=case, fee_type=FeesChoices.FEES_IN, created_by=self.request.user
+            case=case, fees_type=FeesChoices.FEES_IN, created_by=self.request.user
         )
 
 
