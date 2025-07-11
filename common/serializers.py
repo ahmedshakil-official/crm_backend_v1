@@ -88,7 +88,7 @@ class CommonUserWithPasswordSerializer(UserCreateSerializer):
         default=UserTypeChoices.SERVICE_HOLDER,
         required=False,
     )
-    password = serializers.CharField(write_only=True, required=False)
+    password = serializers.CharField(write_only=True, required=False, allow_blank=True)
 
     class Meta(UserCreateSerializer.Meta):
         fields = [
@@ -100,14 +100,21 @@ class CommonUserWithPasswordSerializer(UserCreateSerializer):
             "user_type",
         ]
 
+    def validate_password(self, value):
+        # Don't call parent validation for password if it's empty
+        if not value:
+            return value
+        # Only validate if password is provided
+        return super().validate_password(value)
+
     def validate(self, attrs):
+        # Generate password if not provided
         if not attrs.get("password"):
             attrs["password"] = get_random_string(8)
         return super().validate(attrs)
 
     def create(self, validated_data):
         user = super().create(validated_data)
-
         return user
 
 
