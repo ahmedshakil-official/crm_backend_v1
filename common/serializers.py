@@ -88,6 +88,7 @@ class CommonUserWithPasswordSerializer(UserCreateSerializer):
         default=UserTypeChoices.SERVICE_HOLDER,
         required=False,
     )
+    password = serializers.CharField(write_only=True, required=False)
 
     class Meta(UserCreateSerializer.Meta):
         fields = [
