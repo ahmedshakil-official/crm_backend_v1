@@ -104,11 +104,12 @@ class CommonUserWithPasswordSerializer(serializers.ModelSerializer):
             "password",
         ]
 
-    def validate_password(self, value):
-        """Generate password if not provided or empty"""
-        if not value:
-            return get_random_string(8)
-        return value
+    def to_internal_value(self, data):
+        # Remove password from data if it's empty string before validation
+        if 'password' in data and data['password'] == '':
+            data = data.copy()
+            del data['password']
+        return super().to_internal_value(data)
 
     def validate(self, attrs):
         # Generate password if not provided or empty
