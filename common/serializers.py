@@ -80,7 +80,7 @@ class CommonUserWithIdSerializer(UserCreateSerializer):
         ]
 
 
-class CommonUserWithPasswordSerializer(UserCreateSerializer):
+class CommonUserWithPasswordSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(max_length=24, required=False)
     profile_image = serializers.ImageField(required=False)
     user_type = serializers.ChoiceField(
@@ -89,34 +89,35 @@ class CommonUserWithPasswordSerializer(UserCreateSerializer):
         required=False,
     )
     password = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    alias = serializers.UUIDField(read_only=True)
 
-    class Meta(UserCreateSerializer.Meta):
+    class Meta:
+        model = User
         fields = [
+            "alias",
             "email",
             "phone",
             "first_name",
             "last_name",
             "profile_image",
             "user_type",
+            "password",
         ]
 
-    def validate_password(self, value):
-        # Don't call parent validation for password if it's empty
-        if not value:
-            return value
-        # Only validate if password is provided
-        return super().validate_password(value)
-
     def validate(self, attrs):
-        # Generate password if not provided
+        # Generate password if not provided or empty
         if not attrs.get("password"):
             attrs["password"] = get_random_string(8)
-        return super().validate(attrs)
+        return attrs
 
     def create(self, validated_data):
-        user = super().create(validated_data)
+        # Use the User manager's create_user method
+        password = validated_data.pop('password')
+        user = User.objects.create_user(
+            password=password,
+            **validated_data
+        )
         return user
-
 
 class CommonOrganizationSerializer(serializers.ModelSerializer):
 
