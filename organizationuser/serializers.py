@@ -1,4 +1,3 @@
-
 from django.db import transaction
 from rest_framework import serializers
 from authentication.models import User
@@ -38,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = serializers.SerializerMethodField()
     alias = serializers.UUIDField(read_only=True)
     created_by = UserSerializer(read_only=True)
 
@@ -66,13 +65,28 @@ class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
+    def get_fields(self):
+        fields = super().get_fields()
+
+        # Get the role from the request data to determine which serializer to use
+        role = None
+        if hasattr(self, 'initial_data') and self.initial_data:
+            role = self.initial_data.get('role')
+
+        # Use CommonUserWithPasswordSerializer for LEAD roles
+        if role == OrganizationRoleChoices.LEAD or role == UserTypeChoices.LEAD:
+            fields['user'] = CommonUserWithPasswordSerializer()
+        else:
+            fields['user'] = UserSerializer()
+
+        return fields
+
     @transaction.atomic
     def create(self, validated_data):
         user_data = validated_data.pop("user")
         role = validated_data.get("role")
 
         # Use CommonUserWithPasswordSerializer for LEAD roles
-        # Check for both UserTypeChoices.LEAD and OrganizationRoleChoices.LEAD
         if role == OrganizationRoleChoices.LEAD or role == UserTypeChoices.LEAD:
             user_serializer = CommonUserWithPasswordSerializer(data=user_data)
         else:
@@ -296,7 +310,7 @@ class NetworkUserSerializer(NetworkUserListSerializer):
 class NetworkUserListCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating NetworkUsers with specific roles"""
 
-    user = UserSerializer()
+    user = serializers.SerializerMethodField()
     alias = serializers.UUIDField(read_only=True)
     created_by = UserSerializer(read_only=True)
 
@@ -324,13 +338,28 @@ class NetworkUserListCreateSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
+    def get_fields(self):
+        fields = super().get_fields()
+
+        # Get the role from the request data to determine which serializer to use
+        role = None
+        if hasattr(self, 'initial_data') and self.initial_data:
+            role = self.initial_data.get('role')
+
+        # Use CommonUserWithPasswordSerializer for LEAD roles
+        if role == NetworkRoleChoices.LEAD or role == UserTypeChoices.LEAD:
+            fields['user'] = CommonUserWithPasswordSerializer()
+        else:
+            fields['user'] = UserSerializer()
+
+        return fields
+
     @transaction.atomic
     def create(self, validated_data):
         user_data = validated_data.pop("user")
         role = validated_data.get("role")
 
         # Use CommonUserWithPasswordSerializer for LEAD roles
-        # Check for both UserTypeChoices.LEAD and NetworkRoleChoices.LEAD
         if role == NetworkRoleChoices.LEAD or role == UserTypeChoices.LEAD:
             user_serializer = CommonUserWithPasswordSerializer(data=user_data)
         else:
