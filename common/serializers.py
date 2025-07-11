@@ -88,7 +88,7 @@ class CommonUserWithPasswordSerializer(serializers.ModelSerializer):
         default=UserTypeChoices.SERVICE_HOLDER,
         required=False,
     )
-    password = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    password = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
     alias = serializers.UUIDField(read_only=True)
 
     class Meta:
@@ -103,6 +103,12 @@ class CommonUserWithPasswordSerializer(serializers.ModelSerializer):
             "user_type",
             "password",
         ]
+
+    def validate_password(self, value):
+        """Generate password if not provided or empty"""
+        if not value:
+            return get_random_string(8)
+        return value
 
     def validate(self, attrs):
         # Generate password if not provided or empty
