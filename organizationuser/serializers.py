@@ -37,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
+    user = CommonUserWithPasswordSerializer()
     alias = serializers.UUIDField(read_only=True)
     created_by = UserSerializer(read_only=True)
 
@@ -310,7 +310,7 @@ class NetworkUserSerializer(NetworkUserListSerializer):
 class NetworkUserListCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating NetworkUsers with specific roles"""
 
-    user = serializers.SerializerMethodField()
+    user = CommonUserWithPasswordSerializer()
     alias = serializers.UUIDField(read_only=True)
     created_by = UserSerializer(read_only=True)
 
