@@ -88,7 +88,6 @@ class CommonUserWithPasswordSerializer(serializers.ModelSerializer):
         default=UserTypeChoices.SERVICE_HOLDER,
         required=False,
     )
-    password = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
     alias = serializers.UUIDField(read_only=True)
 
     class Meta:
@@ -101,25 +100,13 @@ class CommonUserWithPasswordSerializer(serializers.ModelSerializer):
             "last_name",
             "profile_image",
             "user_type",
-            "password",
         ]
 
-    def to_internal_value(self, data):
-        # Remove password from data if it's empty string before validation
-        if 'password' in data and data['password'] == '':
-            data = data.copy()
-            del data['password']
-        return super().to_internal_value(data)
-
-    def validate(self, attrs):
-        # Generate password if not provided or empty
-        if not attrs.get("password"):
-            attrs["password"] = get_random_string(8)
-        return attrs
-
     def create(self, validated_data):
+        # Generate a random password automatically
+        password = get_random_string(8)
+
         # Use the User manager's create_user method
-        password = validated_data.pop('password')
         user = User.objects.create_user(
             password=password,
             **validated_data
