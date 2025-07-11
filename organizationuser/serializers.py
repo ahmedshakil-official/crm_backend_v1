@@ -70,7 +70,8 @@ class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
         # Check if this is for creating a LEAD role
         if self.instance is None:  # Only for creation
             role = self.initial_data.get('role') if hasattr(self, 'initial_data') else None
-            if role == OrganizationRoleChoices.LEAD:
+            # Check for both UserTypeChoices.LEAD and OrganizationRoleChoices.LEAD
+            if role == OrganizationRoleChoices.LEAD or role == UserTypeChoices.LEAD:
                 self.fields['user'] = CommonUserWithPasswordSerializer()
 
     @transaction.atomic
@@ -79,7 +80,8 @@ class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
         role = validated_data.get("role")
 
         # Use appropriate serializer based on role
-        if role == OrganizationRoleChoices.LEAD:
+        # Check for both UserTypeChoices.LEAD and OrganizationRoleChoices.LEAD
+        if role == OrganizationRoleChoices.LEAD or role == UserTypeChoices.LEAD:
             user_serializer = CommonUserWithPasswordSerializer(data=user_data)
         else:
             user_serializer = UserSerializer(data=user_data)
@@ -90,6 +92,7 @@ class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
         # Map role to user_type
         role_to_user_type_map = {
             OrganizationRoleChoices.LEAD: UserTypeChoices.LEAD,
+            UserTypeChoices.LEAD: UserTypeChoices.LEAD,  # Add this mapping
             OrganizationRoleChoices.CLIENT: UserTypeChoices.CLIENT,
             OrganizationRoleChoices.ADVISOR: UserTypeChoices.ADVISOR,
             OrganizationRoleChoices.INTRODUCER: UserTypeChoices.INTRODUCER,
@@ -128,9 +131,7 @@ class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
             present_address=validated_data.get("present_address", ""),
             dob=validated_data.get("dob", ""),
             gender=validated_data.get("gender", ""),
-
         )
-
 
 class UserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -356,14 +357,12 @@ class NetworkUserListCreateSerializer(serializers.ModelSerializer):
             "alias",
             "user",
             "role",
-
             "official_email",
             "official_phone",
             "permanent_address",
             "present_address",
             "dob",
             "gender",
-
             "created_by",
             "created_at",
         ]
@@ -381,7 +380,8 @@ class NetworkUserListCreateSerializer(serializers.ModelSerializer):
         # Check if this is for creating a LEAD role
         if self.instance is None:  # Only for creation
             role = self.initial_data.get('role') if hasattr(self, 'initial_data') else None
-            if role == NetworkRoleChoices.LEAD:
+            # Check for both UserTypeChoices.LEAD and NetworkRoleChoices.LEAD
+            if role == NetworkRoleChoices.LEAD or role == UserTypeChoices.LEAD:
                 self.fields['user'] = CommonUserWithPasswordSerializer()
 
     @transaction.atomic
@@ -390,7 +390,8 @@ class NetworkUserListCreateSerializer(serializers.ModelSerializer):
         role = validated_data.get("role")
 
         # Use appropriate serializer based on role
-        if role == NetworkRoleChoices.LEAD:
+        # Check for both UserTypeChoices.LEAD and NetworkRoleChoices.LEAD
+        if role == NetworkRoleChoices.LEAD or role == UserTypeChoices.LEAD:
             user_serializer = CommonUserWithPasswordSerializer(data=user_data)
         else:
             user_serializer = UserSerializer(data=user_data)
@@ -401,6 +402,7 @@ class NetworkUserListCreateSerializer(serializers.ModelSerializer):
         # Map role to user_type
         role_to_user_type_map = {
             NetworkRoleChoices.LEAD: UserTypeChoices.LEAD,
+            UserTypeChoices.LEAD: UserTypeChoices.LEAD,  # Add this mapping
             NetworkRoleChoices.CLIENT: UserTypeChoices.CLIENT,
             NetworkRoleChoices.ADVISOR: UserTypeChoices.ADVISOR,
             NetworkRoleChoices.INTRODUCER: UserTypeChoices.INTRODUCER,
@@ -437,9 +439,7 @@ class NetworkUserListCreateSerializer(serializers.ModelSerializer):
             present_address=validated_data.get("present_address", ""),
             dob=validated_data.get("dob", ""),
             gender=validated_data.get("gender", ""),
-
         )
-
 
 class NetworkUserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
     """Serializer for retrieving, updating, and deleting NetworkUsers"""
