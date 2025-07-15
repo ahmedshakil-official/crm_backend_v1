@@ -248,7 +248,7 @@ class Case(CreatedAtUpdatedAtBaseModel):
     case_stage = models.CharField(
         max_length=50,
         choices=CaseStageChoices.choices,
-        default=CaseStageChoices.INQUIRY,
+        default=CaseStageChoices.ENQUIRY,
         db_index=True,
     )
     notes = models.TextField(blank=True, null=True)
@@ -304,19 +304,16 @@ class Case(CreatedAtUpdatedAtBaseModel):
         return self.create_pdf_report(cases, "Adviser Report", None)
 
     def save(self, *args, **kwargs):
-        # Check if the case_stage has changed
-        if self.pk:  # Check if the instance already exists (for updates)
-            original = Case.objects.get(pk=self.pk)
-            if original.case_stage != self.case_stage:
-                # If the case_stage is different, regenerate the name
-                self.name = self.generate_case_name()
-        else:
-            # For new cases, generate the name if not set
-            if not self.name:
-                self.name = self.generate_case_name()
+        # Save first to ensure we have a primary key
+        is_new = not self.pk
 
-        # Call the parent save method
-        super().save(*args, **kwargs)
+        if is_new and not self.name:
+            super().save(*args, **kwargs)
+            # Now generate the name using the actual ID
+            self.name = self.generate_case_name()
+            super().save(update_fields=['name'])
+        else:
+            super().save(*args, **kwargs)
 
 
 class Files(CreatedAtUpdatedAtBaseModel):

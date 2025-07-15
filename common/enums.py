@@ -137,7 +137,7 @@ class CaseStatusChoices(models.TextChoices):
 
 
 class CaseStageChoices(models.TextChoices):
-    INQUIRY = "INQUIRY", _("Inquiry")
+    ENQUIRY = "ENQUIRY", _("Enquiry")
     FACT_FIND = "FACT_FIND", _("Fact Find")
     RESEARCH_COMPLIANCE_CHECK = "RESEARCH_COMPLIANCE_CHECK", _(
         "Research and Compliance Check"
