@@ -238,6 +238,7 @@ class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
             "lead_user",
             "organization",
             "network",
+            "case_stage",
             "created_by",
             "is_removed",
             "updated_by",
