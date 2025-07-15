@@ -4,7 +4,7 @@ from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 
-from common.enums import UserTypeChoices
+from common.enums import UserTypeChoices, OrganizationRoleChoices, NetworkRoleChoices
 from case.enums import (
     UserTypeChoices as SolicitorTypeChoices,
     IncomeTypeChoices,
@@ -191,13 +191,23 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
         validated_data["created_by"] = user
         validated_data["updated_by"] = user
 
-        # Create the case
         case = super().create(validated_data)
 
-        # If case was created with a lead, update the lead user's user_type to CLIENT
+        # If case was created with a lead, update the lead user's user_type and role to CLIENT
         if case.lead:
             case.lead.user_type = UserTypeChoices.CLIENT
             case.lead.save()
+
+            # Update the role in OrganizationUser or NetworkUser
+            lead_org_user = OrganizationUser.objects.filter(user=case.lead).first()
+            if lead_org_user:
+                lead_org_user.role = OrganizationRoleChoices.CLIENT
+                lead_org_user.save()
+            else:
+                lead_network_user = NetworkUser.objects.filter(user=case.lead).first()
+                if lead_network_user:
+                    lead_network_user.role = NetworkRoleChoices.CLIENT
+                    lead_network_user.save()
 
         return case
 
