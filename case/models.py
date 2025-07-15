@@ -273,7 +273,7 @@ class Case(CreatedAtUpdatedAtBaseModel):
     def generate_case_name(self):
         # Mapping case stage choices to abbreviations
         stage_mapping = {
-            "INQUIRY": "INQ",
+            "ENQUIRY": "ENQ",  # Changed from "INQUIRY" to "ENQUIRY"
             "FACT_FIND": "FFD",
             "RESEARCH_COMPLIANCE_CHECK": "RCC",
             "DECISION_IN_PRINCIPLE": "DIP",
