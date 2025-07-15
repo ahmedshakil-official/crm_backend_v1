@@ -80,7 +80,7 @@ class CommonUserWithIdSerializer(UserCreateSerializer):
         ]
 
 
-class CommonUserWithPasswordSerializer(serializers.ModelSerializer):
+class CommonUserWithPasswordSerializer(UserCreateSerializer):
     phone = serializers.CharField(max_length=24, required=False)
     profile_image = serializers.ImageField(required=False)
     user_type = serializers.ChoiceField(
@@ -88,12 +88,9 @@ class CommonUserWithPasswordSerializer(serializers.ModelSerializer):
         default=UserTypeChoices.SERVICE_HOLDER,
         required=False,
     )
-    alias = serializers.UUIDField(read_only=True)
 
-    class Meta:
-        model = User
+    class Meta(UserCreateSerializer.Meta):
         fields = [
-            "alias",
             "email",
             "phone",
             "first_name",
@@ -102,16 +99,16 @@ class CommonUserWithPasswordSerializer(serializers.ModelSerializer):
             "user_type",
         ]
 
-    def create(self, validated_data):
-        # Generate a random password automatically
-        password = get_random_string(8)
+    def validate(self, attrs):
+        if not attrs.get("password"):
+            attrs["password"] = get_random_string(8)
+        return super().validate(attrs)
 
-        # Use the User manager's create_user method
-        user = User.objects.create_user(
-            password=password,
-            **validated_data
-        )
+    def create(self, validated_data):
+        user = super().create(validated_data)
+
         return user
+
 
 class CommonOrganizationSerializer(serializers.ModelSerializer):
 
