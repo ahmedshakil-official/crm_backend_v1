@@ -191,7 +191,15 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
         validated_data["created_by"] = user
         validated_data["updated_by"] = user
 
-        return super().create(validated_data)
+        # Create the case
+        case = super().create(validated_data)
+
+        # If case was created with a lead, update the lead user's user_type to CLIENT
+        if case.lead:
+            case.lead.user_type = UserTypeChoices.CLIENT
+            case.lead.save()
+
+        return case
 
 
 class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
