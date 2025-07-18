@@ -3,7 +3,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from common.enums import UserTypeChoices
+from common.enums import UserTypeChoices, NameTitleChoices
 from common.fields import TimestampThumbnailImageField
 from common.models import CreatedAtUpdatedAtBaseModel
 
@@ -41,7 +41,9 @@ class User(AbstractBaseUser, PermissionsMixin, CreatedAtUpdatedAtBaseModel):
     phone = models.CharField(
         db_index=True, max_length=24, unique=False, null=True, blank=True, default=None
     )
+    title = models.CharField(max_length=64, choices=NameTitleChoices.choices, default=NameTitleChoices.MR)
     first_name = models.CharField(max_length=64, blank=True)
+    middle_name = models.CharField(max_length=64, blank=True)
     last_name = models.CharField(max_length=64, blank=True)
     profile_image = models.ImageField(upload_to="user/profile", blank=True, null=True)
 

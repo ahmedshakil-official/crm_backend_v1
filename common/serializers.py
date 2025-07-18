@@ -85,7 +85,7 @@ class CommonUserWithPasswordSerializer(UserCreateSerializer):
     profile_image = serializers.ImageField(required=False)
     user_type = serializers.ChoiceField(
         choices=UserTypeChoices.choices,
-        default=UserTypeChoices.SERVICE_HOLDER,
+        default=UserTypeChoices.LEAD,
         required=False,
     )
 
@@ -93,7 +93,9 @@ class CommonUserWithPasswordSerializer(UserCreateSerializer):
         fields = [
             "email",
             "phone",
+            "title",
             "first_name",
+            "middle_name",
             "last_name",
             "profile_image",
             "user_type",
