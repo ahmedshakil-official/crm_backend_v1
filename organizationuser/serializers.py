@@ -507,3 +507,117 @@ class NetworkUserRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+
+class LeadListCreateSerializer(serializers.ModelSerializer):
+    """Universal lead serializer that detects context and creates appropriate lead user"""
+    user = CommonUserWithPasswordSerializer()
+    alias = serializers.UUIDField(read_only=True)
+    created_by = UserSerializer(read_only=True)
+
+    class Meta:
+        model = OrganizationUser  # Default model, will be overridden
+        fields = [
+            "alias",
+            "user",
+            "role",
+            "official_email",
+            "official_phone",
+            "permanent_address",
+            "present_address",
+            "dob",
+            "gender",
+            "created_by",
+            "created_at",
+        ]
+        read_only_fields = [
+            "alias",
+            "official_email",
+            "official_phone",
+            "created_by",
+            "role",
+            "created_at",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Determine the context and set the appropriate model
+        context = kwargs.get('context', self.context if hasattr(self, 'context') else {})
+        request = context.get('request')
+
+        if request and hasattr(request, 'user'):
+            # Check if user is associated with network first
+            if hasattr(request.user, 'network_users') and request.user.network_users.exists():
+                self.Meta.model = NetworkUser
+                self._is_network = True
+            else:
+                self.Meta.model = OrganizationUser
+                self._is_network = False
+        else:
+            self._is_network = False
+
+    @transaction.atomic
+    def create(self, validated_data):
+        user_data = validated_data.pop("user")
+
+        # Use CommonUserWithPasswordSerializer for auto-generated password
+        user_serializer = CommonUserWithPasswordSerializer(data=user_data)
+        user_serializer.is_valid(raise_exception=True)
+        user = user_serializer.save()
+
+        # Set user_type to LEAD
+        user.user_type = UserTypeChoices.LEAD
+        user.save()
+
+        # Create appropriate user type based on context
+        if self._is_network:
+            return self._create_network_lead(user, validated_data)
+        else:
+            return self._create_organization_lead(user, validated_data)
+
+    def _create_network_lead(self, user, validated_data):
+        """Create NetworkUser with LEAD role"""
+        # Get the network from the request's context
+        network_user = self.context["request"].user.network_users.first()
+        if not network_user:
+            raise serializers.ValidationError(
+                "User is not associated with any network."
+            )
+        network = network_user.network
+
+        return NetworkUser.objects.create(
+            user=user,
+            network=network,
+            role=NetworkRoleChoices.LEAD,
+            created_by=self.context["request"].user,
+            official_email=user.email,
+            official_phone=user.phone,
+            permanent_address=validated_data.get("permanent_address", ""),
+            present_address=validated_data.get("present_address", ""),
+            dob=validated_data.get("dob", ""),
+            gender=validated_data.get("gender", ""),
+        )
+
+    def _create_organization_lead(self, user, validated_data):
+        """Create OrganizationUser with LEAD role"""
+        # Get the organization from the request's context
+        organization_user = self.context["request"].user.organization_users.first()
+        if not organization_user:
+            raise serializers.ValidationError(
+                "User is not associated with any organization."
+            )
+        organization = organization_user.organization
+
+        return OrganizationUser.objects.create(
+            user=user,
+            organization=organization,
+            role=OrganizationRoleChoices.LEAD,
+            created_by=self.context["request"].user,
+            official_email=user.email,
+            official_phone=user.phone,
+            permanent_address=validated_data.get("permanent_address", ""),
+            present_address=validated_data.get("present_address", ""),
+            dob=validated_data.get("dob", ""),
+            gender=validated_data.get("gender", ""),
+        )

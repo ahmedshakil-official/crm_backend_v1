@@ -3,8 +3,9 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from common.enums import UserTypeChoices
+from common.enums import UserTypeChoices, OrganizationRoleChoices
 from organization.models import Organization, OrganizationUser, Network, NetworkUser
+from organizationuser.serializers import LeadListCreateSerializer
 
 
 class AuthenticationRequiredMixin:
@@ -185,8 +186,14 @@ class RoleSpecificRetrieveUpdateDelete(
 
 
 # Role-specific view implementations (work for both org and network users)
+
 class LeadListCreateView(RoleSpecificListCreate):
-    role = UserTypeChoices.LEAD
+    role = OrganizationRoleChoices.LEAD  # or NetworkRoleChoices.LEAD
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return LeadListCreateSerializer
+        return super().get_serializer_class()
 
 
 class LeadRetrieveUpdateDeleteView(RoleSpecificRetrieveUpdateDelete):
