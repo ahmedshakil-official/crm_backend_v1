@@ -6,34 +6,36 @@ from organization.models import OrganizationUser, NetworkUser, Network
 from common.enums import OrganizationRoleChoices, NetworkRoleChoices, UserTypeChoices
 
 
-# class UserSerializer(serializers.ModelSerializer):
-#     password = serializers.CharField(write_only=True)
-#     alias = serializers.UUIDField(read_only=True)
-#
-#     class Meta:
-#         model = User
-#         fields = [
-#             "id",
-#             "alias",
-#             "email",
-#             "first_name",
-#             "last_name",
-#             "phone",
-#             "password",
-#             "user_type",
-#         ]
-#         read_only_fields = ["user_type"]
-#
-#     def create(self, validated_data):
-#         # Create a new user with the provided data
-#         user = User.objects.create_user(
-#             email=validated_data["email"],
-#             first_name=validated_data.get("first_name", ""),
-#             last_name=validated_data.get("last_name", ""),
-#             phone=validated_data.get("phone", ""),
-#             password=validated_data["password"],
-#         )
-#         return user
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    alias = serializers.UUIDField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "alias",
+            "email",
+            "title",
+            "first_name",
+            "middle_name",
+            "last_name",
+            "phone",
+            "password",
+            "user_type",
+        ]
+        read_only_fields = ["user_type"]
+
+    def create(self, validated_data):
+        # Create a new user with the provided data
+        user = User.objects.create_user(
+            email=validated_data["email"],
+            first_name=validated_data.get("first_name", ""),
+            last_name=validated_data.get("last_name", ""),
+            phone=validated_data.get("phone", ""),
+            password=validated_data["password"],
+        )
+        return user
 
 
 class OrganizationUserListCreateSerializer(serializers.ModelSerializer):
