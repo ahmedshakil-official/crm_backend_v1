@@ -3364,3 +3364,10 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+# dashboard/serializers.py
+class NewMortgageEnquirySerializer(serializers.Serializer):
+   label = serializers.CharField()
+   count = serializers.IntegerField()
+   percentage_change = serializers.IntegerField()
+   trend = serializers.CharField()

@@ -26,6 +26,8 @@ from drf_spectacular.views import (
 )
 from rest_framework import permissions
 
+from case.views import MortgageEnquiryAPIView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("djoser.urls")),
@@ -34,6 +36,9 @@ urlpatterns = [
     path("director/", include("organizationuser.urls")),
     path("cases/", include("case.urls")),
     path("reports/", include("report.urls")),
+    path(
+    "network/dashboard/",MortgageEnquiryAPIView.as_view(),name="network-dashboard",),
+
 ]
 
 if settings.DEBUG:

@@ -1,5 +1,7 @@
 import io
-from datetime import datetime
+from datetime import datetime, timedelta
+from django.utils import timezone
+
 
 from django.db import transaction
 
@@ -32,6 +34,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from authentication.models import User
+from common.enums import ProductCategoryChoices, CaseStageChoices
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization, Network, OrganizationUser, NetworkUser
 from .common import (
@@ -113,7 +116,7 @@ from .serializers import (
     SuitabilitySerializer,
     ExtraAnswerSerializers,
     ComplianceSerializers,
-    MortgageNeedsSerializers,
+    MortgageNeedsSerializers, NewMortgageEnquirySerializer,
 )
 
 
@@ -1294,3 +1297,71 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
         response.write(pdf)
 
         return response
+
+# Mortgage Enquiry Dashboard
+class MortgageEnquiryAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = NewMortgageEnquirySerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        filter_param = self.request.query_params.get("filter", "all")  # default = all
+
+        # Get all networks associated with the user
+        network_users = NetworkUser.objects.filter(user=user)
+        if not network_users.exists():
+            raise NotFound("You are not assigned to any network.")
+
+        networks = [nu.network for nu in network_users]
+        today = timezone.now().date()
+
+        # Helper function
+        def get_counts(start_current, start_previous, end_previous, label):
+            current = Case.objects.filter(
+                network__in=networks,
+                case_category=ProductCategoryChoices.MORTGAGE,
+                case_stage=CaseStageChoices.ENQUIRY,
+                created_at__gte=start_current
+            ).count()
+
+            previous = Case.objects.filter(
+                network__in=networks,
+                case_category=ProductCategoryChoices.MORTGAGE,
+                case_stage=CaseStageChoices.ENQUIRY,
+                created_at__gte=start_previous,
+                created_at__lt=end_previous
+            ).count()
+
+            if previous == 0:
+                percentage_change = 100.0 if current > 0 else 0.0
+            else:
+                percentage_change = ((current - previous) / previous) * 100.0
+
+            return {
+                "label": label,
+                "count": current,
+                "percentage_change": round(percentage_change, 2),
+                "trend": "up" if percentage_change >= 0 else "down"
+            }
+
+        data = []
+
+        if filter_param == "30_days" or filter_param == "all":
+            start_30 = today - timedelta(days=30)
+            start_30_prev = today - timedelta(days=60)
+            end_30_prev = today - timedelta(days=30)
+            data.append(get_counts(start_30, start_30_prev, end_30_prev, "New Mortgage Enquiries (30 days)"))
+
+        if filter_param == "6_months" or filter_param == "all":
+            start_6 = today - timedelta(days=180)
+            start_6_prev = today - timedelta(days=360)
+            end_6_prev = start_6
+            data.append(get_counts(start_6, start_6_prev, end_6_prev, "New Mortgage Enquiries (6 months)"))
+
+        if filter_param == "1_year" or filter_param == "all":
+            start_1y = today - timedelta(days=365)
+            start_1y_prev = today - timedelta(days=730)
+            end_1y_prev = start_1y
+            data.append(get_counts(start_1y, start_1y_prev, end_1y_prev, "New Mortgage Enquiries (1 year)"))
+
+        return data
