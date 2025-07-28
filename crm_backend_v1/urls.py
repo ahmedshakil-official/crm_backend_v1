@@ -26,6 +26,8 @@ from drf_spectacular.views import (
 )
 from rest_framework import permissions
 
+from case.views import MortgageCasesSubmittedAPIView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("djoser.urls")),
@@ -34,6 +36,7 @@ urlpatterns = [
     path("director/", include("organizationuser.urls")),
     path("cases/", include("case.urls")),
     path("reports/", include("report.urls")),
+    path("network/dashboard/submitted/", MortgageCasesSubmittedAPIView.as_view(), name="mortgage-submitted"),
 ]
 
 if settings.DEBUG:

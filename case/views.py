@@ -1,5 +1,6 @@
 import io
-from datetime import datetime
+from datetime import datetime,timedelta
+from django.utils import timezone
 
 from django.db import transaction
 
@@ -113,9 +114,9 @@ from .serializers import (
     SuitabilitySerializer,
     ExtraAnswerSerializers,
     ComplianceSerializers,
-    MortgageNeedsSerializers,
+    MortgageNeedsSerializers, MortgageCasesSubmittedSerializer,
 )
-
+from organization.models import Network, Organization, OrganizationUser, NetworkUser
 
 class CaseRelatedViewMixin:
     """
@@ -1294,3 +1295,65 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
         response.write(pdf)
 
         return response
+
+class MortgageCasesSubmittedAPIView(ListAPIView):
+   permission_classes = [IsAuthenticated]
+   serializer_class = MortgageCasesSubmittedSerializer
+
+   def get_queryset(self):
+       # Return empty queryset since we override list()
+       return Case.objects.none()
+
+   def list(self, request, *args, **kwargs):
+       user = request.user
+
+       try:
+           network_user = NetworkUser.objects.get(user=user)
+           network = network_user.network
+       except NetworkUser.DoesNotExist:
+           return Response({"detail": "You are not assigned to any network."}, status=status.HTTP_404_NOT_FOUND)
+
+       period = request.query_params.get("period", "one_month")
+       if period == "one_month":
+           delta = timedelta(days=30)
+       elif period == "six_month":
+           delta = timedelta(days=182)
+       elif period == "one_year":
+           delta = timedelta(days=365)
+       else:
+           return Response({"detail": "Invalid period. Use one_month, six_month, or one_year."},
+                           status=status.HTTP_400_BAD_REQUEST)
+
+       now = timezone.now()
+       start_current = now - delta
+       start_previous = start_current - delta
+       end_previous = start_current
+
+       current_count = Case.objects.filter(
+           network=network,
+           case_category="MORTGAGE",
+           submitted_date__gte=start_current,
+           submitted_date__lte=now
+       ).count()
+
+       previous_count = Case.objects.filter(
+           network=network,
+           case_category="MORTGAGE",
+           submitted_date__gte=start_previous,
+           submitted_date__lt=end_previous
+       ).count()
+
+       if previous_count == 0:
+           percentage_change = 100.0 if current_count > 0 else 0.0
+       else:
+           percentage_change = ((current_count - previous_count) / previous_count) * 100.0
+
+       data = [{
+           "label": f"Mortgage Cases Submitted ({period.replace('_', ' ').title()})",
+           "count": current_count,
+           "percentage_change": round(percentage_change, 2),
+           "trend": "up" if percentage_change >= 0 else "down"
+       }]
+
+       serializer = self.get_serializer(data, many=True)
+       return Response(serializer.data)
