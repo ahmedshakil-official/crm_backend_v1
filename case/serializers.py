@@ -3364,3 +3364,9 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+class MortgageCasesOfferedSerializer(serializers.Serializer):
+    label = serializers.CharField()
+    count = serializers.IntegerField()
+    percentage_change = serializers.IntegerField()
+    trend = serializers.CharField(allow_blank=True)

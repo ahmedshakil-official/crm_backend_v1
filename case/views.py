@@ -1,6 +1,6 @@
 import io
-from datetime import datetime
-
+from datetime import datetime, timedelta
+from django.utils.timezone import now
 from django.db import transaction
 
 from django.db.models import Q
@@ -32,6 +32,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from authentication.models import User
+from common.enums import ProductCategoryChoices
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization, Network, OrganizationUser, NetworkUser
 from .common import (
@@ -113,7 +114,7 @@ from .serializers import (
     SuitabilitySerializer,
     ExtraAnswerSerializers,
     ComplianceSerializers,
-    MortgageNeedsSerializers,
+    MortgageNeedsSerializers, MortgageCasesOfferedSerializer,
 )
 
 
@@ -1294,3 +1295,77 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
         response.write(pdf)
 
         return response
+
+class MortgageCasesOfferedAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MortgageCasesOfferedSerializer
+
+    def get_queryset(self, network):
+        return Case.objects.filter(
+            network=network,
+            case_category=ProductCategoryChoices.MORTGAGE,
+            is_removed=False
+        )
+
+    def get_time_range(self, period):
+        today = now().date()
+
+        if period == "six_month":
+            current_start = today - timedelta(days=180)
+            previous_start = current_start - timedelta(days=180)
+        elif period == "one_year":
+            current_start = today - timedelta(days=365)
+            previous_start = current_start - timedelta(days=365)
+        else:  # Default to one_month
+            current_start = today - timedelta(days=30)
+            previous_start = current_start - timedelta(days=30)
+
+        return previous_start, current_start, today
+
+    def get(self, request, network_id):
+        period = request.query_params.get("period", "one_month")
+
+        try:
+            network = Network.objects.get(id=network_id, is_removed=False)
+        except Network.DoesNotExist:
+            return Response({"error": "Network not found."}, status=404)
+
+        previous_start, current_start, today = self.get_time_range(period)
+        qs = self.get_queryset(network)
+
+        current_count = qs.filter(
+            created_at__date__gte=current_start,
+            created_at__date__lte=today
+        ).count()
+
+        previous_count = qs.filter(
+            created_at__date__gte=previous_start,
+            created_at__date__lt=current_start
+        ).count()
+
+        if previous_count == 0:
+            if current_count == 0:
+                percentage_change = 0
+                trend = ""
+            else:
+                percentage_change = 100  # or some fixed large number
+                trend = "↑"
+        else:
+            percentage_change = int(((current_count - previous_count) / previous_count) * 100)
+            if percentage_change > 0:
+                trend = "↑"
+            elif percentage_change < 0:
+                trend = "↓"
+            else:
+                trend = ""
+
+        data = {
+            "label": "Mortgage cases offered",
+            "count": current_count,
+            "percentage_change": abs(percentage_change),
+            "trend": trend,
+        }
+
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data)
