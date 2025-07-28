@@ -1,6 +1,6 @@
 import io
-from datetime import datetime
-
+from datetime import datetime,timedelta
+from django.utils import timezone
 from django.db import transaction
 
 from django.db.models import Q
@@ -32,6 +32,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from authentication.models import User
+from common.enums import ProductCategoryChoices, CaseStageChoices
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization, Network, OrganizationUser, NetworkUser
 from .common import (
@@ -113,7 +114,7 @@ from .serializers import (
     SuitabilitySerializer,
     ExtraAnswerSerializers,
     ComplianceSerializers,
-    MortgageNeedsSerializers,
+    MortgageNeedsSerializers, InsuranceCasesSubmittedSerializer,
 )
 
 
@@ -1294,3 +1295,76 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
         response.write(pdf)
 
         return response
+
+class InsuranceCasesSubmittedStatsView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = InsuranceCasesSubmittedSerializer
+
+    def get_queryset(self):
+        self.network_id = self.request.query_params.get("network_id")
+        self.period = self.request.query_params.get("period", "one_month")
+
+        period_map = {
+            "one_month": 30,
+            "six_month": 180,
+            "one_year": 365,
+        }
+
+        self.days = period_map.get(self.period)
+
+        if not self.network_id or not self.days:
+            return Case.objects.none()
+
+        if not Network.objects.filter(id=self.network_id).exists():
+            raise NotFound(detail=f"Network with id {self.network_id} does not exist.")
+
+        self.now = timezone.now()
+        self.current_start = self.now - timedelta(days=self.days)
+        self.previous_start = self.current_start - timedelta(days=self.days)
+
+        filters = {
+            "organization__network_id": self.network_id,
+            "case_category": ProductCategoryChoices.GENERAL_INSURANCE,
+            "is_removed": False,
+            "submitted_date__isnull": False,
+        }
+
+        return Case.objects.filter(**filters)
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not self.network_id:
+            return Response({"error": "network_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+        if not self.days:
+            return Response(
+                {"error": "Invalid period. Use one_month, six_month, or one_year."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        current_count = queryset.filter(
+            submitted_date__gte=self.current_start,
+            submitted_date__lte=self.now
+        ).count()
+
+        previous_count = queryset.filter(
+            submitted_date__gte=self.previous_start,
+            submitted_date__lt=self.current_start
+        ).count()
+
+        if previous_count == 0:
+            percentage_change = 100 if current_count > 0 else 0
+        else:
+            percentage_change = int(((current_count - previous_count) / previous_count) * 100)
+
+        trend = "up" if percentage_change > 0 else "down" if percentage_change < 0 else "no_change"
+
+        serializer = self.get_serializer(data={
+            "label": "Insurance Cases Submitted",
+            "count": current_count,
+            "percentage_change": percentage_change,
+            "trend": trend
+        })
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data)

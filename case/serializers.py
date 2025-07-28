@@ -3364,3 +3364,9 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+class InsuranceCasesSubmittedSerializer(serializers.Serializer):
+    label = serializers.CharField()
+    count = serializers.IntegerField()
+    percentage_change = serializers.IntegerField()
+    trend = serializers.ChoiceField(choices=["up", "down", "no_change"])
