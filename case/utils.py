@@ -52,13 +52,18 @@ COMMON_MORTGAGE_TYPES = {
     "ASSET_FINANCE": "Asset Finance",
 }
 
-def get_mortgage_type_distribution(network_id, duration):
+def get_mortgage_type_distribution_for_user(user, duration):
     from case.models import LoanDetails
+    from organization.models import OrganizationUser
+    from django.utils import timezone
 
     filter_date = timezone.now() - DURATION_MAP.get(duration, timedelta(days=365))
 
+    # Get all network ids where user belongs through OrganizationUser
+    network_ids = OrganizationUser.objects.filter(user=user).values_list("organization__network_id", flat=True).distinct()
+
     queryset = LoanDetails.objects.filter(
-        case__organization__network_id=network_id,
+        case__organization__network_id__in=network_ids,
         case__created_at__gte=filter_date,
     ).exclude(mortgage_type__isnull=True)
 
