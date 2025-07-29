@@ -1,6 +1,6 @@
 import io
-from datetime import datetime
-
+from datetime import datetime, timedelta
+from django.utils import timezone
 from django.db import transaction
 
 from django.db.models import Q
@@ -113,8 +113,9 @@ from .serializers import (
     SuitabilitySerializer,
     ExtraAnswerSerializers,
     ComplianceSerializers,
-    MortgageNeedsSerializers,
+    MortgageNeedsSerializers, LenderPieChartSerializer,
 )
+from .utils import get_lender_pie_chart_data
 
 
 class CaseRelatedViewMixin:
@@ -1294,3 +1295,35 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
         response.write(pdf)
 
         return response
+
+
+class NetworkLenderPieChartView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        network_user = user.network_users.first()
+        if not network_user:
+            return LoanDetails.objects.none()
+
+        network = network_user.network
+        case_ids = Case.objects.filter(organization__network=network).values_list("id", flat=True)
+
+        duration = self.request.query_params.get('duration', 'one_month')
+        now = timezone.now()
+
+        if duration == 'one_month':
+            start_date = now - timedelta(days=30)
+        elif duration == 'six_month':
+            start_date = now - timedelta(days=180)
+        elif duration == 'one_year':
+            start_date = now - timedelta(days=365)
+        else:
+            start_date = now - timedelta(days=30)
+
+        return LoanDetails.objects.filter(case_id__in=case_ids, created_at__gte=start_date)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        data = get_lender_pie_chart_data(queryset)
+        return Response(data)

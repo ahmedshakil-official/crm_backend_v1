@@ -3364,3 +3364,7 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+class LenderPieChartSerializer(serializers.Serializer):
+    lender = serializers.CharField()
+    count = serializers.FloatField()
