@@ -26,6 +26,8 @@ from drf_spectacular.views import (
 )
 from rest_framework import permissions
 
+from case.views import MortgagePieChartView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("djoser.urls")),
@@ -34,6 +36,11 @@ urlpatterns = [
     path("director/", include("organizationuser.urls")),
     path("cases/", include("case.urls")),
     path("reports/", include("report.urls")),
+    path(
+        "network/<int:network_id>/mortgage-pie-chart/",
+        MortgagePieChartView.as_view(),
+        name="mortgage-pie-chart"
+    ),
 ]
 
 if settings.DEBUG:

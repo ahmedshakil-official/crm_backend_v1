@@ -113,8 +113,9 @@ from .serializers import (
     SuitabilitySerializer,
     ExtraAnswerSerializers,
     ComplianceSerializers,
-    MortgageNeedsSerializers,
+    MortgageNeedsSerializers, MortgagePieChartSerializer,
 )
+from .utils import get_mortgage_type_distribution
 
 
 class CaseRelatedViewMixin:
@@ -1294,3 +1295,20 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
         response.write(pdf)
 
         return response
+
+#Mortgage Type (pie chart) Api views.
+class MortgagePieChartView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MortgagePieChartSerializer
+
+    def get_queryset(self):
+        network_id = self.kwargs.get("network_id")
+        duration = self.request.query_params.get("duration", "one_year")
+
+        if not Network.objects.filter(id=network_id).exists():
+            raise NotFound("Network not found.")
+
+        if duration not in ["one_month", "six_month", "one_year"]:
+            return []
+
+        return get_mortgage_type_distribution(network_id, duration)
