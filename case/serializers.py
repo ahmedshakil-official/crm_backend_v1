@@ -3368,4 +3368,4 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
 #Mortgage Type (pie chart) Serializers
 class MortgagePieChartSerializer(serializers.Serializer):
     label = serializers.CharField()
-    count = serializers.IntegerField()
+    count = serializers.FloatField()

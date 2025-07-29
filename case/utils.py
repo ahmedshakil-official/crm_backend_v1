@@ -80,6 +80,6 @@ def get_mortgage_type_distribution_for_user(user, duration):
         else:
             others_count += item["count"]
 
-    final_result = [{"label": label, "count": count} for label, count in result.items()]
-    final_result.append({"label": "Others", "count": others_count})
+    final_result = [{"label": label, "count": int(count)} for label, count in result.items()]
+    final_result.append({"label": "Others", "count": int(others_count)})
     return final_result
