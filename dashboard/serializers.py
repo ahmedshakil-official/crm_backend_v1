@@ -19,33 +19,56 @@ class MortgageEnquirySerializer(serializers.ModelSerializer):
             'count_1_year'
         ]
 
-    def get_count_in_period(self, networks, days):
-        today = timezone.now().date()
-        start = today - timedelta(days=days)
-        return Case.objects.filter(
+    def get_counts(self, networks, current_days, label):
+        today = timezone.now()
+        start_current = today - timedelta(days=current_days)
+        start_previous = today - timedelta(days=current_days * 2)
+        end_previous = start_current
+
+        current = Case.objects.filter(
             network__in=networks,
             case_category=ProductCategoryChoices.MORTGAGE,
             case_stage=CaseStageChoices.ENQUIRY,
-            created_at__gte=start
+            created_at__gte=start_current
         ).count()
+
+        previous = Case.objects.filter(
+            network__in=networks,
+            case_category=ProductCategoryChoices.MORTGAGE,
+            case_stage=CaseStageChoices.ENQUIRY,
+            created_at__gte=start_previous,
+            created_at__lt=end_previous
+        ).count()
+
+        if previous == 0:
+            percentage_change = 100.0 if current > 0 else 0.0
+        else:
+            percentage_change = ((current - previous) / previous) * 100.0
+
+        return {
+            "label": label,
+            "count": current,
+            "percentage_change": round(percentage_change, 2),
+            "trend": "up" if percentage_change >= 0 else "down"
+        }
 
     def get_count_30_days(self, obj):
         filter_param = self.context.get('filter')
         if filter_param not in ["30_days", "all"]:
             return None
         networks = self.context.get('networks', [])
-        return self.get_count_in_period(networks, 30)
+        return self.get_counts(networks, 30, "New Mortgage Enquiries (30 days)")
 
     def get_count_6_months(self, obj):
         filter_param = self.context.get('filter')
         if filter_param not in ["6_months", "all"]:
             return None
         networks = self.context.get('networks', [])
-        return self.get_count_in_period(networks, 180)
+        return self.get_counts(networks, 180, "New Mortgage Enquiries (6 months)")
 
     def get_count_1_year(self, obj):
         filter_param = self.context.get('filter')
         if filter_param not in ["1_year", "all"]:
             return None
         networks = self.context.get('networks', [])
-        return self.get_count_in_period(networks, 365)
+        return self.get_counts(networks, 365, "New Mortgage Enquiries (1 year)")
