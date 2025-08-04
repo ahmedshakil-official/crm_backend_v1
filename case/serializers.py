@@ -97,7 +97,7 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True,
     )
-    assigned_user = CommonUserWithIdSerializer(read_only=True)
+    assigned_user = CommonUserWithIdSerializer(read_only=True, source="assigned_to")
     assigned_to = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.none(),
         write_only=True,
