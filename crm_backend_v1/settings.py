@@ -68,6 +68,7 @@ PROJECT_APPS = [
     "organizationuser.apps.OrganizationuserConfig",
     "case.apps.CaseConfig",
     "report.apps.ReportConfig",
+    "dashboard.apps.DashboardConfig",
 ]
 
 

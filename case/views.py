@@ -319,7 +319,10 @@ class JointUserListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
         return JointUser.objects.filter(case=self.get_case(), is_removed=False)
 
     def perform_create(self, serializer):
-        serializer.save(case=self.get_case())
+        serializer.save(
+            case=self.get_case(),
+
+        )
 
 
 class JointUserRetrieveUpdateDeleteApiView(
