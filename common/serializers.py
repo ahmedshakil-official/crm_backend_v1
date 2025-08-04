@@ -139,13 +139,20 @@ class CommonUserWithPasswordJointUserSerializer(UserCreateSerializer):
     def validate(self, attrs):
         if not attrs.get("password"):
             attrs["password"] = get_random_string(8)
+        attrs["user_type"] = UserTypeChoices.JOINT_USER
         return super().validate(attrs)
 
     def create(self, validated_data):
-        user = super().create(validated_data)
+        email = validated_data.get("email")
+        password = validated_data.pop("password", get_random_string(8))
+
+        user = self.Meta.model.objects.create_user(
+            email=email,
+            password=password,
+            **validated_data
+        )
 
         return user
-
 
 
 class CommonOrganizationSerializer(serializers.ModelSerializer):

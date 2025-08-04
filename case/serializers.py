@@ -384,7 +384,9 @@ class FileSerializer(serializers.ModelSerializer):
 
 class JointUserSerializer(serializers.ModelSerializer):
     joint_user = CommonUserWithPasswordJointUserSerializer(write_only=True)
-    joint_user_details = CommonUserWithPasswordJointUserSerializer(read_only=True, source="joint_user")
+    joint_user_details = CommonUserWithPasswordJointUserSerializer(
+        read_only=True, source="joint_user"
+    )
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
     case = CommonCaseSerializer(read_only=True)
@@ -416,8 +418,10 @@ class JointUserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         joint_user_data = validated_data.pop("joint_user")
-        joint_user_data["user_type"] = UserTypeChoices.JOINT_USER
-        joint_user = CommonUserWithPasswordSerializer().create(joint_user_data)
+
+        joint_user_serializer = CommonUserWithPasswordJointUserSerializer(data=joint_user_data)
+        joint_user_serializer.is_valid(raise_exception=True)
+        joint_user = joint_user_serializer.save()
 
         case = validated_data["case"]
         organization = case.organization
@@ -437,17 +441,16 @@ class JointUserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         joint_user_data = validated_data.pop("joint_user", None)
         if joint_user_data:
-            joint_user_data["user_type"] = UserTypeChoices.JOINT_USER
-            joint_user_serializer = CommonUserWithPasswordSerializer(
+            joint_user_serializer = CommonUserWithPasswordJointUserSerializer(
                 instance.joint_user, data=joint_user_data, partial=True
             )
             joint_user_serializer.is_valid(raise_exception=True)
             joint_user_serializer.save()
 
-            # Update OrganizationUser information
             organization_user = OrganizationUser.objects.filter(
                 user=instance.joint_user, organization=instance.case.organization
             ).first()
+
             if organization_user:
                 organization_user.official_email = instance.joint_user.email
                 organization_user.official_phone = joint_user_data.get(
