@@ -34,6 +34,7 @@ from rest_framework.views import APIView
 from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization, Network, OrganizationUser, NetworkUser
+from common.enums import UserTypeChoices as CommonUserTypeChoices
 from .common import (
     RegisterLoan,
     PaymentCommitment,
@@ -321,7 +322,7 @@ class JointUserListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(
             case=self.get_case(),
-            joint_user={"user_type": UserTypeChoices.JOINT_USER}
+            joint_user={"user_type": CommonUserTypeChoices.JOINT_USER}
         )
 
 
