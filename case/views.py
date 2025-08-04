@@ -321,7 +321,7 @@ class JointUserListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(
             case=self.get_case(),
-
+            joint_user={"user_type": UserTypeChoices.JOINT_USER}
         )
 
 

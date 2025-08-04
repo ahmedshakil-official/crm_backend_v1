@@ -113,6 +113,41 @@ class CommonUserWithPasswordSerializer(UserCreateSerializer):
         return user
 
 
+class CommonUserWithPasswordJointUserSerializer(UserCreateSerializer):
+    phone = serializers.CharField(max_length=24, required=False)
+    profile_image = serializers.ImageField(required=False)
+    user_type = serializers.ChoiceField(
+        choices=UserTypeChoices.choices,
+        default=UserTypeChoices.JOINT_USER,
+        required=False,
+        read_only=True,
+    )
+
+    class Meta(UserCreateSerializer.Meta):
+        fields = [
+            "id",
+            "email",
+            "phone",
+            "title",
+            "first_name",
+            "middle_name",
+            "last_name",
+            "profile_image",
+            "user_type",
+        ]
+
+    def validate(self, attrs):
+        if not attrs.get("password"):
+            attrs["password"] = get_random_string(8)
+        return super().validate(attrs)
+
+    def create(self, validated_data):
+        user = super().create(validated_data)
+
+        return user
+
+
+
 class CommonOrganizationSerializer(serializers.ModelSerializer):
 
     class Meta:

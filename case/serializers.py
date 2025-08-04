@@ -84,7 +84,7 @@ from common.serializers import (
     CommonUserWithPasswordSerializer,
     CommonCaseSerializer,
     CommonUserWithIdSerializer,
-    CommonNetworkSerializer,
+    CommonNetworkSerializer, CommonUserWithPasswordJointUserSerializer,
 )
 
 
@@ -383,8 +383,8 @@ class FileSerializer(serializers.ModelSerializer):
 
 
 class JointUserSerializer(serializers.ModelSerializer):
-    joint_user = CommonUserWithPasswordSerializer(write_only=True)
-    joint_user_details = CommonUserWithIdSerializer(read_only=True, source="joint_user")
+    joint_user = CommonUserWithPasswordJointUserSerializer(write_only=True)
+    joint_user_details = CommonUserWithPasswordJointUserSerializer(read_only=True, source="joint_user")
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
     case = CommonCaseSerializer(read_only=True)
