@@ -223,6 +223,13 @@ class Case(CreatedAtUpdatedAtBaseModel):
         Organization, on_delete=models.CASCADE, null=True, blank=True
     )
     lead = models.ForeignKey(User, on_delete=models.CASCADE)
+    assigned_to = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="assigned_to_case",
+        null=True,
+        blank=True,
+    )
     name = models.CharField(max_length=100, blank=True)
     network = models.ForeignKey(
         Network, on_delete=models.CASCADE, null=True, blank=True

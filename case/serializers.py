@@ -97,6 +97,12 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True,
     )
+    assigned_user = CommonUserWithIdSerializer(read_only=True)
+    assigned_to = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.none(),
+        write_only=True,
+        required=False,
+    )
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
 
@@ -107,6 +113,8 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
             "name",
             "lead",
             "lead_user",
+            "assigned_to",
+            "assigned_user",
             "organization",
             "network",
             "case_category",
