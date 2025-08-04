@@ -311,16 +311,10 @@ class Case(CreatedAtUpdatedAtBaseModel):
         return self.create_pdf_report(cases, "Adviser Report", None)
 
     def save(self, *args, **kwargs):
-        # Save first to ensure we have a primary key
         is_new = not self.pk
-
-        if is_new and not self.name:
-            super().save(*args, **kwargs)
-            # Now generate the name using the actual ID
-            self.name = self.generate_case_name()
-            super().save(update_fields=['name'])
-        else:
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
+        self.name = self.generate_case_name()
+        super().save(update_fields=['name'])
 
 
 class Files(CreatedAtUpdatedAtBaseModel):
