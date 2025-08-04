@@ -215,7 +215,7 @@ class CaseAuthenticationMixin:
             return Case.objects.filter(
                 organization=user_association["organization"]
             ).select_related(
-                "organization", "network", "lead", "created_by", "updated_by"
+                "organization", "network", "lead", "assigned_to", "created_by", "updated_by"
             )
 
         elif user_association["type"] == "network":
@@ -223,7 +223,7 @@ class CaseAuthenticationMixin:
             return Case.objects.filter(
                 network=user_association["network"]
             ).select_related(
-                "organization", "network", "lead", "created_by", "updated_by"
+                "organization", "network", "lead", "assigned_to", "created_by", "updated_by"
             )
 
         return Case.objects.none()

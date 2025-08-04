@@ -146,6 +146,7 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if request and hasattr(request, "user"):
             self._set_lead_queryset(request.user)
+            self._set_assigned_to_queryset(request.user)
 
     def _set_lead_queryset(self, user):
         """Set the lead queryset based on whether user is from organization or network"""
@@ -174,6 +175,26 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
 
         # If neither, empty queryset
         self.fields["lead"].queryset = User.objects.none()
+
+    def _set_assigned_to_queryset(self, user):
+        """Set the assigned_to queryset for users with user_type='ADVISOR'"""
+        organization_user = OrganizationUser.objects.filter(user=user).first()
+        if organization_user:
+            self.fields["assigned_to"].queryset = User.objects.filter(
+                user_type="ADVISOR",
+                organization_users__organization=organization_user.organization,
+            )
+            return
+
+        network_user = NetworkUser.objects.filter(user=user).first()
+        if network_user:
+            self.fields["assigned_to"].queryset = User.objects.filter(
+                Q(user_type="ADVISOR", organization_users__organization__network=network_user.network)
+                | Q(user_type="ADVISOR", network_users__network=network_user.network)
+            ).distinct()
+            return
+
+        self.fields["assigned_to"].queryset = User.objects.none()
 
     def create(self, validated_data):
         """Create case with proper organization/network assignment"""
