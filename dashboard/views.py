@@ -44,17 +44,17 @@ class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView)
         mortgage_type_qs = loan_details.values('mortgage_type').annotate(count=Count('id'))
         mortgage_type_counts = {choice[0]: 0 for choice in MortgageTypeChoices.choices}
         mortgage_type_counts.update({row['mortgage_type']: row['count'] for row in mortgage_type_qs})
-        mortgage_type_counts['NOT_FILLED'] = total_cases - loan_details.count()
-        # Remove null and empty keys
+        # mortgage_type_counts['NOT_FILLED'] = total_cases - loan_details.count()
         mortgage_type_counts = {k: v for k, v in mortgage_type_counts.items() if k not in (None, '')}
+        mortgage_type_counts = dict(sorted(mortgage_type_counts.items(), key=lambda item: item[1], reverse=True))
 
         # Lender Counts
         lender_qs = loan_details.values('lender').annotate(count=Count('id'))
         lender_counts = {choice[0]: 0 for choice in LenderChoices.choices}
         lender_counts.update({row['lender']: row['count'] for row in lender_qs})
-        lender_counts['NOT_FILLED'] = total_cases - loan_details.count()
-        # Remove null and empty keys
+        # lender_counts['NOT_FILLED'] = total_cases - loan_details.count()
         lender_counts = {k: v for k, v in lender_counts.items() if k not in (None, '')}
+        lender_counts = dict(sorted(lender_counts.items(), key=lambda item: item[1], reverse=True))
 
         # Summary cards
         data = {
