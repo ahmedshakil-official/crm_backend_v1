@@ -4,7 +4,7 @@ from .models import Organization, OrganizationUser, Network, NetworkUser
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ("name", "email", "license_no", "is_approved")
+    list_display = ("name", "email", "slug", "license_no", "is_approved")
     search_fields = ("name", "email", "license_no")
     list_filter = ("is_approved", "is_active")
 
