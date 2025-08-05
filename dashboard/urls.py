@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views import NetworkDashboardListView
+from .views import OrganizationNetworkDashboardListView
 
 urlpatterns = [
-    path('network/', NetworkDashboardListView.as_view(), name='network-dashboard'),
+    path("", OrganizationNetworkDashboardListView.as_view(), name='network-dashboard'),
 ]
