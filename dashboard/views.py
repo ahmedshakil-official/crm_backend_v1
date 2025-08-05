@@ -45,12 +45,16 @@ class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView)
         mortgage_type_counts = {choice[0]: 0 for choice in MortgageTypeChoices.choices}
         mortgage_type_counts.update({row['mortgage_type']: row['count'] for row in mortgage_type_qs})
         mortgage_type_counts['NOT_FILLED'] = total_cases - loan_details.count()
+        # Remove null and empty keys
+        mortgage_type_counts = {k: v for k, v in mortgage_type_counts.items() if k not in (None, '')}
 
         # Lender Counts
         lender_qs = loan_details.values('lender').annotate(count=Count('id'))
         lender_counts = {choice[0]: 0 for choice in LenderChoices.choices}
         lender_counts.update({row['lender']: row['count'] for row in lender_qs})
         lender_counts['NOT_FILLED'] = total_cases - loan_details.count()
+        # Remove null and empty keys
+        lender_counts = {k: v for k, v in lender_counts.items() if k not in (None, '')}
 
         # Summary cards
         data = {
