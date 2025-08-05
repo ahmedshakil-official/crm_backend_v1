@@ -15,87 +15,82 @@ from organization.models import OrganizationUser, Organization, NetworkUser
 
 
 class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView):
-    """
-    Dashboard API for both network and organization users.
-    """
     permission_classes = [IsAuthenticated]
     queryset = Case.objects.none()
 
-    def list(self, request, *args, **kwargs):
-        # Get association info (no duplication)
-        user_association = self.get_user_association()
-        association_type = user_association["type"]
-        association_instance = (
-            user_association["organization"] if association_type == "organization"
-            else user_association["network"]
-        )
-
-        # Meta and user role counters
-        if association_type == "organization":
+    def get_meta_and_user_counts(self, user_association):
+        """
+        Returns meta and user_counts for either organization or network context.
+        """
+        if user_association["type"] == "organization":
+            org = user_association["organization"]
             meta = {
                 "type": "organization",
-                "name": association_instance.name,
-                "slug": association_instance.slug,
-                "description": getattr(association_instance, "description", ""),
-                "email": association_instance.email,
-                "logo": association_instance.logo.url if association_instance.logo else None,
-                "profile_image": association_instance.profile_image.url if association_instance.profile_image else None,
-                "hero_image": association_instance.hero_image.url if association_instance.hero_image else None,
-                "primary_mobile": association_instance.primary_mobile,
-                "other_contact": association_instance.other_contact,
-                "contact_person": association_instance.contact_person,
-                "website": association_instance.website,
-                "network": association_instance.network.name if association_instance.network else None,
+                "name": org.name,
+                "slug": org.slug,
+                "description": getattr(org, "description", ""),
+                "email": org.email,
+                "logo": org.logo.url if org.logo else None,
+                "profile_image": org.profile_image.url if org.profile_image else None,
+                "hero_image": org.hero_image.url if org.hero_image else None,
+                "primary_mobile": org.primary_mobile,
+                "other_contact": org.other_contact,
+                "contact_person": org.contact_person,
+                "website": org.website,
+                "network": org.network.name if org.network else None,
             }
-            org_users = OrganizationUser.objects.filter(organization=association_instance)
+            org_users = OrganizationUser.objects.filter(organization=org)
             adviser_roles = [
                 OrganizationRoleChoices.ADVISOR,
                 OrganizationRoleChoices.ORGANIZATION_PRINCIPAL_ADVISER,
                 OrganizationRoleChoices.ORGANIZATION_ADVISER,
             ]
-            adviser_user_ids = list(org_users.filter(role__in=adviser_roles).values_list('user_id', flat=True))
-            counters = {
-                "total_advisers": len(adviser_user_ids),
+            user_counts = {
+                "total_advisers": org_users.filter(role__in=adviser_roles).count(),
                 "total_clients": org_users.filter(role=OrganizationRoleChoices.CLIENT).count(),
                 "total_leads": org_users.filter(role=OrganizationRoleChoices.LEAD).count(),
                 "total_introducers": org_users.filter(role=OrganizationRoleChoices.INTRODUCER).count(),
+                "adviser_user_ids": list(org_users.filter(role__in=adviser_roles).values_list('user_id', flat=True))
             }
         else:
+            net = user_association["network"]
             meta = {
                 "type": "network",
-                "name": association_instance.name,
-                "slug": association_instance.slug,
-                "description": getattr(association_instance, "description", ""),
-                "email": association_instance.email,
-                "logo": association_instance.logo.url if association_instance.logo else None,
-                "profile_image": association_instance.profile_image.url if association_instance.profile_image else None,
-                "hero_image": association_instance.hero_image.url if association_instance.hero_image else None,
-                "primary_mobile": association_instance.primary_mobile,
-                "other_contact": association_instance.other_contact,
-                "contact_person": association_instance.contact_person,
-                "website": association_instance.website,
+                "name": net.name,
+                "slug": net.slug,
+                "description": getattr(net, "description", ""),
+                "email": net.email,
+                "logo": net.logo.url if net.logo else None,
+                "profile_image": net.profile_image.url if net.profile_image else None,
+                "hero_image": net.hero_image.url if net.hero_image else None,
+                "primary_mobile": net.primary_mobile,
+                "other_contact": net.other_contact,
+                "contact_person": net.contact_person,
+                "website": net.website,
             }
-            net_users = NetworkUser.objects.filter(network=association_instance)
+            net_users = NetworkUser.objects.filter(network=net)
             adviser_roles = [
                 NetworkRoleChoices.ADVISOR,
                 NetworkRoleChoices.NETWORK_PRINCIPAL_ADVISER,
                 NetworkRoleChoices.NETWORK_ADVISER,
             ]
-            adviser_user_ids = list(net_users.filter(role__in=adviser_roles).values_list('user_id', flat=True))
-            counters = {
-                "total_advisers": len(adviser_user_ids),
+            user_counts = {
+                "total_advisers": net_users.filter(role__in=adviser_roles).count(),
                 "total_clients": net_users.filter(role=NetworkRoleChoices.CLIENT).count(),
                 "total_leads": net_users.filter(role=NetworkRoleChoices.LEAD).count(),
                 "total_introducers": net_users.filter(role=NetworkRoleChoices.INTRODUCER).count(),
+                "adviser_user_ids": list(net_users.filter(role__in=adviser_roles).values_list('user_id', flat=True))
             }
+        return meta, user_counts
 
-        # Use the unified, already-filtered cases
-        cases = self.get_case_queryset()
+    def list(self, request, *args, **kwargs):
+        user_association = self.get_user_association()
+        meta, user_counts = self.get_meta_and_user_counts(user_association)
+        cases = self.get_case_queryset()  # This will use org/network context and skip org cases for network!
         case_ids = list(cases.values_list('id', flat=True))
         total_cases = len(case_ids)
-        counters["total_cases"] = total_cases
 
-        # Pie and summary counts (always with all keys)
+        # Count dictionaries (always include all choices)
         def make_count_dict(qs, field, choices):
             result = {choice[0]: 0 for choice in choices}
             result.update({row[field]: row['count'] for row in qs.values(field).annotate(count=Count('id'))})
@@ -121,10 +116,12 @@ class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView)
             "insurance_cases_submitted": category_counts.get(ProductCategoryChoices.GENERAL_INSURANCE, 0),
         }
 
-        # Top Performing Advisers (by completed cases, sorted)
+        # Top Performing Advisers
+        adviser_user_ids = user_counts.pop("adviser_user_ids", [])
         completed_cases = (
             cases.filter(case_stage=CaseStageChoices.COMPLETION)
             .exclude(assigned_to=None)
+            .filter(assigned_to__in=adviser_user_ids)
             .values('assigned_to')
             .annotate(
                 cases_completed=Count('id'),
@@ -132,15 +129,14 @@ class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView)
             )
             .order_by('-cases_completed')
         )
-        adviser_ids_with_cases = [row['assigned_to'] for row in completed_cases if row['assigned_to'] in adviser_user_ids]
-        adviser_users = User.objects.filter(id__in=adviser_ids_with_cases)
+        adviser_users = User.objects.filter(id__in=[row['assigned_to'] for row in completed_cases])
         adviser_id_map = {user.id: user for user in adviser_users}
         top_advisers = []
         for i, stat in enumerate(completed_cases, start=1):
             adviser_id = stat['assigned_to']
-            if adviser_id not in adviser_id_map:
+            user = adviser_id_map.get(adviser_id)
+            if not user:
                 continue
-            user = adviser_id_map[adviser_id]
             top_advisers.append({
                 "rank": i,
                 "full_name": f"{user.first_name} {user.last_name}".strip(),
@@ -149,9 +145,11 @@ class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView)
                 "total_loan_amount": stat['total_loan_amount'] or 0,
             })
 
-        return Response({
+        user_counts['total_cases'] = total_cases
+
+        data = {
             "meta": meta,
-            "counters": counters,
+            "counters": user_counts,
             "category_counts": category_counts,
             "status_counts": status_counts,
             "stage_counts": stage_counts,
@@ -159,7 +157,8 @@ class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView)
             "lender_counts": lender_counts,
             "summary_cards": summary_cards,
             "top_performing_advisers": top_advisers,
-        })
+        }
+        return Response(data)
 
 
 
