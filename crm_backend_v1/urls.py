@@ -34,6 +34,8 @@ urlpatterns = [
     path("director/", include("organizationuser.urls")),
     path("cases/", include("case.urls")),
     path("reports/", include("report.urls")),
+
+    path("dashboard/", include("dashboard.urls")),
 ]
 
 if settings.DEBUG:

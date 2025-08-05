@@ -1,3 +1,70 @@
-from django.shortcuts import render
+from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.db.models import Count
 
-# Create your views here.
+from case.models import (
+    Case, LoanDetails, ProductCategoryChoices, CaseStatusChoices, CaseStageChoices,
+    MortgageTypeChoices, LenderChoices
+)
+
+class NetworkDashboardListView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Case.objects.none()  
+
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        network = getattr(user, 'network', None)
+        if not network:
+            return Response({'error': 'User does not belong to any network'}, status=400)
+
+        cases = Case.objects.filter(network=network)
+        case_ids = list(cases.values_list('id', flat=True))
+        total_cases = len(case_ids)
+
+        # Product Category Counts
+        category_qs = cases.values('case_category').annotate(count=Count('id'))
+        category_counts = {choice[0]: 0 for choice in ProductCategoryChoices.choices}
+        category_counts.update({row['case_category']: row['count'] for row in category_qs})
+
+        # Case Status Counts
+        status_qs = cases.values('case_status').annotate(count=Count('id'))
+        status_counts = {choice[0]: 0 for choice in CaseStatusChoices.choices}
+        status_counts.update({row['case_status']: row['count'] for row in status_qs})
+
+        # Case Stage Counts
+        stage_qs = cases.values('case_stage').annotate(count=Count('id'))
+        stage_counts = {choice[0]: 0 for choice in CaseStageChoices.choices}
+        stage_counts.update({row['case_stage']: row['count'] for row in stage_qs})
+
+        # LoanDetails queries (for pie charts)
+        loan_details = LoanDetails.objects.filter(case_id__in=case_ids)
+
+        # Mortgage Type Counts
+        mortgage_type_qs = loan_details.values('mortgage_type').annotate(count=Count('id'))
+        mortgage_type_counts = {choice[0]: 0 for choice in MortgageTypeChoices.choices}
+        mortgage_type_counts.update({row['mortgage_type']: row['count'] for row in mortgage_type_qs})
+        mortgage_type_counts['NOT_FILLED'] = total_cases - loan_details.count()
+
+        # Lender Counts
+        lender_qs = loan_details.values('lender').annotate(count=Count('id'))
+        lender_counts = {choice[0]: 0 for choice in LenderChoices.choices}
+        lender_counts.update({row['lender']: row['count'] for row in lender_qs})
+        lender_counts['NOT_FILLED'] = total_cases - loan_details.count()
+
+        # Summary cards
+        data = {
+            "total_cases": total_cases,
+            "category_counts": category_counts,
+            "status_counts": status_counts,
+            "stage_counts": stage_counts,
+            "mortgage_type_counts": mortgage_type_counts,
+            "lender_counts": lender_counts,
+            "summary_cards": {
+                "new_mortgage_enquiry": stage_counts.get(CaseStageChoices.ENQUIRY, 0),
+                "mortgage_cases_submitted": category_counts.get(ProductCategoryChoices.MORTGAGE, 0),
+                "mortgage_cases_completed": stage_counts.get(CaseStageChoices.COMPLETION, 0),
+                "insurance_cases_submitted": category_counts.get(ProductCategoryChoices.GENERAL_INSURANCE, 0),
+            }
+        }
+        return Response(data)
