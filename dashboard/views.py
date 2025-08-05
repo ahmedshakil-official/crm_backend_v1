@@ -7,22 +7,22 @@ from case.models import (
     Case, LoanDetails, ProductCategoryChoices, CaseStatusChoices, CaseStageChoices,
     MortgageTypeChoices, LenderChoices
 )
+from case.views import CaseAuthenticationMixin
 
-class NetworkDashboardListView(ListAPIView):
+class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView):
+    """
+    Dashboard API for both network and organization users.
+    Returns summary and pie chart data for associated cases and loan details.
+    """
     permission_classes = [IsAuthenticated]
-    queryset = Case.objects.none()  
+    queryset = Case.objects.none()  # Not directly returning objects
 
     def list(self, request, *args, **kwargs):
-        user = request.user
-        network = getattr(user, 'network', None)
-        if not network:
-            return Response({'error': 'User does not belong to any network'}, status=400)
-
-        cases = Case.objects.filter(network=network)
+        user_association = self.get_user_association()
+        cases = self.get_case_queryset()
         case_ids = list(cases.values_list('id', flat=True))
         total_cases = len(case_ids)
 
-        # Product Category Counts
         category_qs = cases.values('case_category').annotate(count=Count('id'))
         category_counts = {choice[0]: 0 for choice in ProductCategoryChoices.choices}
         category_counts.update({row['case_category']: row['count'] for row in category_qs})
