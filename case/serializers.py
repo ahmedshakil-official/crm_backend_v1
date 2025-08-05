@@ -470,14 +470,27 @@ class JointUserSerializer(serializers.ModelSerializer):
 
         case = validated_data["case"]
         organization = case.organization
+        network = case.network  # Add this line
 
-        OrganizationUser.objects.create(
-            user=joint_user,
-            organization=organization,
-            role=UserTypeChoices.JOINT_USER,
-            official_email=joint_user_data.get("email"),
-            official_phone=joint_user_data.get("phone"),
-        )
+        # --- Fix: Branch based on presence of organization ---
+        if organization:
+            OrganizationUser.objects.create(
+                user=joint_user,
+                organization=organization,
+                role=UserTypeChoices.JOINT_USER,
+                official_email=joint_user_data.get("email"),
+                official_phone=joint_user_data.get("phone"),
+            )
+        elif network:
+            NetworkUser.objects.create(
+                user=joint_user,
+                network=network,
+                role=UserTypeChoices.JOINT_USER,
+                official_email=joint_user_data.get("email"),
+                official_phone=joint_user_data.get("phone"),
+            )
+        else:
+            raise serializers.ValidationError("Case is not linked to an organization or network.")
 
         validated_data["joint_user"] = joint_user
         validated_data["created_by"] = self.context["request"].user
@@ -492,16 +505,30 @@ class JointUserSerializer(serializers.ModelSerializer):
             joint_user_serializer.is_valid(raise_exception=True)
             joint_user_serializer.save()
 
-            organization_user = OrganizationUser.objects.filter(
-                user=instance.joint_user, organization=instance.case.organization
-            ).first()
+            case = instance.case
+            organization = case.organization
+            network = case.network
 
-            if organization_user:
-                organization_user.official_email = instance.joint_user.email
-                organization_user.official_phone = joint_user_data.get(
-                    "phone", organization_user.official_phone
-                )
-                organization_user.save()
+            if organization:
+                organization_user = OrganizationUser.objects.filter(
+                    user=instance.joint_user, organization=organization
+                ).first()
+                if organization_user:
+                    organization_user.official_email = instance.joint_user.email
+                    organization_user.official_phone = joint_user_data.get(
+                        "phone", organization_user.official_phone
+                    )
+                    organization_user.save()
+            elif network:
+                network_user = NetworkUser.objects.filter(
+                    user=instance.joint_user, network=network
+                ).first()
+                if network_user:
+                    network_user.official_email = instance.joint_user.email
+                    network_user.official_phone = joint_user_data.get(
+                        "phone", network_user.official_phone
+                    )
+                    network_user.save()
 
         validated_data["updated_by"] = self.context["request"].user
         return super().update(instance, validated_data)
