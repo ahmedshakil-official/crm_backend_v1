@@ -75,7 +75,7 @@ from .models import (
     Wills,
     ExtraAnswer,
     Compliance,
-    MortgageNeeds,
+    MortgageNeeds, ClientSurvey,
 )
 from authentication.models import User
 from common.serializers import (
@@ -3427,6 +3427,63 @@ class MortgageNeedsSerializers(serializers.ModelSerializer):
             "mortgage_requirements_note",
             "mortgage_requirements",
             "note_three",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "alias",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+# Client Survey Serializers
+class ClientSurveySerializers(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+    case = CommonCaseSerializer(read_only=True)
+
+    class Meta:
+        model = ClientSurvey
+        fields = [
+            "alias",
+            "case",
+            "adviser_name",
+            "is_clarification_explanation_of_the_service_firm",
+            "is_timely_service_delivery",
+            "is_helpfulness_representative",
+            "the_firm_offices_reason",
+            "is_accuracy_information_provided",
+            "is_clarification_explanation_paid",
+            "is_raising_queries_relating_service",
+            "is_clarification_explanation_protection_review",
+            "is_understanding_of_financial_objectives",
+            "is_explanation_consideration_of_attitude_risk",
+            "is_explanation_consideration_capacity_loss_of_capital",
+            "is_explanation_adviser_product",
+            "is_interaction_adviser_professionals",
+            "is_suitable_advice_for_your_needs",
+            "is_ability_of_the_adviser_undue_pressure_commit",
+            "is_timing_deliver_review_by_adviser",
+            "the_broker_fee_paid_represents",
+            "explanation_broker_fees_including_refund_policy",
+            "is_receive_the_value_expected_broker_fee",
+            "is_any_other_documentation_provided_to_you",
+            "is_timing_arrangements_made_conduct_review_with_you",
+            "is_frequency_communications_receive_from_firm",
+            "is_relevance_communications_sent_to_the_firm",
+            "is_raising_any_queries_on_communications",
+            "is_overall_standard_communications_received_from_firm",
+            "is_timely_manner_of_receiving_letter_confirming_recommendation",
+            "do_we_better_serve_next_time",
+            "have_any_further_comments_on_the_service_received",
+            "do_you_like_someone_to_contact_you",
+            "name",
+            "email",
+            "phone_number",
             "created_by",
             "updated_by",
             "created_at",

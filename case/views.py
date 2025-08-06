@@ -75,7 +75,7 @@ from .models import (
     ExtraAnswer,
     Compliance,
     MortgageNeeds,
-    MortgageFeatures,
+    MortgageFeatures, ClientSurvey,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -114,7 +114,7 @@ from .serializers import (
     SuitabilitySerializer,
     ExtraAnswerSerializers,
     ComplianceSerializers,
-    MortgageNeedsSerializers,
+    MortgageNeedsSerializers, ClientSurveySerializers,
 )
 
 
@@ -1297,3 +1297,16 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
         response.write(pdf)
 
         return response
+
+# Client survey Lise create api views.
+class ClientSurveyListCreateAPIViews(CaseRelatedViewMixin, ListCreateAPIView):
+    serializer_class = ClientSurveySerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case = self.get_case()
+        return ClientSurvey.objects.filter(case=case)
+
+    def perform_create(self, serializer):
+        case = self.get_case()
+        serializer.save(case=case, created_by=self.request.user)

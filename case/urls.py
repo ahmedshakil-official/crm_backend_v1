@@ -59,6 +59,7 @@ from .views import (
     ComplianceRetrieveUpdateApiView,
     MortgageNeedsRetrieveUpdateApiView,
     CasePDFReportAPIView,
+    ClientSurveyListCreateAPIViews,
 )
 
 urlpatterns = [
@@ -353,4 +354,9 @@ urlpatterns = [
         CasePDFReportAPIView.as_view(),
         name="case-pdf-report",
     ),
+    path(
+        "<uuid:case_alias>/client/survey/",
+        ClientSurveyListCreateAPIViews.as_view(),
+        name="client-survey-list-create",
+    )
 ]
