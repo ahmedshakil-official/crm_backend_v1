@@ -531,6 +531,17 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
     reasons_for_capital_raising = models.TextField(blank=True, null=True)
     case_summary = models.TextField(blank=True, null=True)
     accepted_or_declined_by_lender = models.BooleanField(default=False)
+    case_submitted = models.DateField(blank=True, null=True)
+    valuation_instructed_date = models.DateField(blank=True, null=True)
+    valuation_booked_date = models.DateField(blank=True, null=True)
+    valuation_received_date = models.DateField(blank=True, null=True)
+    valuation_expiry_date = models.DateField(blank=True, null=True)
+    case_offered_date = models.DateField(blank=True, null=True)
+    stage_expiry_date = models.DateField(blank=True, null=True)
+    legals_instructed_date = models.DateField(blank=True, null=True)
+    exchange_of_contracts_date = models.DateField(blank=True, null=True)
+    case_completed_date = models.DateField(blank=True, null=True)
+    review_date = models.DateField(blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
@@ -559,6 +570,7 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     )
 
     maiden_name = models.CharField(max_length=100, blank=True, null=True)
+    date_of_name_change =models.DateField(blank=True, null=True)
     date_of_birth = models.DateField(null=True, blank=True)
     anticipated_retirement_age = models.PositiveIntegerField(default=0)
     state_retirement_age = models.PositiveIntegerField(default=0)
@@ -655,6 +667,13 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     )
     year_built = models.PositiveIntegerField(default=0)
     notes = models.TextField(blank=True, null=True)
+    rental_monthly_payment = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    landlord_name = models.CharField(max_length=100, blank=True, null=True)
+    landlord_telephone = models.CharField(max_length=20, blank=True, null=True)
+    landlord_email = models.EmailField(blank=True, null=True)
+    intend_to_move_into_the_new_property= models.BooleanField(default=False)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
@@ -756,10 +775,10 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
     employment_commenced = models.DateField(blank=True, null=True)
     employment_ended = models.DateField(blank=True, null=True)
 
-    gross_annual_income = models.DecimalField(
+    gross_monthly_income = models.DecimalField(
         max_digits=12, decimal_places=2, blank=True, null=True
     )
-    net_annual_income = models.DecimalField(
+    net_monthly_income = models.DecimalField(
         max_digits=12, decimal_places=2, blank=True, null=True
     )
 
