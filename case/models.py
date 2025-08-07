@@ -116,6 +116,7 @@ from common.enums import (
     HasBASectionPersonalisedChoices,
     HasWillsSectionPersonalisedChoices,
     DoesRecommendedProductMatchYourNeedsSectionChoices,
+    ClientServeyChoices, DoYouLikeSomeoneToContactYouChoices,
 )
 from organization.models import Organization, Network
 from .enums import (
@@ -213,7 +214,7 @@ from .signals import (
     create_mortgage_features,
     create_mortgage_features_for_joint_user,
     create_suitability,
-    create_compliance,
+    create_compliance, create_client_survey,
 )
 from .utils import upload_to_case_files
 
@@ -3186,6 +3187,192 @@ class Compliance(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.date_file_checked} {self.date_file_rechecked}"
 
+# Client Servey Model
+class ClientSurvey(CreatedAtUpdatedAtBaseModel):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="client_servey")
+    adviser_name = models.CharField(max_length=100)
+    is_clarification_explanation_of_the_service_firm = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_timely_service_delivery = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_helpfulness_representative = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    the_firm_offices_reason = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_accuracy_information_provided = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_clarification_explanation_paid = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_raising_queries_relating_service = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_clarification_explanation_protection_review = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_understanding_of_financial_objectives = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_explanation_consideration_of_attitude_risk = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_explanation_consideration_capacity_loss_of_capital = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_explanation_adviser_product = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_interaction_adviser_professionals = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_suitable_advice_for_your_needs = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_ability_of_the_adviser_undue_pressure_commit = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_timing_deliver_review_by_adviser = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    the_broker_fee_paid_represents = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    explanation_broker_fees_including_refund_policy = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_receive_the_value_expected_broker_fee = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_any_other_documentation_provided_to_you = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_timing_arrangements_made_conduct_review_with_you = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null=True,
+        blank=True,
+    )
+    is_frequency_communications_receive_from_firm = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null = True,
+        blank=True,
+    )
+    is_relevance_communications_sent_to_the_firm = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null = True,
+        blank=True,
+    )
+    is_raising_any_queries_on_communications = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null = True,
+        blank=True,
+    )
+    is_overall_standard_communications_received_from_firm = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null = True,
+        blank=True,
+    )
+    is_timely_manner_of_receiving_letter_confirming_recommendation = models.CharField(
+        max_length=100,
+        choices=ClientServeyChoices.choices,
+        null = True,
+        blank=True,
+    )
+    do_we_better_serve_next_time = models.CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    have_any_further_comments_on_the_service_received = models.CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    do_you_like_someone_to_contact_you = models.CharField(
+        max_length=100,
+        choices=DoYouLikeSomeoneToContactYouChoices.choices,
+        null=True,
+        blank=True,
+    )
+    name = models.CharField(max_length=255)
+    email = models.EmailField(blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self):
+        return f"{self.name} ({self.email})"
+
 
 # Call all signals here.
 post_save.connect(create_loan_details, sender=Case)
@@ -3202,3 +3389,4 @@ post_save.connect(create_mortgage_features, sender=Case)
 post_save.connect(create_mortgage_features_for_joint_user, sender=JointUser)
 post_save.connect(create_suitability, sender=Case)
 post_save.connect(create_compliance, sender=Case)
+post_save.connect(create_client_survey, sender=Case)

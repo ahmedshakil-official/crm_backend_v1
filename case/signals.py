@@ -208,3 +208,10 @@ def create_compliance(sender, instance, created, **kwargs):
     if created:
         Compliance = apps.get_model("case", "Compliance")
         Compliance.objects.create(case=instance)
+
+
+@receiver(post_save, sender="case.Case")
+def create_client_survey(sender, instance, created, **kwargs):
+    if created:
+        ClientSurvey = apps.get_model("case", "ClientSurvey")
+        ClientSurvey.objects.create(case=instance, applicant=instance.lead)

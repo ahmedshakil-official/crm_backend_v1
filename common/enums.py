@@ -804,3 +804,15 @@ class DoesRecommendedProductMatchYourNeedsSectionChoices(models.TextChoices):
     YES = "YES", _("YES")
     NO = "NO", _("NO")
     NA = "N/A", _("N/A")
+
+# Client servey Choice.
+class ClientServeyChoices(models.TextChoices):
+    Better_Than_Expected = "BETTER_THAN_EXPECTED", _("BETTER_THAN_EXPECTED")
+    AS_EXPECTED = "AS_EXPECTED", _("AS_EXPECTED")
+    BELOW_EXPECTED = "BELOW_EXPECTED", _("BELOW_EXPECTED")
+    NA = "N/A", _("N/A")
+    NOT_MENTIONED_TO_ME = "NOT_MENTIONED_TO_ME", _("NOT_MENTIONED_TO_ME")
+
+class DoYouLikeSomeoneToContactYouChoices(models.TextChoices):
+    YES = "YES", _("YES")
+    NO = "NO", _("NO")
