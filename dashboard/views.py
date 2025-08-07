@@ -18,7 +18,7 @@ class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView)
     permission_classes = [IsAuthenticated]
     queryset = Case.objects.none()
 
-    def get_meta_and_user_counts(self, user_association, request):
+    def get_meta_and_user_counts(self, request, user_association):
         """
         Returns meta and user_counts for either organization or network context.
         """
@@ -85,7 +85,7 @@ class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView)
 
     def list(self, request, *args, **kwargs):
         user_association = self.get_user_association()
-        meta, user_counts = self.get_meta_and_user_counts(user_association)
+        meta, user_counts = self.get_meta_and_user_counts(request, user_association)
         cases = self.get_case_queryset()  # This will use org/network context and skip org cases for network!
         case_ids = list(cases.values_list('id', flat=True))
         total_cases = len(case_ids)
