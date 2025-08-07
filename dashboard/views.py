@@ -18,7 +18,7 @@ class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView)
     permission_classes = [IsAuthenticated]
     queryset = Case.objects.none()
 
-    def get_meta_and_user_counts(self, user_association):
+    def get_meta_and_user_counts(self, user_association, request):
         """
         Returns meta and user_counts for either organization or network context.
         """
@@ -30,9 +30,9 @@ class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView)
                 "slug": org.slug,
                 "description": getattr(org, "description", ""),
                 "email": org.email,
-                "logo": org.logo.url if org.logo else None,
-                "profile_image": org.profile_image.url if org.profile_image else None,
-                "hero_image": org.hero_image.url if org.hero_image else None,
+                "logo": request.build_absolute_uri(org.logo.url) if org.logo else None,
+                "profile_image": request.build_absolute_uri(org.profile_image.url) if org.profile_image else None,
+                "hero_image": request.build_absolute_uri(org.hero_image.url) if org.hero_image else None,
                 "primary_mobile": org.primary_mobile,
                 "other_contact": org.other_contact,
                 "contact_person": org.contact_person,
@@ -60,9 +60,9 @@ class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView)
                 "slug": net.slug,
                 "description": getattr(net, "description", ""),
                 "email": net.email,
-                "logo": net.logo.url if net.logo else None,
-                "profile_image": net.profile_image.url if net.profile_image else None,
-                "hero_image": net.hero_image.url if net.hero_image else None,
+                "logo": request.build_absolute_uri(net.logo.url) if net.logo else None,
+                "profile_image": request.build_absolute_uri(net.profile_image.url) if net.profile_image else None,
+                "hero_image": request.build_absolute_uri(net.hero_image.url) if net.hero_image else None,
                 "primary_mobile": net.primary_mobile,
                 "other_contact": net.other_contact,
                 "contact_person": net.contact_person,
@@ -175,9 +175,9 @@ class OrganizationDashboardListView(ListAPIView):
             "slug": organization.slug,
             "description": getattr(organization, "description", ""),
             "email": organization.email,
-            "logo": organization.logo.url if organization.logo else None,
-            "profile_image": organization.profile_image.url if organization.profile_image else None,
-            "hero_image": organization.hero_image.url if organization.hero_image else None,
+            "logo_url": request.build_absolute_uri(organization.logo.url) if organization.logo else None,
+            "profile_image_url": request.build_absolute_uri(organization.profile_image.url) if organization.profile_image else None,
+            "hero_image_url": request.build_absolute_uri(organization.hero_image.url) if organization.hero_image else None,
             "primary_mobile": organization.primary_mobile,
             "other_contact": organization.other_contact,
             "contact_person": organization.contact_person,
