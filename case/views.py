@@ -1310,3 +1310,18 @@ class ClientSurveyListCreateAPIViews(CaseRelatedViewMixin, ListCreateAPIView):
     def perform_create(self, serializer):
         case = self.get_case()
         serializer.save(case=case, created_by=self.request.user)
+
+
+class ClientSurveyRetrieveUpdateApiView(CaseRelatedViewMixin ,RetrieveUpdateAPIView):
+    serializer_class = ClientSurveySerializers
+    permission_classes = [IsAuthenticated]
+    lookup_field = "case_alias"
+
+    def get_object(self):
+        case = self.get_case()
+        alias = self.kwargs.get("alias")
+        return get_object_or_404(ClientSurvey, case=case, alias=alias)
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+
