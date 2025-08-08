@@ -1315,7 +1315,7 @@ class ClientSurveyListCreateAPIViews(CaseRelatedViewMixin, ListCreateAPIView):
 class ClientSurveyRetrieveUpdateApiView(CaseRelatedViewMixin ,RetrieveUpdateAPIView):
     serializer_class = ClientSurveySerializers
     permission_classes = [IsAuthenticated]
-    lookup_field = "case_alias"
+    lookup_field = "alias"
 
     def get_object(self):
         case = self.get_case()
