@@ -651,6 +651,7 @@ class ApplicantDetailsSerializer(serializers.ModelSerializer):
             "applicant",
             "title",
             "maiden_name",
+            "date_of_name_change",
             "date_of_birth",
             "anticipated_retirement_age",
             "state_retirement_age",
