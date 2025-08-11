@@ -3501,6 +3501,7 @@ class ClientSurveySerializers(serializers.ModelSerializer):
             "name",
             "email",
             "phone_number",
+            "client_survey",
             "created_by",
             "updated_by",
             "created_at",
