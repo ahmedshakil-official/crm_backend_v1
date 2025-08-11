@@ -3382,9 +3382,10 @@ class ClientSurvey(CreatedAtUpdatedAtBaseModel):
         null=True,
         blank=True,
     )
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
+    client_survey = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
