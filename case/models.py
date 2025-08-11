@@ -674,6 +674,17 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     landlord_telephone = models.CharField(max_length=20, blank=True, null=True)
     landlord_email = models.EmailField(blank=True, null=True)
     intend_to_move_into_the_new_property= models.BooleanField(default=False)
+    landlord_address_postcode = models.CharField(max_length=10, blank=True, null=True)
+    landlord_house_number_or_name = models.CharField(max_length=255, blank=True, null=True)
+    landlord_address_line_one = models.CharField(max_length=255, blank=True, null=True)
+    landlord_city = models.CharField(max_length=100, blank=True, null=True)
+    landlord_county = models.CharField(max_length=100, blank=True, null=True)
+    landlord_country = models.CharField(max_length=100, blank=True, null=True)
+    new_address_house_number_or_name = models.CharField(max_length=255, blank=True, null=True)
+    new_address_address_one = models.CharField(max_length=255, blank=True, null=True)
+    new_address_address_two = models.CharField(max_length=255, blank=True, null=True)
+    new_address_city = models.CharField(max_length=100, blank=True, null=True)
+
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
@@ -3209,7 +3220,7 @@ class Compliance(CreatedAtUpdatedAtBaseModel):
 # Client Servey Model
 class ClientSurvey(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="client_servey")
-    adviser_name = models.CharField(max_length=100)
+    adviser_name = models.CharField(max_length=100, null=True, blank=True)
     is_clarification_explanation_of_the_service_firm = models.CharField(
         max_length=100,
         choices=ClientServeyChoices.choices,
