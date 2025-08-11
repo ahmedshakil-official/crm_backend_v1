@@ -694,6 +694,17 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.company} ({self.applicant})"
 
+    # Auto fill new address fields from related Property of the same Case.
+    def save(self, *args, **kwargs):
+        if not self.new_address_house_number_or_name:
+            property_obj = Property.objects.filter(case=self.case).order_by('-created_at').first()
+            if property_obj:
+                self.new_address_house_number_or_name = property_obj.house_name_or_number or ""
+                self.new_address_address_one = property_obj.address_1 or ""
+                self.new_address_address_two = property_obj.address_2 or ""
+                self.new_address_city = property_obj.city or ""
+        super().save(*args, **kwargs)
+
 
 class CompanyInfo(models.Model):
     applicant_details = models.ForeignKey(
