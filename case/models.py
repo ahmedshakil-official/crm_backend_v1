@@ -694,7 +694,7 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.company} ({self.applicant})"
 
-    # Auto fill new address fields from related Property of the same Case.
+    # New address fields from related Property of the same Case.
     def save(self, *args, **kwargs):
         if not self.new_address_house_number_or_name:
             property_obj = Property.objects.filter(case=self.case).order_by('-created_at').first()
