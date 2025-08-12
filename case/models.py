@@ -694,7 +694,7 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     new_address_county = models.CharField(max_length=255, null=True, blank=True)
     new_address_postcode = models.CharField(max_length=10, blank=True, null=True)
     new_address_country = models.CharField(max_length=255, blank=True, null=True)
-    New_address_effective_form = models.DateField(blank=True, null=True)
+    new_address_effective_form = models.DateField(blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
