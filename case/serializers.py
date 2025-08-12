@@ -725,6 +725,10 @@ class ApplicantDetailsSerializer(serializers.ModelSerializer):
             "new_address_address_one",
             "new_address_address_two",
             "new_address_city",
+            "new_address_county",
+            "new_address_postcode",
+            "new_address_country",
+            "New_address_effective_form",
             "updated_at",
             "updated_by",
         ]

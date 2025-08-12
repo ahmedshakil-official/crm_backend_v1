@@ -551,6 +551,13 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.application_type} - {self.mortgage_type if self.mortgage_type else 'No Mortgage Type'}"
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.case_completed_date:
+            ApplicantDetails.objects.filter(case=self.case).update(
+                New_address_effective_form=self.case_completed_date
+            )
+
 
 class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
@@ -684,7 +691,10 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     new_address_address_one = models.CharField(max_length=255, blank=True, null=True)
     new_address_address_two = models.CharField(max_length=255, blank=True, null=True)
     new_address_city = models.CharField(max_length=100, blank=True, null=True)
-
+    new_address_county = models.CharField(max_length=255, null=True, blank=True)
+    new_address_postcode = models.CharField(max_length=10, blank=True, null=True)
+    new_address_country = models.CharField(max_length=255, blank=True, null=True)
+    New_address_effective_form = models.DateField(blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
@@ -693,17 +703,6 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.company} ({self.applicant})"
-
-    # New address fields from related Property of the same Case.
-    def save(self, *args, **kwargs):
-        if not self.new_address_house_number_or_name:
-            property_obj = Property.objects.filter(case=self.case).order_by('-created_at').first()
-            if property_obj:
-                self.new_address_house_number_or_name = property_obj.house_name_or_number or ""
-                self.new_address_address_one = property_obj.address_1 or ""
-                self.new_address_address_two = property_obj.address_2 or ""
-                self.new_address_city = property_obj.city or ""
-        super().save(*args, **kwargs)
 
 
 class CompanyInfo(models.Model):
@@ -1788,6 +1787,19 @@ class PropertyDetails(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.house_name_or_number}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        updates = {
+            "new_address_house_number_or_name": self.house_name_or_number or "",
+            "new_address_address_one": self.address_one or "",
+            "new_address_address_two": self.address_one or "",
+            "new_address_city": self.city or "",
+            "new_address_county": self.county or "",
+            "new_address_postcode": self.postcode or "",
+            "new_address_country": self.country or "",
+        }
+        ApplicantDetails.objects.filter(case=self.case).update(**updates)
 
 
 class OtherOccupants(CreatedAtUpdatedAtBaseModel):

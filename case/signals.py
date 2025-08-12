@@ -214,19 +214,11 @@ def create_compliance(sender, instance, created, **kwargs):
 def create_client_survey(sender, instance, created, **kwargs):
     if created:
         ClientSurvey = apps.get_model("case", "ClientSurvey")
-
         adviser = instance.assigned_to
         lead = instance.lead
-
         adviser_name = f"{adviser.first_name} {adviser.last_name}" if adviser else ""
-        lead_name = f"{lead.first_name} {lead.last_name}" if lead else ""
-        email = lead.email if lead else None
-        phone = lead.phone if lead else None
 
         ClientSurvey.objects.create(
             case=instance,
             adviser_name=adviser_name,
-            name=lead_name,
-            email=email,
-            phone_number=phone
         )
