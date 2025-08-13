@@ -75,7 +75,8 @@ from .models import (
     Wills,
     ExtraAnswer,
     Compliance,
-    MortgageNeeds, ClientSurvey,
+    MortgageNeeds,
+    ClientSurvey,
 )
 from authentication.models import User
 from common.serializers import (
@@ -637,10 +638,10 @@ class CompanyInfoSerializer(serializers.ModelSerializer):
 
 
 class ApplicantDetailsSerializer(serializers.ModelSerializer):
-
     nationality = CountryField(required=False, allow_blank=True, allow_null=True)
     applicant = CommonUserWithIdSerializer(read_only=True)
     dual_nationality = CountryField(required=False, allow_blank=True, allow_null=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
 
     class Meta:
         model = ApplicantDetails
@@ -729,14 +730,15 @@ class ApplicantDetailsSerializer(serializers.ModelSerializer):
             "new_address_postcode",
             "new_address_country",
             "new_address_effective_from",
+            "created_at",
             "updated_at",
             "updated_by",
         ]
         read_only_fields = [
             "alias",
             "applicant",
+            "created_at",
             "updated_at",
-            "created_by",
             "updated_by",
             "case",
             "applicant",
