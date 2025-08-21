@@ -19,7 +19,7 @@ class ReportRendererMixin:
     Renders a modern PDF using HTML/CSS and WeasyPrint.
     """
 
-    base_template = "reports/report.html"  # add this file below
+    base_template = "report.html"  # add this file below
 
     def render_pdf(self, request, context: dict, filename: str) -> HttpResponse:
         """
