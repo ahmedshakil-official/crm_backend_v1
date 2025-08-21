@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt /app/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+COPY install-weasyprint-deps.sh /app/
+RUN chmod +x /app/install-weasyprint-deps.sh && /app/install-weasyprint-deps.sh
 
 # Copy application files
 COPY . /app/
