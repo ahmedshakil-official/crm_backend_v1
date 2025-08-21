@@ -24,7 +24,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = (
             "email",
             "phone",
+            "title",
             "first_name",
+            "middle_name",
             "last_name",
             "profile_image",
             "user_type",
@@ -64,7 +66,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)  # {'access', 'refresh'}
         # Add whatever you want in the HTTP response:
         data["user"] = {
+            "title": self.user.title,
             "first_name": self.user.first_name,
+            "middle_name": self.user.middle_name,
             "last_name": self.user.last_name,
             "email": self.user.email,
             "user_type": self.user.user_type,
@@ -91,7 +95,9 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         fields = [
             "email",
             "phone",
+            "title",
             "first_name",
+            "middle_name",
             "last_name",
             "profile_image",
             "user_type",

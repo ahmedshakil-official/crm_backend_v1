@@ -551,6 +551,13 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.application_type} - {self.mortgage_type if self.mortgage_type else 'No Mortgage Type'}"
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.case_completed_date:
+            ApplicantDetails.objects.filter(case=self.case).update(
+                new_address_effective_from=self.case_completed_date
+            )
+
 
 class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(
@@ -674,6 +681,20 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     landlord_telephone = models.CharField(max_length=20, blank=True, null=True)
     landlord_email = models.EmailField(blank=True, null=True)
     intend_to_move_into_the_new_property= models.BooleanField(default=False)
+    landlord_address_postcode = models.CharField(max_length=10, blank=True, null=True)
+    landlord_house_number_or_name = models.CharField(max_length=255, blank=True, null=True)
+    landlord_address_line_one = models.CharField(max_length=255, blank=True, null=True)
+    landlord_city = models.CharField(max_length=100, blank=True, null=True)
+    landlord_county = models.CharField(max_length=100, blank=True, null=True)
+    landlord_country = models.CharField(max_length=100, blank=True, null=True)
+    new_address_house_number_or_name = models.CharField(max_length=255, blank=True, null=True)
+    new_address_address_one = models.CharField(max_length=255, blank=True, null=True)
+    new_address_address_two = models.CharField(max_length=255, blank=True, null=True)
+    new_address_city = models.CharField(max_length=100, blank=True, null=True)
+    new_address_county = models.CharField(max_length=255, null=True, blank=True)
+    new_address_postcode = models.CharField(max_length=10, blank=True, null=True)
+    new_address_country = models.CharField(max_length=255, blank=True, null=True)
+    new_address_effective_from = models.DateField(blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
@@ -1766,6 +1787,19 @@ class PropertyDetails(CreatedAtUpdatedAtBaseModel):
 
     def __str__(self):
         return f"{self.house_name_or_number}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        updates = {
+            "new_address_house_number_or_name": self.house_name_or_number or "",
+            "new_address_address_one": self.address_one or "",
+            "new_address_address_two": self.address_one or "",
+            "new_address_city": self.city or "",
+            "new_address_county": self.county or "",
+            "new_address_postcode": self.postcode or "",
+            "new_address_country": self.country or "",
+        }
+        ApplicantDetails.objects.filter(case=self.case).update(**updates)
 
 
 class OtherOccupants(CreatedAtUpdatedAtBaseModel):
@@ -3209,7 +3243,7 @@ class Compliance(CreatedAtUpdatedAtBaseModel):
 # Client Servey Model
 class ClientSurvey(CreatedAtUpdatedAtBaseModel):
     case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="client_servey")
-    adviser_name = models.CharField(max_length=100)
+    adviser_name = models.CharField(max_length=100, null=True, blank=True)
     is_clarification_explanation_of_the_service_firm = models.CharField(
         max_length=100,
         choices=ClientServeyChoices.choices,
@@ -3382,9 +3416,10 @@ class ClientSurvey(CreatedAtUpdatedAtBaseModel):
         null=True,
         blank=True,
     )
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
+    client_survey = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")

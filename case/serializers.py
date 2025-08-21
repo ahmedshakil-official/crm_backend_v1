@@ -75,7 +75,8 @@ from .models import (
     Wills,
     ExtraAnswer,
     Compliance,
-    MortgageNeeds, ClientSurvey,
+    MortgageNeeds,
+    ClientSurvey,
 )
 from authentication.models import User
 from common.serializers import (
@@ -637,10 +638,10 @@ class CompanyInfoSerializer(serializers.ModelSerializer):
 
 
 class ApplicantDetailsSerializer(serializers.ModelSerializer):
-
     nationality = CountryField(required=False, allow_blank=True, allow_null=True)
     applicant = CommonUserWithIdSerializer(read_only=True)
     dual_nationality = CountryField(required=False, allow_blank=True, allow_null=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
 
     class Meta:
         model = ApplicantDetails
@@ -651,6 +652,7 @@ class ApplicantDetailsSerializer(serializers.ModelSerializer):
             "applicant",
             "title",
             "maiden_name",
+            "date_of_name_change",
             "date_of_birth",
             "anticipated_retirement_age",
             "state_retirement_age",
@@ -714,14 +716,29 @@ class ApplicantDetailsSerializer(serializers.ModelSerializer):
             "landlord_telephone",
             "landlord_email",
             "intend_to_move_into_the_new_property",
+            "landlord_address_postcode",
+            "landlord_house_number_or_name",
+            "landlord_address_line_one",
+            "landlord_city",
+            "landlord_county",
+            "landlord_country",
+            "new_address_house_number_or_name",
+            "new_address_address_one",
+            "new_address_address_two",
+            "new_address_city",
+            "new_address_county",
+            "new_address_postcode",
+            "new_address_country",
+            "new_address_effective_from",
+            "created_at",
             "updated_at",
             "updated_by",
         ]
         read_only_fields = [
             "alias",
             "applicant",
+            "created_at",
             "updated_at",
-            "created_by",
             "updated_by",
             "case",
             "applicant",
@@ -3467,6 +3484,7 @@ class ClientSurveySerializers(serializers.ModelSerializer):
         fields = [
             "alias",
             "case",
+            "client_survey",
             "adviser_name",
             "is_clarification_explanation_of_the_service_firm",
             "is_timely_service_delivery",
