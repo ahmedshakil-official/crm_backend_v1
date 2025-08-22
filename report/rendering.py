@@ -1,4 +1,3 @@
-# reports/rendering.py
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable, List, Dict, Optional
@@ -26,7 +25,7 @@ class ReportRendererMixin:
         Renders the given context into a PDF using the configured template.
         """
         template = get_template(self.base_template)
-        html_str = template.render(context | {"_now": timezone.localtime()})
+        html_str = template.render(context | {"current_time": timezone.localtime()})
         html = HTML(string=html_str, base_url=request.build_absolute_uri("/"))
 
         # Minimal, classy page setup; additional styles in the template itself
