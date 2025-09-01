@@ -785,7 +785,7 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
     )
 
     # For 'Employed' only:
-    business_type = models.CharField(
+    employment_type = models.CharField(
         max_length=50, choices=EmploymentType.choices, blank=True, null=True
     )
     occupation = models.CharField(max_length=255, blank=True, null=True)
@@ -854,7 +854,7 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
     business_county = models.CharField(max_length=255, blank=True, null=True)
     business_country = models.CharField(max_length=255, blank=True, null=True)
     job_title = models.CharField(max_length=255, blank=True, null=True)
-    company_type = models.CharField(
+    business_type = models.CharField(
         max_length=50, choices=CompanyType.choices, blank=True, null=True
     )
     percentage_of_business_owned = models.DecimalField(
