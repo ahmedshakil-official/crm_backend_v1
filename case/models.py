@@ -116,7 +116,8 @@ from common.enums import (
     HasBASectionPersonalisedChoices,
     HasWillsSectionPersonalisedChoices,
     DoesRecommendedProductMatchYourNeedsSectionChoices,
-    ClientServeyChoices, DoYouLikeSomeoneToContactYouChoices,
+    ClientServeyChoices,
+    DoYouLikeSomeoneToContactYouChoices,
 )
 from organization.models import Organization, Network
 from .enums import (
@@ -199,6 +200,7 @@ from .enums import (
     CourtOrderedChoices,
     PaidOnCompletionChoices,
     ExtraAnswerChoices,
+    OtherIncomeSourceChoice,
 )
 from .signals import (
     create_loan_details,
@@ -214,7 +216,8 @@ from .signals import (
     create_mortgage_features,
     create_mortgage_features_for_joint_user,
     create_suitability,
-    create_compliance, create_client_survey,
+    create_compliance,
+    create_client_survey,
 )
 from .utils import upload_to_case_files
 
@@ -361,6 +364,7 @@ class Files(CreatedAtUpdatedAtBaseModel):
         verbose_name="Special Notes",
         help_text="Optional special notes related to the file",
     )
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
@@ -430,6 +434,7 @@ class Meeting(CreatedAtUpdatedAtBaseModel):
     meeting_date = models.DateField(null=True, blank=True)
     meeting_time = models.TimeField(null=True, blank=True)
     is_removed = models.BooleanField(default=False, db_index=True)
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
@@ -458,6 +463,7 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
     lender = models.CharField(
         max_length=50, choices=LenderChoices.choices, blank=True, null=True
     )
+    other_lender_note = models.TextField(blank=True, null=True)
     lenders_reference = models.CharField(max_length=100, blank=True, null=True)
     borrower_type = models.CharField(
         max_length=50, choices=BorrowerTypeChoices.choices, blank=True, null=True
@@ -542,6 +548,7 @@ class LoanDetails(CreatedAtUpdatedAtBaseModel):
     exchange_of_contracts_date = models.DateField(blank=True, null=True)
     case_completed_date = models.DateField(blank=True, null=True)
     review_date = models.DateField(blank=True, null=True)
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
@@ -695,6 +702,7 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     new_address_postcode = models.CharField(max_length=10, blank=True, null=True)
     new_address_country = models.CharField(max_length=255, blank=True, null=True)
     new_address_effective_from = models.DateField(blank=True, null=True)
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at", "-updated_at"]
@@ -728,6 +736,7 @@ class CompanyInfo(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True)
     county = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
+    note = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.company_name} ({self.company_registration_number})"
@@ -845,7 +854,7 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
     business_county = models.CharField(max_length=255, blank=True, null=True)
     business_country = models.CharField(max_length=255, blank=True, null=True)
     job_title = models.CharField(max_length=255, blank=True, null=True)
-    company_type = models.CharField(
+    business_type = models.CharField(
         max_length=50, choices=CompanyType.choices, blank=True, null=True
     )
     percentage_of_business_owned = models.DecimalField(
@@ -891,7 +900,12 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
     other_income = models.DecimalField(
         max_digits=12, decimal_places=2, blank=True, null=True
     )
-    other_income_source = models.CharField(max_length=255, blank=True, null=True)
+    other_income_source = models.CharField(
+        max_length=50,
+        choices=OtherIncomeSourceChoice.choices,
+        blank=True,
+        null=True,
+    )
     other_income_start_date = models.DateField(blank=True, null=True)
 
     # For 'Contractor':
@@ -905,6 +919,8 @@ class EmploymentDetails(CreatedAtUpdatedAtBaseModel):
     hourly_rate = models.DecimalField(
         max_digits=12, decimal_places=2, blank=True, null=True
     )
+    other = models.CharField(max_length=500, blank=True, null=True)
+    note = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.employment_status}"
@@ -944,6 +960,7 @@ class Adverse(CreatedAtUpdatedAtBaseModel):
         default=False
     )
     why_did_the_adverse_occur = models.CharField(max_length=500, blank=True, null=True)
+    note = models.TextField(blank=True, null=True)
 
 
 class Property(CreatedAtUpdatedAtBaseModel):
@@ -1007,6 +1024,7 @@ class Property(CreatedAtUpdatedAtBaseModel):
     epc_rating = models.CharField(
         max_length=255, choices=EPCRatingChoices.choices, null=True, blank=True
     )
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1055,6 +1073,7 @@ class CaseSolicitor(CreatedAtUpdatedAtBaseModel):
         on_delete=models.CASCADE,
         related_name="solicitor_case_user",
     )
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1072,6 +1091,7 @@ class CaseAccountant(CreatedAtUpdatedAtBaseModel):
         on_delete=models.CASCADE,
         related_name="accountant_case_user",
     )
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1132,6 +1152,7 @@ class ExistingProtection(CreatedAtUpdatedAtBaseModel):
     )
     policy_cancellation_notes = models.TextField(null=True, blank=True)
     why_did_you_take_out_this_policy = models.TextField(null=True, blank=True)
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1185,11 +1206,13 @@ class Product(CreatedAtUpdatedAtBaseModel):
         choices=InitialRateTypeChoices.choices,
         default=InitialRateTypeChoices.PLEASE_SELECT_A_INITIAL_RATE_TYPE,
     )
+    initial_rate_text = models.CharField(max_length=350, null=True, blank=True)
     initial_rate_period_type = models.CharField(
         max_length=255,
         choices=InitialRatePeriodTypeChoices.choices,
         default=InitialRatePeriodTypeChoices.PLEASE_SELECT_A_INITIAL_RATE_PERIOD_TYPE,
     )
+    initial_rate_period_date= models.DateField(null=True, blank=True)
     reversion_rate = models.DecimalField(
         max_digits=12, decimal_places=2, null=True, blank=True
     )
@@ -1257,6 +1280,7 @@ class Product(CreatedAtUpdatedAtBaseModel):
     processing_consent_description = models.TextField(null=True, blank=True)
     application_review = models.BooleanField(default=False)
     application_review_description = models.TextField(null=True, blank=True)
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1285,6 +1309,7 @@ class DipHistory(CreatedAtUpdatedAtBaseModel):
         default=DIPDecisionChoices.ACCEPTED,
     )
     dip_reference_number = models.CharField(max_length=20, null=True, blank=True)
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1779,8 +1804,8 @@ class PropertyDetails(CreatedAtUpdatedAtBaseModel):
     contacts_daytime_telephone = models.CharField(max_length=20, null=True, blank=True)
     contacts_mobile_telephone = models.CharField(max_length=20, null=True, blank=True)
     contacts_email_address = models.CharField(max_length=50, null=True, blank=True)
-
     estimated_value = models.PositiveIntegerField(default=0, null=True, blank=True)
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1815,6 +1840,7 @@ class OtherOccupants(CreatedAtUpdatedAtBaseModel):
         choices=RelationshipChoices.choices,
         default=RelationshipChoices.PARTNER,
     )
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1927,6 +1953,7 @@ class BudgetPlanner(CreatedAtUpdatedAtBaseModel):
     )
     disclaimer = models.BooleanField(default=False)
     disclaimer_details = models.CharField(null=True, blank=True)
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -1981,6 +2008,7 @@ class CreditCommitments(CreatedAtUpdatedAtBaseModel):
     has_the_unsecured_credit_mounted_up = models.CharField(
         max_length=255, null=True, blank=True
     )
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -2061,6 +2089,7 @@ class MortgageNeeds(CreatedAtUpdatedAtBaseModel):
     )
     mortgage_requirements = models.BooleanField(default=False)
     note_three = models.CharField(max_length=10000, null=True, blank=True)
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -2087,6 +2116,7 @@ class MortgageFeatures(CreatedAtUpdatedAtBaseModel):
     pmi = models.BooleanField(default=False)
     family_income_benefit = models.BooleanField(default=False)
     buildings_and_contents = models.BooleanField(default=False)
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -2538,6 +2568,7 @@ class Suitability(CreatedAtUpdatedAtBaseModel):
         blank=True,
         related_name="suitability_wills",
     )
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -3233,6 +3264,7 @@ class Compliance(CreatedAtUpdatedAtBaseModel):
     does_recommended_product_match_your_needs_section_text = models.TextField(
         max_length=255, null=True, blank=True
     )
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -3420,6 +3452,7 @@ class ClientSurvey(CreatedAtUpdatedAtBaseModel):
     email = models.EmailField(blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     client_survey = models.BooleanField(default=False)
+    note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")

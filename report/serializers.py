@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Case
+from case.models import Case
 
 
 class ReportFilterSerializer(serializers.Serializer):
