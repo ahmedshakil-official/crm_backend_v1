@@ -35,6 +35,7 @@ from authentication.models import User
 from common.serializers import CommonUserSerializer, CommonUserWithIdSerializer
 from organization.models import Organization, Network, OrganizationUser, NetworkUser
 from common.enums import UserTypeChoices as CommonUserTypeChoices
+from organization.permissions import CasePermission, IsInOrgOrNetwork, CasePermissionForClintUpdate
 from .common import (
     RegisterLoan,
     PaymentCommitment,
@@ -266,7 +267,7 @@ class CaseRetrieveUpdateDeleteApiView(
     """Retrieve, update, and delete cases for both organization and network users"""
 
     serializer_class = CaseRetrieveUpdateDeleteSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_queryset(self):
@@ -279,7 +280,7 @@ class CaseRetrieveUpdateDeleteApiView(
 
 class FileListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = FileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     filter_backends = [DjangoFilterBackend]
     filterset_class = FileFilter
 
@@ -297,7 +298,7 @@ class FileRetrieveUpdateDeleteApiView(
     CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView
 ):
     serializer_class = FileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_object(self):
@@ -356,7 +357,7 @@ class CaseUserListApiView(CaseRelatedViewMixin, ListAPIView):
 
 class LoanDetailsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = LoanDetailsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermissionForClintUpdate]
 
     def get_queryset(self):
         return LoanDetails.objects.filter(case=self.get_case())
@@ -367,7 +368,7 @@ class LoanDetailsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class LoanDetailsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = LoanDetailsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermissionForClintUpdate]
     lookup_field = "alias"
 
     def get_object(self):
@@ -396,7 +397,7 @@ class CaseUserListViewOnlyApiView(CaseRelatedViewMixin, ListAPIView):
 
 class ApplicantDetailsListApiView(CaseRelatedViewMixin, ListAPIView):
     serializer_class = ApplicantDetailsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,CasePermissionForClintUpdate]
 
     def get_queryset(self):
         return ApplicantDetails.objects.filter(case=self.get_case())
@@ -407,7 +408,7 @@ class ApplicantDetailsRetrieveUpdateApiView(
 ):
     queryset = ApplicantDetails.objects.all()
     serializer_class = ApplicantDetailsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermissionForClintUpdate]
     lookup_field = "alias"
 
     def get_object(self):
@@ -421,7 +422,7 @@ class ApplicantDetailsRetrieveUpdateApiView(
 
 class DependantListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = DependantSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -439,7 +440,7 @@ class DependantListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class CompanyInfoListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = CompanyInfoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -457,7 +458,7 @@ class CompanyInfoListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class DirectorShareholderListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = DirectorShareholderSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -484,7 +485,7 @@ class DirectorShareholderListCreateApiView(CaseRelatedViewMixin, ListCreateAPIVi
 
 class EmploymentDetailsListApiView(CaseRelatedViewMixin, ListAPIView):
     serializer_class = EmploymentDetailsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         return EmploymentDetails.objects.filter(case=self.get_case())
@@ -492,7 +493,7 @@ class EmploymentDetailsListApiView(CaseRelatedViewMixin, ListAPIView):
 
 class EmploymentDetailsCreateApiView(CaseRelatedViewMixin, CreateAPIView):
     serializer_class = EmploymentDetailsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         return EmploymentDetails.objects.all()
@@ -511,7 +512,7 @@ class EmploymentDetailsRetrieveUpdateApiView(
     CaseRelatedViewMixin, RetrieveUpdateAPIView
 ):
     serializer_class = EmploymentDetailsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_queryset(self):
@@ -523,7 +524,7 @@ class EmploymentDetailsRetrieveUpdateApiView(
 
 class AdverseListApiView(CaseRelatedViewMixin, ListAPIView):
     serializer_class = AdverseSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         return Adverse.objects.filter(case=self.get_case())
@@ -531,7 +532,7 @@ class AdverseListApiView(CaseRelatedViewMixin, ListAPIView):
 
 class AdverseRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = AdverseSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_queryset(self):
@@ -543,7 +544,7 @@ class AdverseRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
 
 class RegisterLoanListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = RegisterLoanSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -559,7 +560,7 @@ class RegisterLoanListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class CCJListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = CCJSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -575,7 +576,7 @@ class CCJListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class PaymentCommitmentListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = PaymentCommitmentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -593,7 +594,7 @@ class PaymentCommitmentListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView
 
 class PropertyRepossessedListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = PropertyRepossessedSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -611,7 +612,7 @@ class PropertyRepossessedListCreateApiView(CaseRelatedViewMixin, ListCreateAPIVi
 
 class BankruptListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = BankruptSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -627,7 +628,7 @@ class BankruptListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class IndividualVoluntaryListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = IndividualVoluntarySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -645,7 +646,7 @@ class IndividualVoluntaryListCreateApiView(CaseRelatedViewMixin, ListCreateAPIVi
 
 class DebtManagementPlanListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = DebtManagementPlanSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -663,7 +664,7 @@ class DebtManagementPlanListCreateApiView(CaseRelatedViewMixin, ListCreateAPIVie
 
 class PayDayLoanListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = PayDayLoanSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -679,7 +680,7 @@ class PayDayLoanListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class PropertyListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = PropertySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermissionForClintUpdate]
 
     def get_queryset(self):
         return Property.objects.filter(case=self.get_case())
@@ -691,7 +692,7 @@ class PropertyListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class SolicitorListCreateApiView(ListCreateAPIView):
     serializer_class = SolicitorAccountantSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         return SolicitorAccountant.objects.filter(user_type="SOLICITOR")
@@ -702,7 +703,7 @@ class SolicitorListCreateApiView(ListCreateAPIView):
 
 class AccountantListCreateApiView(ListCreateAPIView):
     serializer_class = SolicitorAccountantSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         return SolicitorAccountant.objects.filter(user_type="ACCOUNTANT")
@@ -713,7 +714,7 @@ class AccountantListCreateApiView(ListCreateAPIView):
 
 class CaseAccountantsApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = CaseAccountantSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         return CaseAccountant.objects.filter(case=self.get_case())
@@ -725,7 +726,7 @@ class CaseAccountantsApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class CaseSolicitorApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = CaseSolicitorSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         return CaseSolicitor.objects.filter(case=self.get_case())
@@ -737,7 +738,7 @@ class CaseSolicitorApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class SolicitorRetrieveUpdateApiView(RetrieveUpdateAPIView):
     serializer_class = SolicitorAccountantSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_queryset(self):
@@ -749,7 +750,7 @@ class SolicitorRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
 class AccountantRetrieveUpdateApiView(RetrieveUpdateAPIView):
     serializer_class = SolicitorAccountantSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_queryset(self):
@@ -761,7 +762,7 @@ class AccountantRetrieveUpdateApiView(RetrieveUpdateAPIView):
 
 class ExistingProtectionListApiView(CaseRelatedViewMixin, ListAPIView):
     serializer_class = ExistingProtectionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         return ExistingProtection.objects.filter(case=self.get_case())
@@ -769,7 +770,7 @@ class ExistingProtectionListApiView(CaseRelatedViewMixin, ListAPIView):
 
 class ExistingProtectionCreateApiView(CaseRelatedViewMixin, CreateAPIView):
     serializer_class = ExistingProtectionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def perform_create(self, serializer):
         case = self.get_case()
@@ -781,7 +782,7 @@ class ExistingProtectionRetrieveUpdateApiView(
     CaseRelatedViewMixin, RetrieveUpdateAPIView
 ):
     serializer_class = ExistingProtectionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_object(self):
@@ -795,7 +796,7 @@ class ExistingProtectionRetrieveUpdateApiView(
 
 class NoteListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = NotesSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermissionForClintUpdate]
 
     def get_queryset(self):
         return Notes.objects.filter(case=self.get_case())
@@ -807,7 +808,7 @@ class NoteListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class NoteRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = NotesSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermissionForClintUpdate]
     lookup_field = "alias"
 
     def get_object(self):
@@ -821,7 +822,7 @@ class NoteRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
 
 class PropertyDetailsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = PropertyDetailsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         return PropertyDetails.objects.filter(case=self.get_case())
@@ -833,7 +834,7 @@ class PropertyDetailsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class PropertyDetailsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = PropertyDetailsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_object(self):
@@ -847,7 +848,7 @@ class PropertyDetailsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateA
 
 class OtherOccupantsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = OtherOccupantsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         return OtherOccupants.objects.filter(case=self.get_case())
@@ -859,7 +860,7 @@ class OtherOccupantsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class OtherOccupantsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = OtherOccupantsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_object(self):
@@ -873,7 +874,7 @@ class OtherOccupantsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAP
 
 class ProductListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermissionForClintUpdate]
 
     def get_queryset(self):
         return Product.objects.filter(case=self.get_case())
@@ -885,7 +886,7 @@ class ProductListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class ProductRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermissionForClintUpdate]
     lookup_field = "alias"
 
     def get_object(self):
@@ -899,7 +900,7 @@ class ProductRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
 
 class BudgetPlannerListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = BudgetPlannerSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         return BudgetPlanner.objects.filter(case=self.get_case())
@@ -911,7 +912,7 @@ class BudgetPlannerListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class BudgetPlannerRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = BudgetPlannerSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_object(self):
@@ -925,7 +926,7 @@ class BudgetPlannerRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPI
 
 class FeesInListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = FeesSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -940,7 +941,7 @@ class FeesInListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class FeesOutListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = FeesSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -955,7 +956,7 @@ class FeesOutListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class FeesRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = FeesSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_object(self):
@@ -969,7 +970,7 @@ class FeesRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
 
 class DipHistoryListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = DipHistorySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -982,7 +983,7 @@ class DipHistoryListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class DipHistoryRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = DipHistorySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_object(self):
@@ -996,7 +997,7 @@ class DipHistoryRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIVie
 
 class CreditCommitmentsListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = CreditCommitmentsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -1030,7 +1031,7 @@ class CreditCommitmentsRetrieveUpdateDestroyApiView(
     CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView
 ):
     serializer_class = CreditCommitmentsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
     lookup_field = "alias"
 
     def get_object(self):
@@ -1049,7 +1050,7 @@ class SuitabilityRetrieveUpdateApiView(
     CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView
 ):
     serializer_class = SuitabilitySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_object(self):
         case = self.get_case()
@@ -1065,7 +1066,7 @@ class SuitabilityRetrieveUpdateApiView(
 
 class ExtraAnswerListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = ExtraAnswerSerializers
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_queryset(self):
         case = self.get_case()
@@ -1078,7 +1079,7 @@ class ExtraAnswerListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
 class ComplianceRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = ComplianceSerializers
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_object(self):
         case = self.get_case()
@@ -1090,7 +1091,7 @@ class ComplianceRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIVie
 
 class MortgageNeedsRetrieveUpdateApiView(CaseRelatedViewMixin, RetrieveUpdateAPIView):
     serializer_class = MortgageNeedsSerializers
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermission]
 
     def get_object(self):
         case = self.get_case()
@@ -1301,7 +1302,7 @@ class CasePDFReportAPIView(CaseAuthenticationMixin, APIView):
 # Client survey Lise create api views.
 class ClientSurveyListCreateAPIViews(CaseRelatedViewMixin, ListCreateAPIView):
     serializer_class = ClientSurveySerializers
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermissionForClintUpdate]
 
     def get_queryset(self):
         case = self.get_case()
@@ -1314,7 +1315,7 @@ class ClientSurveyListCreateAPIViews(CaseRelatedViewMixin, ListCreateAPIView):
 
 class ClientSurveyRetrieveUpdateApiView(CaseRelatedViewMixin ,RetrieveUpdateAPIView):
     serializer_class = ClientSurveySerializers
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CasePermissionForClintUpdate]
     lookup_field = "alias"
 
     def get_object(self):
