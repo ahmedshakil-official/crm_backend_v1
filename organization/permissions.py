@@ -309,23 +309,23 @@ class CasePermission(BasePermission):
 
         if request.method == "POST":
             return (
-                OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ADVISOR).exists()
-                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.ADVISOR).exists()
-                or OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ADMIN).exists()
-                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.ADMIN).exists()
+                OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ORGANIZATION_ADVISER).exists()
+                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.NETWORK_ADVISER).exists()
+                or OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ORGANIZATION_ADMIN).exists()
+                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.NETWORK_ADMIN).exists()
             )
         if request.method in ("PUT", "PATCH"):
             return (
-                    OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ADVISOR).exists()
-                    or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.ADVISOR).exists()
-                    or OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ADMIN).exists()
-                    or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.ADMIN).exists()
+                    OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ORGANIZATION_ADVISER).exists()
+                    or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.NETWORK_ADVISER).exists()
+                    or OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ORGANIZATION_ADMIN).exists()
+                    or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.NETWORK_ADMIN).exists()
             )
 
         if request.method == "DELETE":
             return (
-                OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ADMIN).exists()
-                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.ADMIN).exists()
+                OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ORGANIZATION_ADMIN).exists()
+                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.NETWORK_ADMIN).exists()
             )
 
         return False
@@ -342,26 +342,26 @@ class CasePermissionForClintUpdate(BasePermission):
 
         if request.method == "POST":
             return (
-                OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ADVISOR).exists()
-                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.ADVISOR).exists()
-                or OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ADMIN).exists()
-                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.ADMIN).exists()
+                OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ORGANIZATION_ADVISER).exists()
+                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.NETWORK_ADVISER).exists()
+                or OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ORGANIZATION_ADMIN).exists()
+                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.NETWORK_ADMIN).exists()
                 or OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.CLIENT).exists()
                 or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.CLIENT).exists()
             )
         if request.method in ("PUT", "PATCH"):
             return (
-                OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ADVISOR).exists()
-                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.ADVISOR).exists()
-                or OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ADMIN).exists()
-                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.ADMIN).exists()
+                OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ORGANIZATION_ADVISER).exists()
+                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.NETWORK_ADVISER).exists()
+                or OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ORGANIZATION_ADMIN).exists()
+                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.NETWORK_ADMIN).exists()
                 or OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.CLIENT).exists()
                 or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.CLIENT).exists()
             )
         if request.method == "DELETE":
             return (
-                OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ADMIN).exists()
-                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.ADMIN).exists()
+                OrganizationUser.objects.filter(user=user, role=OrganizationRoleChoices.ORGANIZATION_ADMIN).exists()
+                or NetworkUser.objects.filter(user=user, role=NetworkRoleChoices.NETWORK_ADMIN).exists()
             )
 
 # For lead user.
