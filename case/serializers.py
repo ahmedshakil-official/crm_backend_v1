@@ -1865,7 +1865,6 @@ class InsurancesSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "alias",
-            "insurance_type",
             "created_at",
             "updated_at",
             "created_by",
