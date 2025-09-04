@@ -1,3 +1,4 @@
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -299,23 +300,49 @@ class OrganizationDashboardListView(ListAPIView):
 
 
 class NetworkOrganizationLeadListCreateView(RoleSpecificListCreate):
-    role = OrganizationRoleChoices.LEAD  # or NetworkRoleChoices.LEAD
+    role = OrganizationRoleChoices.LEAD  # role for leads
 
     def get_queryset(self):
         organization_slug = self.kwargs.get("slug")
         organization = get_object_or_404(Organization, slug=organization_slug)
 
-        queryset = self.get_role_filtered_queryset()
         user_context = self.get_user_context()
+        queryset = self.get_role_filtered_queryset()
 
         if user_context["type"] == "organization":
+            if user_context["instance"] != organization:
+                raise PermissionDenied("You cannot access this organization.")
             return queryset.filter(organization=organization)
+
         elif user_context["type"] == "network":
-            return queryset.filter(network=organization.network)
+            if organization.network != user_context["instance"]:
+                raise PermissionDenied("This organization is not part of your network.")
+            return queryset.filter(organization=organization)
 
         return queryset.none()
 
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return LeadListCreateSerializer
-        return super().get_serializer_class()
+    def perform_create(self, serializer):
+        organization_slug = self.kwargs.get("slug")
+        organization = get_object_or_404(Organization, slug=organization_slug)
+
+        user_context = self.get_user_context()
+
+        if user_context["type"] == "organization":
+            if user_context["instance"] != organization:
+                raise PermissionDenied("You cannot create data for this organization.")
+            instance = organization
+
+        elif user_context["type"] == "network":
+            if organization.network != user_context["instance"]:
+                raise PermissionDenied("This organization is not part of your network.")
+            instance = organization
+
+        else:
+            raise PermissionDenied("Invalid user context.")
+
+        serializer.save(
+            role=self.role,
+            organization=instance,
+            created_by=self.request.user,
+            updated_by=self.request.user,
+        )
