@@ -304,7 +304,16 @@ class NetworkOrganizationLeadListCreateView(RoleSpecificListCreate):
     def get_queryset(self):
         organization_slug = self.kwargs.get("slug")
         organization = get_object_or_404(Organization, slug=organization_slug)
-        return self.get_role_filtered_queryset().filter(organization=organization)
+
+        queryset = self.get_role_filtered_queryset()
+        user_context = self.get_user_context()
+
+        if user_context["type"] == "organization":
+            return queryset.filter(organization=organization)
+        elif user_context["type"] == "network":
+            return queryset.filter(network=organization.network)
+
+        return queryset.none()
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
