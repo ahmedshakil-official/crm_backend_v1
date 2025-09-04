@@ -5,5 +5,8 @@ from .views import OrganizationNetworkDashboardListView, OrganizationDashboardLi
 urlpatterns = [
     path("common/", OrganizationNetworkDashboardListView.as_view(), name='common-dashboard'),
     path("organization/<slug:slug>/", OrganizationDashboardListView.as_view(), name='network-organization-dashboard'),
-    path("organisations/<slug:org_slug>/<str:org_user>/", OrganisationStatusView.as_view(), name="org-status"),
+    path("organization/<slug:slug>/cases/",
+         OrganisationStatusView.as_view(), {"section": "cases"}),
+    path("organization/<slug:slug>/<str:org_user>/",
+         OrganisationStatusView.as_view(), {"section": "people"}),
 ]

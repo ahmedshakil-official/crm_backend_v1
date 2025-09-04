@@ -311,9 +311,10 @@ class OrganisationStatusView(ListAPIView):
     pagination_class = StandardResultsSetPagination
 
     def list(self, request, *args, **kwargs):
-        org_slug = kwargs["org_slug"]
-        section_raw = request.query_params.get("section")
-        section = (section_raw.strip().lower() if section_raw and section_raw.strip() else "people")
+        slug = kwargs["slug"]
+        section_kw = (kwargs.get("section") or "").lower()
+        section_qs = (request.query_params.get("section") or "").strip().lower()
+        section = section_kw or section_qs or "people"
         org_user = (kwargs.get("org_user") or "").lower()
 
         role_map = {
@@ -325,23 +326,31 @@ class OrganisationStatusView(ListAPIView):
                 OrganizationRoleChoices.ORGANIZATION_PRINCIPAL_ADVISER,
             ],
         }
-        if org_user not in role_map:
-            return Response({"detail": "use one of: leads | clients | advisers"}, status=400)
 
         if section == "cases":
             case_category = request.query_params.get("case_category")
             case_stage = request.query_params.get("case_stage")
+            name = (request.query_params.get("name") or "").strip()
 
             qs = (
                 Case.objects
                 .select_related("lead", "assigned_to", "created_by", "updated_by", "organization", "network")
-                .filter(organization__slug=org_slug)
+                .filter(organization__slug=slug)
                 .order_by("-created_at")
             )
             if case_category:
                 qs = qs.filter(case_category=case_category)
             if case_stage:
                 qs = qs.filter(case_stage=case_stage)
+
+            if name:
+                qs = qs.filter(
+                    Q(name__icontains=name) |
+                    Q(lead__first_name__icontains=name) |
+                    Q(lead__last_name__icontains=name) |
+                    Q(assigned_to__first_name__icontains=name) |
+                    Q(assigned_to__last_name__icontains=name)
+                )
 
             page = self.paginate_queryset(qs)
             items = page if page is not None else qs
@@ -446,11 +455,13 @@ class OrganisationStatusView(ListAPIView):
 
             return self.get_paginated_response(data) if page is not None else Response(data)
 
+        if org_user not in role_map:
+            return Response({"detail": "use one of: leads | clients | advisers"}, status=400)
         # people section
         queryset = (
             OrganizationUser.objects
             .select_related("user", "created_by", "organization")
-            .filter(organization__slug=org_slug, role__in=role_map[org_user])
+            .filter(organization__slug=slug, role__in=role_map[org_user])
             .order_by("-created_at")
         )
 
@@ -485,7 +496,7 @@ class OrganisationStatusView(ListAPIView):
                 } if user else None,
                 "role": basic_role,
                 "organization_slug": (
-                    organization_user.organization.slug if organization_user.organization_id else org_slug
+                    organization_user.organization.slug if organization_user.organization_id else slug
                 ),
                 "dob": organization_user.dob.isoformat() if getattr(organization_user, "dob", None) else None,
                 "gender": getattr(organization_user, "gender", None),
