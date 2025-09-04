@@ -12,6 +12,8 @@ from case.models import (
 from case.views import CaseAuthenticationMixin
 from common.enums import OrganizationRoleChoices, NetworkRoleChoices
 from organization.models import OrganizationUser, Organization, NetworkUser
+from organizationuser.serializers import LeadListCreateSerializer
+from organizationuser.views import RoleSpecificListCreate
 
 
 class OrganizationNetworkDashboardListView(CaseAuthenticationMixin, ListAPIView):
@@ -294,3 +296,17 @@ class OrganizationDashboardListView(ListAPIView):
             "top_performing_advisers": top_advisers,
         }
         return Response(data)
+
+
+class NetworkOrganizationLeadListCreateView(RoleSpecificListCreate):
+    role = OrganizationRoleChoices.LEAD  # or NetworkRoleChoices.LEAD
+
+    def get_queryset(self):
+        organization_slug = self.kwargs.get("slug")
+        organization = get_object_or_404(Organization, slug=organization_slug)
+        return self.get_role_filtered_queryset().filter(organization=organization)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return LeadListCreateSerializer
+        return super().get_serializer_class()
