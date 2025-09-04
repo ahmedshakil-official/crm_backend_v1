@@ -1,4 +1,6 @@
-from rest_framework.generics import ListAPIView
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
@@ -294,3 +296,171 @@ class OrganizationDashboardListView(ListAPIView):
             "top_performing_advisers": top_advisers,
         }
         return Response(data)
+
+
+# Pagination class
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+# This dashboard used for organisation user lead, client, and Cases Overview and adviser.
+class OrganisationStatusView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    pagination_class = StandardResultsSetPagination
+
+    #section
+    def get_section(self):
+        return (self.request.query_params.get("section", "people") or "").strip().lower()
+
+    def get_filter_backends(self):
+        return self.filter_backends if self.get_section() == "cases" else []
+
+    #querysets
+    def get_queryset(self):
+        org_slug = self.kwargs["org_slug"]
+        if self.get_section() == "cases":
+            case_category = self.request.query_params.get("case_category")
+            case_stage = self.request.query_params.get("case_stage")
+
+
+            cases =  (
+                Case.objects
+                .select_related(
+                    "lead", "assigned_to", "created_by", "updated_by",
+                    "organization", "network"
+                )
+                .filter(organization__slug=org_slug)
+                .order_by("-created_at")
+            )
+
+            filters = {}
+            if case_category:
+                filters["case_category"] = case_category
+            if case_stage:
+                filters["case_stage"] = case_stage
+
+            cases = cases.filter(**filters)
+
+            return cases
+        return (
+            OrganizationUser.objects
+            .select_related("user", "created_by", "organization")
+            .filter(organization__slug=org_slug)
+            .order_by("-created_at")
+        )
+
+    #list
+    def list(self, request, *args, **kwargs):
+        if self.get_section() == "cases":
+            qs = self.filter_queryset(self.get_queryset())  # apply CaseFilter
+            page = self.paginate_queryset(qs)
+            data = [self.case_row(c) for c in (page if page is not None else qs)]
+            return self.get_paginated_response(data) if page is not None else Response(data)
+
+        # people: no CaseFilter, no pagination
+        qs = self.get_queryset()
+        data = [self.client_leads_adviser_row(m) for m in qs]
+        return Response(data)
+
+    #helpers
+    @staticmethod
+    def get_iso_formate(data):
+        if not data:
+            return None
+        s = data.isoformat()
+        return s.replace("+00:00", "Z") if s.endswith("+00:00") else s
+
+    @staticmethod
+    def get_url(f):
+        try:
+            return f.url if f else None
+        except Exception:
+            return None
+
+    @staticmethod
+    def get_user_data(user: User):
+        if not user:
+            return None
+        return {
+            "id": user.id,
+            "alias": str(getattr(user, "alias", "")),
+            "email": user.email,
+            "title": user.title,
+            "first_name": user.first_name,
+            "middle_name": getattr(user, "middle_name", ""),
+            "last_name": user.last_name,
+            "phone": user.phone,
+            "user_type": user.user_type,
+        }
+
+    @staticmethod
+    def get_org_data(org):
+        if not org:
+            return None
+        return {
+            "alias": str(getattr(org, "alias", "")),
+            "email": org.email,
+            "name": org.name,
+            "logo": OrganisationStatusView.get_url(getattr(org, "logo", None)),
+            "profile_image": OrganisationStatusView.get_url(getattr(org, "profile_image", None)),
+            "hero_image": OrganisationStatusView.get_url(getattr(org, "hero_image", None)),
+        }
+
+    @staticmethod
+    def get_network_data(data):
+        if not data:
+            return None
+        return {
+            "alias": str(getattr(data, "alias", "")),
+            "slug": getattr(data, "slug", None),
+            "name": getattr(data, "name", None),
+            "email": getattr(data, "email", None),
+            "logo": OrganisationStatusView.get_url(getattr(data, "logo", None)),
+            "profile_image": OrganisationStatusView.get_url(getattr(data, "profile_image", None)),
+            "hero_image": OrganisationStatusView.get_url(getattr(data, "hero_image", None)),
+            "primary_mobile": getattr(data, "primary_mobile", None),
+        }
+
+    @staticmethod
+    def get_to_basic_role(org_role_value: str) -> str:
+        adviser_set = {
+            OrganizationRoleChoices.ADVISOR,
+            OrganizationRoleChoices.ORGANIZATION_ADVISER,
+            OrganizationRoleChoices.ORGANIZATION_PRINCIPAL_ADVISER,
+        }
+        if org_role_value in adviser_set:
+            return NetworkRoleChoices.ADVISOR
+        if org_role_value == OrganizationRoleChoices.CLIENT:
+            return NetworkRoleChoices.CLIENT
+        return NetworkRoleChoices.LEAD
+
+    def client_leads_adviser_row(self, organization_user: OrganizationUser):
+        return {
+            "alias": str(getattr(organization_user, "alias", organization_user.id)),
+            "user": self.get_user_data(organization_user.user),
+            "role": self.get_to_basic_role(organization_user.role),
+            "dob": getattr(organization_user, "dob", None),
+            "gender": getattr(organization_user, "gender", None),
+            "created_by": self.get_user_data(organization_user.created_by),
+            "created_at": self.get_iso_formate(organization_user.created_at),
+        }
+
+    def case_row(self, case: Case):
+        return {
+            "alias": str(getattr(case, "alias", case.id)),
+            "name": case.name,
+            "lead_user": self.get_user_data(case.lead),
+            "assigned_user": self.get_user_data(case.assigned_to),
+            "organization": self.get_org_data(case.organization),
+            "network": self.get_network_data(case.network),
+            "case_category": case.case_category,
+            "case_stage": case.case_stage,
+            "notes": case.notes or "",
+            "is_removed": bool(case.is_removed),
+            "created_by": self.get_user_data(case.created_by),
+            "updated_by": self.get_user_data(case.updated_by),
+            "created_at": self.get_iso_formate(case.created_at),
+            "updated_at": self.get_iso_formate(case.updated_at),
+        }
