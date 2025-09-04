@@ -1,4 +1,6 @@
-from rest_framework.generics import ListAPIView
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
@@ -293,4 +295,223 @@ class OrganizationDashboardListView(ListAPIView):
             "summary_cards": summary_cards,
             "top_performing_advisers": top_advisers,
         }
+        return Response(data)
+
+
+# Pagination class
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+# This dashboard used for organisation user lead, client, and Cases Overview and adviser.
+class OrganisationStatusView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Organization.objects.none()
+    pagination_class = StandardResultsSetPagination
+
+    def list(self, request, *args, **kwargs):
+        slug = kwargs["slug"]
+        section_kw = (kwargs.get("section") or "").lower()
+        section_qs = (request.query_params.get("section") or "").strip().lower()
+        section = section_kw or section_qs or "people"
+        org_user = (kwargs.get("org_user") or "").lower()
+
+        role_map = {
+            "leads": [OrganizationRoleChoices.LEAD],
+            "clients": [OrganizationRoleChoices.CLIENT],
+            "advisers": [
+                OrganizationRoleChoices.ADVISOR,
+                OrganizationRoleChoices.ORGANIZATION_ADVISER,
+                OrganizationRoleChoices.ORGANIZATION_PRINCIPAL_ADVISER,
+            ],
+        }
+
+        if section == "cases":
+            case_category = request.query_params.get("case_category")
+            case_stage = request.query_params.get("case_stage")
+            name = (request.query_params.get("name") or "").strip()
+
+            qs = (
+                Case.objects
+                .select_related("lead", "assigned_to", "created_by", "updated_by", "organization", "network")
+                .filter(organization__slug=slug)
+                .order_by("-created_at")
+            )
+            if case_category:
+                qs = qs.filter(case_category=case_category)
+            if case_stage:
+                qs = qs.filter(case_stage=case_stage)
+
+            if name:
+                qs = qs.filter(
+                    Q(name__icontains=name) |
+                    Q(lead__first_name__icontains=name) |
+                    Q(lead__last_name__icontains=name) |
+                    Q(assigned_to__first_name__icontains=name) |
+                    Q(assigned_to__last_name__icontains=name)
+                )
+
+            page = self.paginate_queryset(qs)
+            items = page if page is not None else qs
+            data = []
+            for case in items:
+                lead_user = None
+                if case.lead:
+                    lead_user = {
+                        "id": case.lead.id,
+                        "alias": str(getattr(case.lead, "alias", "")),
+                        "email": case.lead.email,
+                        "title": case.lead.title,
+                        "first_name": case.lead.first_name,
+                        "middle_name": getattr(case.lead, "middle_name", ""),
+                        "last_name": case.lead.last_name,
+                        "phone": case.lead.phone,
+                        "user_type": case.lead.user_type,
+                    }
+
+                assigned_user = None
+                if case.assigned_to:
+                    assigned_user = {
+                        "id": case.assigned_to.id,
+                        "alias": str(getattr(case.assigned_to, "alias", "")),
+                        "email": case.assigned_to.email,
+                        "title": case.assigned_to.title,
+                        "first_name": case.assigned_to.first_name,
+                        "middle_name": getattr(case.assigned_to, "middle_name", ""),
+                        "last_name": case.assigned_to.last_name,
+                        "phone": case.assigned_to.phone,
+                        "user_type": case.assigned_to.user_type,
+                    }
+
+                created_by = None
+                if case.created_by:
+                    created_by = {
+                        "id": case.created_by.id,
+                        "alias": str(getattr(case.created_by, "alias", "")),
+                        "email": case.created_by.email,
+                        "title": case.created_by.title,
+                        "first_name": case.created_by.first_name,
+                        "middle_name": getattr(case.created_by, "middle_name", ""),
+                        "last_name": case.created_by.last_name,
+                        "phone": case.created_by.phone,
+                        "user_type": case.created_by.user_type,
+                    }
+
+                updated_by = None
+                if case.updated_by:
+                    updated_by = {
+                        "id": case.updated_by.id,
+                        "alias": str(getattr(case.updated_by, "alias", "")),
+                        "email": case.updated_by.email,
+                        "title": case.updated_by.title,
+                        "first_name": case.updated_by.first_name,
+                        "middle_name": getattr(case.updated_by, "middle_name", ""),
+                        "last_name": case.updated_by.last_name,
+                        "phone": case.updated_by.phone,
+                        "user_type": case.updated_by.user_type,
+                    }
+
+                org_obj = None
+                if case.organization:
+                    org_obj = {
+                        "alias": str(getattr(case.organization, "alias", "")),
+                        "email": case.organization.email,
+                        "name": case.organization.name,
+                        "logo": request.build_absolute_uri(case.organization.logo.url) if getattr(case.organization, "logo", None) else None,
+                        "profile_image": request.build_absolute_uri(case.organization.profile_image.url) if getattr(case.organization, "profile_image", None) else None,
+                        "hero_image": request.build_absolute_uri(case.organization.hero_image.url) if getattr(case.organization, "hero_image", None) else None,
+                    }
+
+                network_obj = None
+                if case.network:
+                    network_obj = {
+                        "alias": str(getattr(case.network, "alias", "")),
+                        "slug": getattr(case.network, "slug", None),
+                        "name": getattr(case.network, "name", None),
+                        "email": getattr(case.network, "email", None),
+                        "logo": request.build_absolute_uri(case.network.logo.url) if getattr(case.network, "logo", None) else None,
+                        "profile_image": request.build_absolute_uri(case.network.profile_image.url) if getattr(case.network, "profile_image", None) else None,
+                        "hero_image": request.build_absolute_uri(case.network.hero_image.url) if getattr(case.network, "hero_image", None) else None,
+                        "primary_mobile": getattr(case.network, "primary_mobile", None),
+                    }
+
+                data.append({
+                    "alias": str(getattr(case, "alias", case.id)),
+                    "name": case.name,
+                    "lead_user": lead_user,
+                    "assigned_user": assigned_user,
+                    "organization": org_obj,
+                    "network": network_obj,
+                    "case_category": case.case_category,
+                    "case_stage": case.case_stage,
+                    "notes": case.notes or "",
+                    "is_removed": bool(case.is_removed),
+                    "created_by": created_by,
+                    "updated_by": updated_by,
+                    "created_at": case.created_at.isoformat().replace("+00:00", "Z") if case.created_at else None,
+                    "updated_at": case.updated_at.isoformat().replace("+00:00", "Z") if case.updated_at else None,
+                })
+
+            return self.get_paginated_response(data) if page is not None else Response(data)
+
+        if org_user not in role_map:
+            return Response({"detail": "use one of: leads | clients | advisers"}, status=400)
+        # people section
+        queryset = (
+            OrganizationUser.objects
+            .select_related("user", "created_by", "organization")
+            .filter(organization__slug=slug, role__in=role_map[org_user])
+            .order_by("-created_at")
+        )
+
+        data = []
+        for organization_user in queryset:
+            if organization_user.role in {
+                OrganizationRoleChoices.ADVISOR,
+                OrganizationRoleChoices.ORGANIZATION_ADVISER,
+                OrganizationRoleChoices.ORGANIZATION_PRINCIPAL_ADVISER,
+            }:
+                basic_role = NetworkRoleChoices.ADVISOR
+            elif organization_user.role == OrganizationRoleChoices.CLIENT:
+                basic_role = NetworkRoleChoices.CLIENT
+            else:
+                basic_role = NetworkRoleChoices.LEAD
+
+            user = organization_user.user
+            created_by_user = organization_user.created_by
+
+            data.append({
+                "alias": str(getattr(organization_user, "alias", organization_user.id)),
+                "user": {
+                    "id": user.id,
+                    "alias": str(getattr(user, "alias", "")),
+                    "email": user.email,
+                    "title": user.title,
+                    "first_name": user.first_name,
+                    "middle_name": getattr(user, "middle_name", ""),
+                    "last_name": user.last_name,
+                    "phone": user.phone,
+                    "user_type": user.user_type,
+                } if user else None,
+                "role": basic_role,
+                "organization_slug": (
+                    organization_user.organization.slug if organization_user.organization_id else slug
+                ),
+                "dob": organization_user.dob.isoformat() if getattr(organization_user, "dob", None) else None,
+                "gender": getattr(organization_user, "gender", None),
+                "created_by": {
+                    "id": created_by_user.id,
+                    "alias": str(getattr(created_by_user, "alias", "")),
+                    "email": created_by_user.email,
+                    "title": created_by_user.title,
+                    "first_name": created_by_user.first_name,
+                    "middle_name": getattr(created_by_user, "middle_name", ""),
+                    "last_name": created_by_user.last_name,
+                    "phone": created_by_user.phone,
+                    "user_type": created_by_user.user_type,
+                } if created_by_user else None,
+                "created_at": organization_user.created_at.isoformat().replace("+00:00", "Z") if organization_user.created_at else None,
+            })
+
         return Response(data)
