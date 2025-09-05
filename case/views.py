@@ -76,7 +76,7 @@ from .models import (
     ExtraAnswer,
     Compliance,
     MortgageNeeds,
-    MortgageFeatures, ClientSurvey,
+    MortgageFeatures, ClientSurvey, PreviousAddress,
 )
 from .serializers import (
     CaseListCreateSerializer,
@@ -115,7 +115,9 @@ from .serializers import (
     SuitabilitySerializer,
     ExtraAnswerSerializers,
     ComplianceSerializers,
-    MortgageNeedsSerializers, ClientSurveySerializers,
+    MortgageNeedsSerializers,
+    ClientSurveySerializers,
+    ApplicantPreviousAddressSerializers,
 )
 
 
@@ -1326,3 +1328,61 @@ class ClientSurveyRetrieveUpdateApiView(CaseRelatedViewMixin ,RetrieveUpdateAPIV
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
+
+class PreviousApplicantListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
+    serializer_class = ApplicantPreviousAddressSerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case = self.get_case()
+        applicant_alias = self.kwargs["alias"]
+        return (PreviousAddress.objects
+                .select_related("applicant_details")
+                .filter(
+                    applicant_details__case=case,
+                    applicant_details__alias=applicant_alias,
+                )
+                .order_by("-created_at"))
+
+    def perform_create(self, serializer):
+        case = self.get_case()
+        applicant_alias = self.kwargs["alias"]
+
+        applicant_details = get_object_or_404(
+            ApplicantDetails,
+            case=case,
+            alias=applicant_alias,
+        )
+
+        serializer.save(
+            applicant_details=applicant_details,
+            created_by=self.request.user,
+            updated_by=self.request.user,
+        )
+
+
+class PreviousApplicantRetrieveUpdateDeleteApiView(
+    CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView
+):
+    serializer_class = ApplicantPreviousAddressSerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        case = self.get_case()
+        applicant_alias = self.kwargs["alias"]
+        return PreviousAddress.objects.filter(
+            applicant_details__case=case,
+            applicant_details__alias=applicant_alias,
+        )
+
+    def get_object(self):
+        return get_object_or_404(
+            self.get_queryset(),
+            alias=self.kwargs["address_alias"],
+        )
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+
+    def perform_destroy(self, instance):
+        instance.delete()

@@ -712,6 +712,33 @@ class ApplicantDetails(CreatedAtUpdatedAtBaseModel):
     def __str__(self):
         return f"{self.company} ({self.applicant})"
 
+# Create Previous Address Model. This model related ApplicantDetail model.
+class PreviousAddress(CreatedAtUpdatedAtBaseModel):
+    applicant_details = models.ForeignKey(
+        ApplicantDetails,
+        on_delete=models.CASCADE,
+        related_name="previous_addresses"
+    )
+    postcode = models.CharField(max_length=10, null=True, blank=True)
+    house_name_or_number = models.CharField(max_length=255, blank=True, null=True)
+    address_line1 = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    county = models.CharField(max_length=100, blank=True, null=True)
+    effective_from = models.DateField(blank=True, null=True)
+    effective_to = models.DateField(blank=True, null=True)
+    time_at_address_years = models.PositiveIntegerField(blank=True, null=True)
+    time_at_address_months = models.PositiveIntegerField(blank=True, null=True)
+    residential_status = models.CharField(
+        max_length=50,
+        choices=ResidentialStatus.choices,
+        default=ResidentialStatus.OWNER,
+    )
+    notes = models.TextField(blank=True, null=True)
+    complete_previous_address = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.postcode} ({self.house_name_or_number})"
+
 
 class CompanyInfo(models.Model):
     applicant_details = models.ForeignKey(

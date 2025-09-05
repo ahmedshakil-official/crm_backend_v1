@@ -59,7 +59,8 @@ from .views import (
     ComplianceRetrieveUpdateApiView,
     MortgageNeedsRetrieveUpdateApiView,
     CasePDFReportAPIView,
-    ClientSurveyListCreateAPIViews, ClientSurveyRetrieveUpdateApiView,
+    ClientSurveyListCreateAPIViews, ClientSurveyRetrieveUpdateApiView, PreviousApplicantRetrieveUpdateDeleteApiView,
+    PreviousApplicantListCreateApiView,
 )
 
 urlpatterns = [
@@ -364,4 +365,14 @@ urlpatterns = [
         ClientSurveyRetrieveUpdateApiView.as_view(),
         name="client-survey-retrieve-update",
     ),
+    path(
+        "<uuid:case_alias>/applicant/details/<uuid:alias>/applicant/address/",
+        PreviousApplicantListCreateApiView.as_view(),
+        name="previous-address-detail-list-create",
+        ),
+    path(
+        "<uuid:case_alias>/applicant/details/<uuid:alias>/applicant/address/<uuid:address_alias>/",
+        PreviousApplicantRetrieveUpdateDeleteApiView.as_view(),
+        name="previous-address-detail-retrieve-update",
+    )
 ]
