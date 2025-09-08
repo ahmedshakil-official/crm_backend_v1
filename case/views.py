@@ -1357,7 +1357,6 @@ class PreviousApplicantListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView
         serializer.save(
             applicant_details=applicant_details,
             created_by=self.request.user,
-            updated_by=self.request.user,
         )
 
 
