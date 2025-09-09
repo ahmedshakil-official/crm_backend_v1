@@ -3569,6 +3569,7 @@ class ApplicantPreviousAddressSerializers(serializers.ModelSerializer):
             "address_line1",
             "city",
             "county",
+            "country",
             "pre_effective_from",
             "pre_effective_to",
             "time_at_address_years",

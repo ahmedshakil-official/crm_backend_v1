@@ -724,6 +724,7 @@ class PreviousAddress(CreatedAtUpdatedAtBaseModel):
     address_line1 = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     county = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
     pre_effective_from = models.DateField(blank=True, null=True)
     pre_effective_to = models.DateField(blank=True, null=True)
     time_at_address_years = models.PositiveIntegerField(blank=True, null=True)
