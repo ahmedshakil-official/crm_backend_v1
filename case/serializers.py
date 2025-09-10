@@ -103,6 +103,7 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
         queryset=User.objects.none(),
         write_only=True,
         required=False,
+        allow_null=True,
     )
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
