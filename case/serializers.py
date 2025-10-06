@@ -400,7 +400,7 @@ class FileSerializer(serializers.ModelSerializer):
     file_owner_info = CommonUserSerializer(read_only=True, source="file_owner")
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
-    file_owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.none(), write_only=True)
+    file_owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
     class Meta:
         model = Files
         list_serializer_class = BulkFileSerializer
