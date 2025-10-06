@@ -286,11 +286,16 @@ class FileListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = FileFilter
 
-    def get_filterset_kwargs(self):
-        kwargs = super().get_filterset_kwargs()
-        kwargs["request"] = self.request
-        kwargs["case"] = self.get_case()
-        return kwargs
+    def get_serializer(self, *args, **kwargs):
+        data = kwargs.get("data", None)
+        if isinstance(data, list):
+            kwargs["many"] = True
+        kwargs.setdefault("context", {})
+        kwargs["context"].update({
+            "request": self.request,
+            "case": self.get_case()
+        })
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self):
         return Files.objects.filter(case=self.get_case())

@@ -350,16 +350,15 @@ class BulkFileSerializer(serializers.ListSerializer):
         user = self.context["request"].user
         user_ip = self.context["request"].META.get("REMOTE_ADDR")
 
-        files = [
-            Files(
-                case=case,
-                created_by=user,
-                user_ip=user_ip,
-                **item
-            )
-            for item in validated_data
-        ]
-        return Files.objects.bulk_create(files)
+        created_files = []
+        for item in validated_data:
+            item["case"] = case
+            item["created_by"] = user
+            item["user_ip"] = user_ip
+            file_obj = Files.objects.create(**item)
+            created_files.append(file_obj)
+
+        return created_files
 
     def update(self, instances, validated_data):
         instance_mapping = {instance.alias: instance for instance in instances}
