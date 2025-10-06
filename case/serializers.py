@@ -76,7 +76,7 @@ from .models import (
     ExtraAnswer,
     Compliance,
     MortgageNeeds,
-    ClientSurvey,
+    ClientSurvey, PreviousAddress,
 )
 from authentication.models import User
 from common.serializers import (
@@ -103,6 +103,7 @@ class CaseListCreateSerializer(serializers.ModelSerializer):
         queryset=User.objects.none(),
         write_only=True,
         required=False,
+        allow_null=True,
     )
     created_by = CommonUserSerializer(read_only=True)
     updated_by = CommonUserSerializer(read_only=True)
@@ -3542,4 +3543,41 @@ class ClientSurveySerializers(serializers.ModelSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+        ]
+
+# Previous Address Serializers
+class ApplicantPreviousAddressSerializers(serializers.ModelSerializer):
+    created_by = CommonUserWithIdSerializer(read_only=True)
+    updated_by = CommonUserWithIdSerializer(read_only=True)
+
+    class Meta:
+        model = PreviousAddress
+        fields = [
+            "alias",
+            "applicant_details",
+            "postcode",
+            "house_name_or_number",
+            "address_line1",
+            "city",
+            "county",
+            "country",
+            "pre_effective_from",
+            "pre_effective_to",
+            "time_at_address_years",
+            "time_at_address_months",
+            "residential_status",
+            "notes",
+            "complete_previous_address",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at"
+        ]
+        read_only_fields = [
+            "alias",
+            "applicant_details",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at"
         ]
