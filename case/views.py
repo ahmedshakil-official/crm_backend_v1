@@ -302,7 +302,7 @@ class FileListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
 
         return super().get_serializer(*args, **kwargs)
 
-    def perform_create(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         files = request.FILES.getlist("file")
         if len(files) > 1:
             case_alias = self.kwargs['case_alias']
