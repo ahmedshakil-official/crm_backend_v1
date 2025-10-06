@@ -293,18 +293,36 @@ class FileListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
         kwargs.setdefault("context", {})
         kwargs["context"].update({
             "request": self.request,
-            "case": self.get_case()
+            "case": self.get_case(),
         })
         return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self):
         return Files.objects.filter(case=self.get_case())
 
-    def get_serializer(self, *args, **kwargs):
-        data = kwargs.get("data", None)
-        if isinstance(data, list):
-            kwargs["many"] = True
-        return super().get_serializer(*args, **kwargs)
+    def create(self, request, *args, **kwargs):
+        files = request.FILES.getlist("file")
+        if len(files) > 1:
+            case = self.get_case()
+            user = request.user
+            user_ip = request.META.get("REMOTE_ADDR")
+
+            created_files = []
+            for f in files:
+                created_files.append(
+                    Files.objects.create(
+                        case=case,
+                        file=f,
+                        created_by=user,
+                        user_ip=user_ip,
+                    )
+                )
+
+            serializer = self.get_serializer(created_files, many=True)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return super().create(request, *args, **kwargs)
+
 
 
 
