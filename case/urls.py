@@ -59,7 +59,7 @@ from .views import (
     ComplianceRetrieveUpdateApiView,
     MortgageNeedsRetrieveUpdateApiView,
     CasePDFReportAPIView,
-    ClientSurveyListCreateAPIViews, ClientSurveyRetrieveUpdateApiView,
+    ClientSurveyListCreateAPIViews, ClientSurveyRetrieveUpdateApiView, FileBulkUpdateApiView,
 )
 
 urlpatterns = [
@@ -79,6 +79,12 @@ urlpatterns = [
         FileRetrieveUpdateDeleteApiView.as_view(),
         name="file-detail",
     ),
+    path(
+        "<uuid:case_alias>/files/bulk-update/",
+        FileBulkUpdateApiView.as_view(),
+        name="file-bulk-update",
+    ),
+
     path(
         "<uuid:case_alias>/joint/users/",
         JointUserListCreateApiView.as_view(),

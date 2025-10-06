@@ -343,16 +343,63 @@ class CaseRetrieveUpdateDeleteSerializer(serializers.ModelSerializer):
 
 
 
-class FileSerializer(serializers.ModelSerializer):
-    file_owner_info = CommonUserSerializer(read_only=True, source="file_owner")
-    created_by = CommonUserSerializer(read_only=True)
-    updated_by = CommonUserSerializer(read_only=True)
-    file_owner = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.none(), write_only=True
-    )
+class BulkFileSerializer(serializers.ListSerializer):
+    def create(self, validated_data):
+        case = self.context.get("case")
+        user = self.context["request"].user
+        user_ip = self.context["request"].META.get("REMOTE_ADDR")
 
+        files = [
+            Files(
+                case=case,
+                created_by=user,
+                user_ip=user_ip,
+                **item
+            )
+            for item in validated_data
+        ]
+        return Files.objects.bulk_create(files)
+
+    def update(self, instances, validated_data):
+        instance_mapping = {instance.alias: instance for instance in instances}
+        updated_instances = []
+
+        for item in validated_data:
+            instance = instance_mapping.get(item.get("alias"))
+            if not instance:
+                continue
+
+            for attr, value in item.items():
+                setattr(instance, attr, value)
+
+            instance.updated_by = self.context["request"].user
+            instance.user_ip = self.context["request"].META.get("REMOTE_ADDR")
+            updated_instances.append(instance)
+
+        Files.objects.bulk_update(
+            updated_instances,
+            [
+                "file",
+                "file_type",
+                "name",
+                "description",
+                "special_notes",
+                "note",
+                "file_owner",
+                "updated_by",
+                "user_ip",
+                "updated_at",
+            ],
+        )
+        return updated_instances
+
+
+
+
+class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Files
+        list_serializer_class = BulkFileSerializer
         fields = [
             "alias",
             "file",
@@ -368,65 +415,8 @@ class FileSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = [
-            "alias",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-        write_only_fields = ["file_owner"]
+        read_only_fields = ["alias", "created_by", "updated_by", "created_at", "updated_at"]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Get the case from the context and limit the queryset for file_owner
-        case = self.context.get("case")
-        if case:
-            lead = case.lead
-            joint_users = case.joint_users.values_list("joint_user", flat=True)
-            self.fields["file_owner"].queryset = User.objects.filter(
-                pk__in=[lead.pk, *joint_users]
-            )
-
-    def validate_file_owner(self, value):
-        # Ensure file_owner is either the lead or one of the joint users of the case
-        case = self.context.get("case")
-        if not case:
-            raise serializers.ValidationError("Case context is not provided.")
-
-        # Fetch the lead and joint users as user objects
-        valid_owners = [case.lead] + list(
-            User.objects.filter(
-                pk__in=case.joint_users.values_list("joint_user", flat=True)
-            )
-        )
-
-        if value not in valid_owners:
-            raise serializers.ValidationError(
-                "File owner must be the lead or a joint user of this case."
-            )
-        return value
-
-    def create(self, validated_data):
-        user = self.context["request"].user
-        if not user or not user.is_authenticated:
-            raise serializers.ValidationError(
-                "User must be authenticated to create files."
-            )
-
-        validated_data["case"] = self.context["case"]
-        validated_data["created_by"] = user
-        validated_data["user_ip"] = self.context["request"].META.get(
-            "REMOTE_ADDR", None
-        )
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        validated_data["updated_by"] = self.context["request"].user
-        validated_data["user_ip"] = self.context["request"].META.get(
-            "REMOTE_ADDR", None
-        )
-        return super().update(instance, validated_data)
 
 
 class JointUserSerializer(serializers.ModelSerializer):

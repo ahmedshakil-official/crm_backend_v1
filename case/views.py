@@ -293,6 +293,13 @@ class FileListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
     def get_queryset(self):
         return Files.objects.filter(case=self.get_case())
 
+    def get_serializer(self, *args, **kwargs):
+        data = kwargs.get("data", None)
+        if isinstance(data, list):
+            kwargs["many"] = True
+        return super().get_serializer(*args, **kwargs)
+
+
 
 class FileRetrieveUpdateDeleteApiView(
     CaseRelatedViewMixin, RetrieveUpdateDestroyAPIView
@@ -312,6 +319,29 @@ class FileRetrieveUpdateDeleteApiView(
     def perform_destroy(self, instance):
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class FileBulkUpdateApiView(CaseRelatedViewMixin, APIView):
+    permission_classes = [IsAuthenticated, CasePermission]
+    serializer_class = FileSerializer
+
+    def put(self, request, *args, **kwargs):
+        case = self.get_case()
+        data = request.data
+
+        if not isinstance(data, list):
+            return Response({"detail": "Expected a list of file objects."}, status=400)
+
+        aliases = [item.get("alias") for item in data if item.get("alias")]
+        instances = Files.objects.filter(case=case, alias__in=aliases)
+
+        serializer = self.serializer_class(
+            instances, data=data, many=True, context={"request": request, "case": case}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class JointUserListCreateApiView(CaseRelatedViewMixin, ListCreateAPIView):
